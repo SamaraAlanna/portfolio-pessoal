@@ -847,9 +847,16 @@ painel do menu ou do link de pular.
 ### O que anima, e o que não anima
 
 Animam: entrada de bloco ao rolar, hover e foco dos cards e dos botões, accordion, entrada
-do menu, o hero e a troca de tema. **O botão cheio só levanta, sem mudar de cor**: clarear
-ou escurecer o rosa mexeria num valor medido em contraste contra o texto que ele carrega. O
-de contorno ganha fundo em `tint-rosa`, que é token existente e já medido. **Não animam:** nav, footer, tags, chips, itens de lista, a troca de
+do menu, o hero e a troca de tema. **Os dois tipos de botão não respondem igual, e isso é o
+ponto.** O primário levanta e escurece o fundo, pelo token `--accent-rosa-hover`; o de
+contorno só ganha fundo em `tint-rosa`, sem levante. Botão primário é a ação principal e
+responde mais, senão a hierarquia que a cor estabelece se perde no hover.
+
+**O escurecimento é token medido, e não filtro de brilho**, porque é cor sobre a qual texto
+é lido. O texto do botão é o `--bg`: 8,49 sobre o hover no escuro e 6,42 no claro, contra
+11,26 e 5,08 no estado normal. No tema claro o hover aumenta o contraste, porque o fundo
+escurece e o texto continua claro. A diferença entre normal e hover é de 1,33 no escuro e
+1,26 no claro, o bastante para notar sem ser brusca. **Não animam:** nav, footer, tags, chips, itens de lista, a troca de
 filtro na listagem, que precisa de resposta imediata e brigaria com o `aria-live` da
 contagem, e o corpo de texto dos cases, que é onde a pessoa passa mais tempo lendo.
 
@@ -862,20 +869,27 @@ novo, e nada anima na primeira pintura.
 O conteúdo geral não compete com a leitura. Três lugares fogem disso de propósito, porque o
 custo é baixo e o ganho é alto.
 
-**O hero anima na carga**, e é o único lugar que faz isso: é a primeira tela e ninguém está
-lendo ainda. São três coisas em sequência, todas em CSS, sem JavaScript: o título revela a
-transição tipográfica, o cartão do tokens.css assenta depois, e as fitas de luz derivam por
-trás. **O título tem as duas fontes empilhadas na mesma célula de grade**, porque trocar
-`font-family` de verdade custaria layout a cada quadro; a cópia em DM Sans leva
-`aria-hidden`. Descartado revelar as linhas do cartão uma a uma: é o efeito que data a
-página mais rápido.
+**No hero, só as fitas de luz se movem.** A troca de fonte do título e a entrada do cartão
+do tokens.css existiram e foram removidas em 2026-09-13: os dois nascem prontos. Nada mais
+anima na carga da página.
 
-**As fitas de luz custam menos do que parece.** Deslocar camada já rasterizada é trabalho de
-compositor, sem repintura: caro seria animar `filter`, `scale` grande ou algo que mude os
-limites da camada. O que sobrava era manter o compositor acordado, e o
-`components/ui/pausa-fora-da-tela` resolve parando a deriva quando o hero sai da tela.
-Durações de 29, 37 e 43 segundos, que não são múltiplas entre si, fazem o loop não ser
-percebido.
+**As fitas quicam, e quicar é duas ondas triangulares independentes.** Cada fita é dois
+elementos: o invólucro anda no eixo X, a imagem anda no Y, cada um com dois keyframes,
+`linear` e `alternate`. Não é aproximação de reflexão, é a definição dela: reflexão numa
+parede vertical inverte o X e não toca no Y. **O `alternate` só retraça o caminho quando os
+dois eixos têm o mesmo período**, que era o defeito da primeira versão, com as duas
+coordenadas numa animação só. Com períodos coprimos o caminho composto leva de 416 a 442
+segundos para fechar, e como os três números não são múltiplos entre si a cena só se repete
+depois de semanas.
+
+**Não use JavaScript para isso.** A conta é trivial, mas um laço de `requestAnimationFrame`
+obriga a thread principal a acordar a cada 16ms para sempre, numa página feita para rolar. A
+animação CSS roda no compositor e deixa a thread livre. É diferença de categoria.
+
+**As paredes são uma caixa de amplitude, e não as bordas do hero**, porque as formas são
+maiores que a área visível e recortadas: refletir na borda real tiraria o brilho da região
+que ele foi desenhado para iluminar. O `components/ui/pausa-fora-da-tela` para tudo quando o
+hero sai da tela.
 
 **A troca de tema entra por um círculo que nasce no botão clicado**, pela View Transitions
 API. Transição de mesmo documento é Baseline desde outubro de 2025; sem suporte, ou com

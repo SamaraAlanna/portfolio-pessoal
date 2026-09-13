@@ -49,6 +49,11 @@
 
   /* Accent. Cor aqui significa camada, não decoração. */
   --accent-rosa: #e6b7d3; /* design e produto */
+
+  /* Fundo do botão primário no hover. Existe como token, e não como filtro de brilho,
+     porque é cor sobre a qual texto é lido: precisava ser medida, não calculada em tempo
+     de execução. O texto do botão é o --bg, e fica em 8,49 aqui. */
+  --accent-rosa-hover: #c89fb8;
   --accent-lavanda: #c9b8e8; /* front-end */
   --accent-ciano: #9fd4d8; /* back-end e dados */
   --accent-ambar: #e8cfa0; /* ressalva, honestidade, em construção */
@@ -211,12 +216,6 @@
   --curva-saida: cubic-bezier(0.22, 1, 0.36, 1);
   --deslocamento-entrada: 12px;
 
-  /* Hero. Os atrasos montam a sequência: o texto já está lá quando a página abre, o
-     título troca de fonte, e o cartão assenta depois. */
-  --atraso-titulo: 700ms;
-  --dur-troca-fonte: 500ms;
-  --atraso-cartao: 900ms;
-  --dur-cartao: 600ms;
   --dur-tema: 620ms;
   --dur-varredura: 700ms;
 
@@ -235,12 +234,8 @@
     --dur-media: 0ms;
     --dur-entrada: 0ms;
     --deslocamento-entrada: 0px;
-    --dur-troca-fonte: 0ms;
-    --dur-cartao: 0ms;
     --dur-tema: 0ms;
     --dur-varredura: 0ms;
-    --atraso-titulo: 0ms;
-    --atraso-cartao: 0ms;
   }
 }
 
@@ -299,6 +294,7 @@
     --text-dim: #6b6660;
 
     --accent-rosa: #aa3e7f;
+    --accent-rosa-hover: #91356c;
     --accent-lavanda: #7a47d6;
     --accent-ciano: #337075;
     --accent-ambar: #6b5227;
@@ -340,6 +336,7 @@
      Tentar resolver pelo --surface-2 não funciona: para o pior accent chegar a 4,5 ele
      precisaria ir a #f6f1e9, que dá 1,01 sobre o --bg e faz a camada deixar de existir. */
   --accent-rosa: #aa3e7f; /* 5,08 sobre --bg, 4,57 sobre --surface-2 */
+  --accent-rosa-hover: #91356c; /* 6,42 contra o --bg, que é o texto do botão */
   --accent-lavanda: #7a47d6; /* 5,09 sobre --bg, 4,57 sobre --surface-2 */
   --accent-ciano: #337075; /* 5,06 sobre --bg, 4,55 sobre --surface-2 */
   --accent-ambar: #6b5227; /* 6,58 sobre --bg */
@@ -373,6 +370,7 @@
   --color-text-dim: var(--text-dim);
 
   --color-accent-rosa: var(--accent-rosa);
+  --color-accent-rosa-hover: var(--accent-rosa-hover);
   --color-accent-lavanda: var(--accent-lavanda);
   --color-accent-ciano: var(--accent-ciano);
   --color-accent-ambar: var(--accent-ambar);
@@ -923,12 +921,19 @@ body {
    Mesma linguagem do cartão: levante de 2px por `translate`, que o compositor resolve
    sozinho, e o foco recebe o mesmo, e não só o anel.
 
-   O botão cheio não muda de cor no hover. Clarear ou escurecer o rosa mexeria num valor
-   medido em contraste contra o texto que ele carrega, e não existe token para isso. O
-   levante já dá o retorno.
+   OS DOIS NÃO RESPONDEM IGUAL, E ISSO É O PONTO. Botão primário é a ação principal e
+   responde mais: levanta e escurece o fundo. O de contorno só ganha fundo, sem levante. Se
+   os dois se comportassem igual, a hierarquia que a cor estabelece se perderia no hover.
 
-   O de contorno ganha fundo em `tint-rosa`, que é token que já existe e cujo contraste com
-   o accent já foi medido nos dois temas. Ele vem para a frente sem mudar de cor.
+   O escurecimento do primário usa o token `--accent-rosa-hover`, medido no Figma, e não um
+   filtro de brilho. É cor sobre a qual texto é lido, então precisava ser medida.
+
+   O de contorno ganha `tint-rosa`, token que já existe e cujo contraste com o accent já
+   foi medido nos dois temas.
+
+   O primário é selecionado por `:not(.botao-contorno)`, e não por ordem no arquivo: os
+   dois seletores teriam a mesma especificidade e quem chegasse depois venceria, o que é o
+   tipo de dependência que quebra quando alguém reordena o arquivo.
 
    Só em ponteiro que faz hover de verdade, senão o toque no celular deixa o botão preso no
    estado depois do clique.
@@ -941,8 +946,9 @@ body {
 }
 
 @media (hover: hover) {
-  .botao-interativo:hover {
+  .botao-interativo:not(.botao-contorno):hover {
     translate: 0 -2px;
+    background-color: var(--accent-rosa-hover);
   }
 
   .botao-contorno:hover {
@@ -950,8 +956,14 @@ body {
   }
 }
 
-.botao-interativo:focus-visible {
+/* O foco espelha o hover, para quem navega por teclado receber a mesma hierarquia. */
+.botao-interativo:not(.botao-contorno):focus-visible {
   translate: 0 -2px;
+  background-color: var(--accent-rosa-hover);
+}
+
+.botao-contorno:focus-visible {
+  background-color: var(--tint-rosa);
 }
 
 /* ---------------------------------------------------------------------------
@@ -1015,136 +1027,96 @@ body {
 }
 
 /* ---------------------------------------------------------------------------
-   Hero.
+   As fitas de luz quicam.
 
-   É a única parte do site que anima na carga, e é deliberado: é a primeira tela, ninguém
-   está lendo ainda, e é onde o site tem permissão de impressionar. O resto do conteúdo
-   segue a regra contrária, de não competir com a leitura.
+   UMA ANIMAÇÃO POR EIXO, EM ELEMENTOS ANINHADOS: o invólucro anda no X, a imagem dentro
+   dele anda no Y. Cada uma com dois keyframes e `alternate`.
 
-   NENHUM ESTADO INVISÍVEL MORA NO ESTILO BASE. O que esconde é o keyframe, com
-   fill-mode `backwards` ou `both`, então o elemento fica visível se a animação não rodar,
-   por movimento reduzido ou por qualquer falha. O caminho oposto, esconder no CSS e
-   revelar na animação, transforma qualquer defeito em página em branco.
-   --------------------------------------------------------------------------- */
+   ISSO É QUICAR DE VERDADE, e não uma aproximação. Movimento de bola dentro de uma caixa
+   retangular é, matematicamente, duas ondas triangulares independentes, uma por eixo: cada
+   reflexão numa parede vertical inverte o X e não toca no Y, que é exatamente o que
+   `alternate` faz num eixo só. Com `linear` a velocidade é constante e a virada é seca,
+   como em reflexão.
 
-/* As duas fontes ocupam a mesma célula, e a caixa nasce com a largura da maior. É o que
-   permite trocar de fonte sem reflow: o que anima é opacity e translate. */
-.hero-troca-fonte {
-  display: grid;
-  justify-items: start;
-}
+   POR QUE NÃO PARECE REPETIR. O `alternate` só retraça o caminho quando os dois eixos têm
+   o mesmo período, que era o defeito da versão anterior, com as duas coordenadas numa
+   animação só. Com períodos coprimos o caminho composto só fecha no mínimo múltiplo comum
+   dos dois ciclos: a fita 1 leva 442 segundos, a 2 leva 418 e a 3 leva 416. E como os três
+   números não são múltiplos entre si, a cena inteira só voltaria à mesma configuração
+   relativa depois de semanas.
 
-.hero-troca-fonte > * {
-  grid-area: 1 / 1;
-}
+   POR QUE NÃO É JAVASCRIPT. Calcular três posições por quadro é aritmética trivial, mas um
+   laço de requestAnimationFrame obriga a thread principal a acordar a cada 16ms para
+   sempre, recalcular estilo e empurrar para o compositor. Aqui a animação roda inteira no
+   compositor e a thread principal fica livre para a rolagem. É diferença de categoria, não
+   de grau.
 
-/* A cópia em DM Sans é decorativa e some no fim. Escondida por padrão para que, sem
-   animação, sobre só a versão final em mono. */
-.hero-fonte-saindo {
-  opacity: 0;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .hero-fonte-saindo {
-    animation: hero-fonte-sai var(--dur-troca-fonte) var(--curva-saida)
-      var(--atraso-titulo) both;
-  }
-
-  .hero-fonte-entrando {
-    animation: hero-fonte-entra var(--dur-troca-fonte) var(--curva-saida)
-      var(--atraso-titulo) both;
-  }
-
-  .hero-cartao {
-    animation: hero-cartao-entra var(--dur-cartao) var(--curva-saida)
-      var(--atraso-cartao) backwards;
-  }
-}
-
-@keyframes hero-fonte-sai {
-  from {
-    opacity: 1;
-    translate: 0 0;
-  }
-  to {
-    opacity: 0;
-    translate: 0 -0.12em;
-  }
-}
-
-@keyframes hero-fonte-entra {
-  from {
-    opacity: 0;
-    translate: 0 0.12em;
-  }
-  to {
-    opacity: 1;
-    translate: 0 0;
-  }
-}
-
-/* O scale pequeno é o que dá peso: o cartão assenta em vez de aparecer. */
-@keyframes hero-cartao-entra {
-  from {
-    opacity: 0;
-    translate: 0 18px;
-    scale: 0.985;
-  }
-}
-
-/* ---------------------------------------------------------------------------
-   Deriva das fitas de luz.
-
-   SÓ `translate`. Deslocar uma camada já rasterizada é trabalho de compositor, sem
-   repintura. Caro seria animar `filter`, `scale` grande ou qualquer coisa que mude os
-   limites da camada, porque aí o navegador rasteriza de novo a cada quadro.
+   AS PAREDES SÃO UMA CAIXA DE AMPLITUDE, e não as bordas do hero. As formas são maiores
+   que a área visível, a maior tem 1500 de largura num contêiner de 1200, e todas são
+   recortadas. Refletir na borda real exigiria deslocar centenas de pixels, e aí o brilho
+   sairia da região que ele foi desenhado para iluminar.
 
    Sem `will-change`: o navegador promove sozinho enquanto a animação roda e libera a
-   memória quando ela pausa, o que é melhor do que manter três camadas grandes promovidas
-   para sempre.
-
-   DURAÇÕES QUE NÃO SÃO MÚLTIPLAS ENTRE SI. Com 29, 37 e 43 segundos o conjunto não volta
-   a uma configuração reconhecível em tempo útil, então não dá para perceber o loop.
-
-   A amplitude é de 20px sobre elipses de mais de mil, então a deriva nunca revela borda
-   dentro do recorte do hero.
+   memória quando ela pausa.
    --------------------------------------------------------------------------- */
 
 @media (prefers-reduced-motion: no-preference) {
-  .fita-luz {
-    animation-name: deriva-luz;
-    animation-timing-function: ease-in-out;
+  .fita-eixo-x,
+  .fita-eixo-y {
+    animation-timing-function: linear;
     animation-iteration-count: infinite;
     animation-direction: alternate;
   }
 
-  .fita-luz:nth-child(1) {
-    animation-duration: 29s;
-    --deriva-x: 20px;
-    --deriva-y: -12px;
+  .fita-eixo-x {
+    animation-name: fita-anda-x;
+    animation-duration: var(--tempo-x);
   }
 
-  .fita-luz:nth-child(2) {
-    animation-duration: 37s;
-    --deriva-x: -16px;
-    --deriva-y: 14px;
+  /* O tempo e o curso do Y são herdados do invólucro, onde os quatro valores da fita
+     ficam juntos. */
+  .fita-eixo-y {
+    animation-name: fita-anda-y;
+    animation-duration: var(--tempo-y);
   }
 
-  .fita-luz:nth-child(3) {
-    animation-duration: 43s;
-    --deriva-x: 12px;
-    --deriva-y: 18px;
+  .fita-eixo-x:nth-child(1) {
+    --tempo-x: 13s;
+    --tempo-y: 17s;
+    --curso-x: 180px;
+    --curso-y: -130px;
   }
 
-  /* Fora da tela a deriva para. Quem alterna o atributo é o PausaForaDaTela. */
-  [data-pausar-fora="fora"] .fita-luz {
+  .fita-eixo-x:nth-child(2) {
+    --tempo-x: 19s;
+    --tempo-y: 11s;
+    --curso-x: -180px;
+    --curso-y: 140px;
+  }
+
+  .fita-eixo-x:nth-child(3) {
+    --tempo-x: 16s;
+    --tempo-y: 13s;
+    --curso-x: 180px;
+    --curso-y: -120px;
+  }
+
+  /* Fora da tela tudo para. Quem alterna o atributo é o PausaForaDaTela. */
+  [data-pausar-fora="fora"] .fita-eixo-x,
+  [data-pausar-fora="fora"] .fita-eixo-y {
     animation-play-state: paused;
   }
 }
 
-@keyframes deriva-luz {
+@keyframes fita-anda-x {
   to {
-    translate: var(--deriva-x) var(--deriva-y);
+    translate: var(--curso-x) 0;
+  }
+}
+
+@keyframes fita-anda-y {
+  to {
+    translate: 0 var(--curso-y);
   }
 }
 

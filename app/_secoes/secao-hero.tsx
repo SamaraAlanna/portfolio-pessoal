@@ -14,8 +14,9 @@ import Image from "next/image";
  * currículo: o currículo em inglês existe e está linkado no rodapé.
  *
  * As luzes são decorativas, exportadas do Figma. Ficam com aria-hidden e sem interação.
- * Elas derivam devagar, e a deriva para quando o hero sai da tela. O CSS está no
- * app/globals.css, junto do resto da animação do hero.
+ * Elas navegam pelo hero e mudam de direção ao tocar o limite. Cada uma é dois elementos:
+ * o invólucro anda no eixo X e a imagem anda no Y, com períodos diferentes. O CSS está no
+ * app/globals.css, com a explicação de por que isso é quicar de verdade.
  */
 export default function SecaoHero() {
   // O hero ocupa a viewport inteira menos a nav.
@@ -48,27 +49,33 @@ export default function SecaoHero() {
         className="pointer-events-none absolute inset-0 -z-10 overflow-hidden"
       >
         <div className="relative mx-auto h-full w-full max-w-[var(--largura-maxima)]">
-        <Image
-          src="/imagens/luz/campo-de-luz.svg"
-          alt=""
-          width={1500}
-          height={1100}
-          className="fita-luz absolute top-[-84px] left-[513px] h-[1100px] w-[1500px] max-w-none"
-        />
-        <Image
-          src="/imagens/luz/halo-b.svg"
-          alt=""
-          width={760}
-          height={780}
-          className="fita-luz absolute top-[-86px] left-[640px] h-[780px] w-[760px] max-w-none"
-        />
-        <Image
-          src="/imagens/luz/halo-a.svg"
-          alt=""
-          width={1400}
-          height={1403}
-          className="fita-luz absolute top-[-114px] left-[40px] h-[1403px] w-[1400px] max-w-none rotate-[44.49deg]"
-        />
+        <div className="fita-eixo-x absolute top-[-84px] left-[513px] h-[1100px] w-[1500px]">
+          <Image
+            src="/imagens/luz/campo-de-luz.svg"
+            alt=""
+            width={1500}
+            height={1100}
+            className="fita-eixo-y block h-[1100px] w-[1500px] max-w-none"
+          />
+        </div>
+        <div className="fita-eixo-x absolute top-[-86px] left-[640px] h-[780px] w-[760px]">
+          <Image
+            src="/imagens/luz/halo-b.svg"
+            alt=""
+            width={760}
+            height={780}
+            className="fita-eixo-y block h-[780px] w-[760px] max-w-none"
+          />
+        </div>
+        <div className="fita-eixo-x absolute top-[-114px] left-[40px] h-[1403px] w-[1400px]">
+          <Image
+            src="/imagens/luz/halo-a.svg"
+            alt=""
+            width={1400}
+            height={1403}
+            className="fita-eixo-y block h-[1403px] w-[1400px] max-w-none rotate-[44.49deg]"
+          />
+        </div>
         </div>
       </div>
 
@@ -96,26 +103,11 @@ export default function SecaoHero() {
           </div>
 
           <div className="flex flex-col items-start gap-[18px]">
-            {/* A segunda linha existe duas vezes, uma em cada fonte, empilhadas na mesma
-                célula de grade. A caixa é dimensionada pela mais larga desde o primeiro
-                quadro, então a troca de fonte acontece sem reflow: o que anima é opacity e
-                translate, e nada muda de tamanho.
-
-                Trocar font-family de verdade custaria layout no meio da animação, com a
-                palavra mudando de largura a cada quadro.
-
-                A cópia em DM Sans leva aria-hidden, senão o leitor de tela anuncia
-                "Desenvolvedora" duas vezes. */}
             <h1 className="text-h1 font-extrabold text-text">
               <span className="block">
                 UX/UI Designer <span className="text-accent-rosa">&amp;</span>
               </span>
-              <span className="hero-troca-fonte">
-                <span aria-hidden="true" className="hero-fonte-saindo">
-                  Desenvolvedora
-                </span>
-                <span className="hero-fonte-entrando font-mono">Desenvolvedora</span>
-              </span>
+              <span className="block font-mono">Desenvolvedora</span>
             </h1>
 
             <p className="text-hero-paragrafo text-text-muted">
@@ -144,7 +136,7 @@ export default function SecaoHero() {
             por isso fica escondido de leitor de tela e some no mobile, como no Figma. */}
         <div
           aria-hidden="true"
-          className="hero-cartao hidden w-[440px] shrink-0 flex-col overflow-hidden rounded-[18px] border border-[rgba(255,242,255,0.28)] shadow-[0px_26px_70px_0px_rgba(0,0,0,0.55)] lg:flex"
+          className="hidden w-[440px] shrink-0 flex-col overflow-hidden rounded-[18px] border border-[rgba(255,242,255,0.28)] shadow-[0px_26px_70px_0px_rgba(0,0,0,0.55)] lg:flex"
           style={{
             backgroundImage:
               "linear-gradient(147.41deg, rgba(26, 15, 33, 0.82) 0%, rgba(10, 5, 15, 0.92) 70.922%)",
