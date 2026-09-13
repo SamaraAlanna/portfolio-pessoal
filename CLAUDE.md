@@ -94,8 +94,16 @@ sugerida, para a próxima sessão saber de onde continuar sem reabrir tudo.
   `conteudo/contato.ts`. O cabeçalho de página interna virou
   `components/ui/cabecalho-pagina` e é usado por Projetos, Stack e Contato. O Sobre tem
   cabeçalho próprio, com foto.
-- **O formulário de contato tem o envio desligado**, porque não existe destino para a
-  mensagem. A marcação está pronta e o motivo comentado no arquivo.
+- **O formulário de contato foi removido em 2026-09-13** e volta na fase dois. O que ele
+  era está registrado na seção do painel, mais abaixo. A página foi rearranjada: os canais
+  viraram três cartões em vez da lista de linhas do Figma, porque sem o formulário sobrou
+  uma coluna num espaço de duas. Entrou a seção "QUANDO ME CHAMAR", com quatro motivos em
+  `conteudo/contato.ts`, que qualifica o contato antes de a pessoa escrever. A ponte para o
+  BORDA desceu para o fim, logo depois do motivo que fala do estúdio, para o link ser a
+  porta do que acabou de ser explicado em vez de repetir a marca em dois blocos.
+- **A linha de disponibilidade não é seção.** Ela é o texto de apoio do cabeçalho da
+  página, onde o Figma a coloca: "Respondo em até 2 dias úteis. Prefiro conversar por
+  escrito".
 - **Passo 8, feito.** Os comportamentos de mobile. Duas peças novas em `components/ui/`:
   `acordeao-mobile`, que é o `details` nativo com o desktop sempre aberto, e `trilho-rolavel`,
   que é a moldura dos carrosséis. Elas são usadas pela seção de skills da home, pelo
@@ -667,6 +675,35 @@ entra depois e vira case próprio.
 **Como escreve:** sem banco. O painel faz commit nos arquivos MDX pela API do GitHub, o
 push dispara build na Vercel, o site atualiza em um ou dois minutos. Mostre esse estado
 na interface ("publicando" que vira "publicado"), senão a pessoa acha que não salvou.
+
+### O formulário de contato volta aqui
+
+Ele existiu e foi removido em 2026-09-13, porque dependia de serviço externo para enviar, e
+formulário que despacha para terceiro não demonstra nada tecnicamente. Volta quando o
+projeto tiver rota de API própria, com validação escrita à mão, e aí vira caso de uso de
+verdade em vez de enfeite.
+
+**Não recomece do zero.** O componente era `app/contato/_secoes/secao-formulario.tsx` e está
+no primeiro commit do repositório, então dá para recuperar por `git show`. O que ele tinha:
+
+- **Quatro campos**, cada um com rótulo associado por `htmlFor` e `id`: NOME (`text`,
+  placeholder "Como devo te chamar"), EMAIL (`email`, "seu@email.com"), ASSUNTO (`select`
+  com um `option` vazio e desabilitado de placeholder, "Selecione um assunto") e MENSAGEM
+  (`textarea` de 5 linhas, "Conta o contexto e o que você precisa").
+- **Os cinco assuntos do select continuam em `conteudo/contato.ts`**, anotados como
+  pendentes. Eles são a única parte do formulário que é conteúdo e não código: Projeto de
+  site, Identidade visual, Vaga ou processo seletivo, Parceria, Outro assunto. A ordem
+  importa, o primeiro é o pedido mais comum e o último cobre o resto.
+- **Rótulo** em mono, `text-titlebar` com `tracking-titlebar`, em `text-text-muted`.
+- **Campo**: `rounded-[8px]`, `border-[0.5px] border-border-campo`, `bg-surface`,
+  `px-[18px] py-[16px]`, `text-corpo`, placeholder em `text-text-dim`.
+- **Acessibilidade**: `h2` só para leitor de tela ligado ao `form` por `aria-labelledby`, e
+  o botão desabilitado ligado ao aviso por `aria-describedby`, senão a pessoa encontra um
+  botão morto sem saber por quê.
+
+**O token `--border-campo` ficou sem uso e foi mantido de propósito.** Ele existe porque
+campo é componente interativo e o limite de um precisa de 3:1, e os valores foram medidos
+contra o pior fundo. Apagar agora custaria refazer essa medição quando o formulário voltar.
 
 **Currículo:** PDF vai para o repositório, também via API do GitHub, em base64.
 **Limite de 5 MB no upload**, porque arquivo grande entra no histórico do Git e não sai.

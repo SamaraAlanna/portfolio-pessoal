@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { metadataDaPagina } from "@/lib/site";
 import CabecalhoPagina from "@/components/ui/cabecalho-pagina";
 import SecaoCanais from "@/app/contato/_secoes/secao-canais";
-import SecaoFormulario from "@/app/contato/_secoes/secao-formulario";
+import SecaoMotivos from "@/app/contato/_secoes/secao-motivos";
+import SecaoBorda from "@/app/contato/_secoes/secao-borda";
 
 export const metadata: Metadata = metadataDaPagina({
   titulo: "Contato",
@@ -18,10 +19,16 @@ export default function PaginaContato() {
         <p>Respondo em até 2 dias úteis. Prefiro conversar por escrito.</p>
       </CabecalhoPagina>
 
-      <section data-revelar className="faixa grid grid-cols-1 items-start gap-[64px] pb-[96px] lg:grid-cols-2">
+      {/* O formulário saiu daqui e volta na fase dois, quando existir rota de API
+          própria. O que ele era está registrado no CLAUDE.md.
+
+          As três seções ocupam a faixa inteira: os canais em três cartões, os motivos em
+          quatro colunas e a ponte para o BORDA fechando. Não há mais largura de espera. */}
+      <div data-revelar className="faixa flex flex-col gap-[64px] pb-[96px]">
         <SecaoCanais />
-        <SecaoFormulario />
-      </section>
+        <SecaoMotivos />
+        <SecaoBorda />
+      </div>
     </>
   );
 }

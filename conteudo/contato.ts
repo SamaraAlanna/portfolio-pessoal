@@ -28,6 +28,46 @@ export const canais: Canal[] = [
  * o primeiro é o pedido mais comum e o último cobre o resto, então ninguém fica sem
  * opção que sirva.
  */
+export type MotivoDeContato = {
+  titulo: string;
+  texto: string;
+};
+
+/**
+ * O que faz sentido me procurar.
+ *
+ * Qualifica o contato antes de a pessoa escrever, para não chegar mensagem que não vai a
+ * lugar nenhum. É lista estruturada, e por isso vive aqui e não no TSX da seção.
+ *
+ * A ordem é por frequência esperada: vaga primeiro, comunidade por último.
+ */
+export const motivos: MotivoDeContato[] = [
+  {
+    titulo: "Vaga ou processo seletivo",
+    texto: "Respondo sobre posições de UX/UI, front-end e full stack.",
+  },
+  {
+    titulo: "Projeto pelo BORDA",
+    texto:
+      "Atendo site e identidade visual pelo meu estúdio, com escopo, prazo e orçamento fechados antes de começar.",
+  },
+  {
+    titulo: "Mentoria",
+    texto:
+      "Converso com quem está começando em design ou em código e quer saber por onde seguir.",
+  },
+  {
+    titulo: "Tech Girls",
+    texto: "Administro a comunidade e falo sobre parceria, palestra ou participação.",
+  },
+];
+
+/**
+ * PENDENTE DA FASE DOIS. O formulário saiu da página de contato em 2026-09-13, porque
+ * dependia de serviço externo para funcionar. Esta lista fica aqui de propósito: ela é a
+ * única parte do formulário que é conteúdo, e não código, e não tem por que ser escrita de
+ * novo quando ele voltar.
+ */
 export const assuntos: string[] = [
   "Projeto de site",
   "Identidade visual",

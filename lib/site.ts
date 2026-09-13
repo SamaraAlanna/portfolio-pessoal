@@ -7,7 +7,7 @@ import type { Metadata } from "next";
  * `metadataBase` do layout, o sitemap e o robots. Com a constante, trocar de domínio é
  * mudar uma linha.
  */
-export const SITE = "https://samaraalanna.dev";
+export const SITE = "https://portfoliosamara.com.br";
 
 export const NOME = "Samara Alanna";
 
