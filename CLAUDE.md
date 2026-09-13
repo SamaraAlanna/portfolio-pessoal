@@ -1,0 +1,902 @@
+# Portfólio Samara Alanna · estratégia de implementação
+
+Documento para o Claude Code. Escrito depois de uma sessão longa de design no Figma,
+onde o arquivo foi fechado em desktop e mobile, nos dois temas.
+
+---
+
+## REGRA ABSOLUTA: COMMITS
+
+**Somente a Samara faz commit. Ninguém mais, em nenhuma circunstância.**
+
+- Não rode `git commit`, `git push`, `git merge` ou qualquer comando que altere o histórico.
+- Escreva os arquivos, mostre o diff, e pare.
+- Se um passo parecer exigir commit para continuar, pare e avise.
+- Isso vale mesmo se ela pedir no meio de uma tarefa longa: confirme antes.
+
+---
+
+## CONFIDENCIALIDADE
+
+Vale mais que qualquer outra regra deste arquivo. Na dúvida, não publique e pergunte.
+
+A Samara trabalha na TecSinapse e alguns projetos têm restrição contratual.
+
+- **Nunca nomeie os produtos internos:** Wingo, Dynamo, Tecflow, KPI Vendas. Se
+  aparecerem em algum lugar do Figma ou de imagem, não reproduza no código nem no
+  conteúdo.
+- **Clientes que podem ser nomeados:** Bajaj e VOGE. **Royal Enfield não pode.**
+- O case Assistente de IA descreve o produto genericamente ("plataforma de gestão de
+  conversas", "produto interno") de propósito. Não substitua por nome real, mesmo que
+  você encontre um.
+- **Não publique nome de colega sem autorização.** Paulo Azevedo autorizou e aparece no
+  case VOGE.
+- Três avaliações no case Bilheteria mostram nomes reais de terceiros nas imagens. Não
+  publique sem tratar.
+
+Se encontrar qualquer nome dessa lista dentro do Figma, avise em vez de reproduzir.
+
+---
+
+## Estado atual
+
+**Repositório:** github.com/SamaraAlanna/portfolio-pessoal. O projeto local ainda não
+está conectado a ele, e quem conecta é a Samara.
+
+**Figma:** https://www.figma.com/design/P0QW4ixXLYZobH8L0pgXe8/Portfólio-Samara
+(chave do arquivo: `P0QW4ixXLYZobH8L0pgXe8`)
+
+**Nome de camada é pista, conteúdo é fonte.** Os nomes das camadas do Figma envelhecem
+sozinhos, porque o Figma nomeia camada de texto pelo conteúdo no momento em que ela é
+criada e não renomeia quando o texto muda. Já apareceram card com nome trocado em relação
+ao texto, título de case com nome de uma versão anterior à reescrita, rótulo de seção
+chamado "FRENTE 2 - SEGURANÇA" cujo texto real é "CREDENCIAIS", e frame de filtro chamado
+"Filtro - TIPO" que filtra por tags.
+
+**Consequência prática, e a origem de vários erros meus nesta sessão:** o `get_metadata`
+devolve **só nomes de camada**, nunca conteúdo. Ele serve para achar estrutura e node id.
+Qualquer texto que vá para o código, para o conteúdo ou para um relatório precisa vir do
+`get_design_context`. Nunca cite texto lido do `get_metadata`.
+
+Arquivo completo com 14 páginas em desktop (escuro e claro), 14 em mobile (escuro e
+claro), o menu mobile aberto, e 5 telas de painel administrativo nos dois temas. Você tem acesso ao Figma via MCP. Leia de lá, não invente medida.
+
+**Onde o código está.** Mantenha esta lista atualizada ao fim de cada passo da ordem
+sugerida, para a próxima sessão saber de onde continuar sem reabrir tudo.
+
+- **Passo 1, feito.** Projeto Next 16 com App Router, TypeScript, Tailwind 4 e ESLint,
+  sem pasta `src`, alias `@/*`, Turbopack por padrão. Git não foi inicializado aqui.
+- **Passo 2, feito.** `app/globals.css` com os 17 tokens da coleção "Cores" nos dois
+  temas, o bloco `@theme` do Tailwind consumindo as variáveis, e os comentários de
+  origem e de restrição de contraste.
+- **Passo 3, feito.** Layout base. Tokens de tipografia em `app/globals.css`, lidos do
+  Figma nos dois tamanhos. `app/layout.tsx` com DM Sans e JetBrains Mono via `next/font`,
+  `lang="pt-BR"` e o script que evita o piscar de tema. Em `components/layout/`: `nav`,
+  `menu-mobile`, `footer`, `seletor-tema`, `logo` e `links-nav`. Em `components/ui/`:
+  `icone-sol` e `icone-lua`. Estado de foco, alvo de toque e transição de tema no CSS.
+- **Passo 4, feito.** Os nove blocos em `components/blocos/`, com o mapa de directives em
+  `components/blocos/index.ts`. Pipeline com `next-mdx-remote` e `remark-directive`, e o
+  plugin que converte directive em componente em `lib/mdx.ts`. A rota `/teste-mdx` foi
+  apagada quando os doze blocos passaram a ser usados pelos cases de verdade.
+- **Passo 5, feito.** Home em `app/page.tsx` com quatro seções em `app/_secoes/`, e
+  listagem em `app/projetos/` com cabeçalho e grade filtrável. Cards em `components/ui/`.
+  Leitura do conteúdo em `lib/conteudo.ts`, dimensões de imagem em `lib/imagens.ts`. Os
+  nove projetos em `conteudo/projetos/`, com as capturas em `public/imagens/projetos/`.
+- **Passo 6, feito.** Página de case em `app/projetos/[slug]/`, com as seções em
+  `_secoes/`. É **uma** página para os três modelos: a moldura é sempre nav, migalha,
+  cabeçalho, ficha, hero opcional, corpo, próximo projeto e footer, e o que varia entre
+  identidade visual, ux-produto e engenharia vive no MDX. O estado em construção troca o
+  corpo pela frase e mantém o resto.
+- **Conteúdo completo.** Os oito cases estão escritos, com ficha, abertura e corpo. O
+  Spirito não tem corpo porque está em construção, e isso é o comportamento correto.
+- **Passo 7, feito.** Sobre, Stack e Contato em `app/sobre/`, `app/stack/` e
+  `app/contato/`, com o conteúdo estruturado em `conteudo/sobre.ts`, `conteudo/stack.ts` e
+  `conteudo/contato.ts`. O cabeçalho de página interna virou
+  `components/ui/cabecalho-pagina` e é usado por Projetos, Stack e Contato. O Sobre tem
+  cabeçalho próprio, com foto.
+- **O formulário de contato tem o envio desligado**, porque não existe destino para a
+  mensagem. A marcação está pronta e o motivo comentado no arquivo.
+- **Passo 8, feito.** Os comportamentos de mobile. Duas peças novas em `components/ui/`:
+  `acordeao-mobile`, que é o `details` nativo com o desktop sempre aberto, e `trilho-rolavel`,
+  que é a moldura dos carrosséis. Elas são usadas pela seção de skills da home, pelo
+  `bloco-codigo`, e por `bloco-numeros`, `bloco-paleta` e `bloco-imagens`. O
+  `bloco-diagrama` empilha com seta para baixo. Alvo de toque tratado nos links do footer,
+  nas pílulas do filtro, na migalha do case e nos links de seção da home.
+- **Passo 9, feito.** Estrutura de cabeçalhos refeita, link de pular no `app/layout.tsx`,
+  menu mobile virou modal de verdade, formulário ligado ao aviso de envio, e os três
+  accents do tema claro escurecidos para passar em AA sobre o `surface-2`. Token
+  `--border-campo` criado para a borda de campo de formulário.
+- **Nav fixa no topo**, com fundo opaco. O `body` ganha `padding-top` e o `html` ganha
+  `scroll-padding-top`, os dois pelo token de altura da nav.
+- **Pacote de publicação, feito.** `lib/site.ts` guarda o endereço, o nome e a imagem de
+  compartilhamento, e monta o metadata de cada rota. `app/sitemap.ts` e `app/robots.ts`
+  saem do mesmo `SITE`. `app/not-found.tsx` é a página de 404, com as duas saídas. As
+  sobras do template em `public/` foram apagadas.
+- **Currículos no ar**, em `public/curriculos`, nos dois idiomas. Os caminhos vivem em
+  `lib/site.ts` e não escritos à mão: quatro lugares apontam para eles, e os quatro erraram
+  juntos quando os PDFs entraram com nome diferente do previsto.
+- **Favicon e imagem de compartilhamento no ar.** O ícone é `app/icon.png`, de 512x512, e
+  o `favicon.ico` do template foi apagado. O Next detecta o arquivo e emite a tag de ícone
+  sozinho, mas **ele não gera tamanhos menores**: serve o mesmo 512 e declara o tamanho. O
+  navegador reduz para 16 e 32, o que basta para uma marca simples.
+- **Passada de animação, feita.** Tokens de movimento e o bloco de `prefers-reduced-motion`
+  em `app/globals.css`, entrada ao rolar por `components/ui/revelar-ao-rolar`, accordion por
+  `::details-content`, hover e foco dos cards, entrada do menu, hero, troca de tema e a
+  prova visual dos cases.
+- **Falta para publicar só o passo 10**, que é registrar o domínio, conectar o repositório
+  e subir na Vercel.
+- Próximo passo é o 10, deploy na Vercel e domínio.
+
+### Metadata e compartilhamento
+
+**O endereço do site vive em `lib/site.ts`**, e não espalhado. Três lugares dependem dele
+e nenhum pode divergir: o `metadataBase` do layout, o sitemap e o robots.
+
+**O `metadataBase` é o que faz o cartão existir.** Sem ele o caminho da imagem sai relativo
+e as plataformas não conseguem buscá-la, e o link aparece sem cartão nenhum.
+
+**A imagem de compartilhamento é PNG, e é a única exceção à regra de WebP.** O suporte a
+WebP em cartão é irregular entre as plataformas, e ali não existe substituto: ou carrega ou
+o link sai sem imagem.
+
+**Cada case tem cartão próprio**, com o título e a descrição dele. O título usado é o do
+card, e não o `tituloCase`: o segundo existe para encurtar na tela, onde a migalha e a
+ficha já dão contexto, e fora da página esse contexto não existe. Um link compartilhado
+chamado "CRUD" não diz nada.
+
+**Quando o painel da fase dois entrar, a rota dele precisa ser bloqueada no
+`app/robots.ts`.** E vale lembrar que isso é para não aparecer em busca, e não é
+segurança: quem protege o painel é a autenticação.
+
+### Duas decisões de implementação do passo 8
+
+**O accordion é o `details` nativo, e o componente não manda JavaScript nenhum.** Teclado,
+semântica de disclosure e funcionamento sem JavaScript vêm da plataforma. O `open` do HTML
+é o estado do mobile, que é onde o accordion existe.
+
+**O `AcordeaoMobile` não é client component, e isso não é detalhe.** Ele não tem estado,
+não tem handler e não manda JavaScript nenhum para o navegador: quem abre e fecha é o
+`details`. Na passada de animação vai dar vontade de transformá-lo de volta em client para
+controlar a transição, e o que se perde nisso é o funcionamento sem JavaScript, a semântica
+de disclosure de graça e o teclado nativo. **A transição cabe em CSS**, no
+`::details-content` com `interpolate-size`, sem voltar para estado em React.
+
+O desktop fica sempre aberto por `::details-content`, redeclarando `content-visibility`
+acima de 64rem. **Esse pseudo-elemento é a única forma de fazer isso**, porque quem esconde
+o conteúdo de um `details` fechado é o navegador, e não uma regra que dê para vencer por
+especificidade. Regra de folha de autor ganha da folha do user agent, então basta
+redeclarar.
+
+**O `@supports not selector(::details-content)` tem data para ser reavaliado.** O
+pseudo-elemento virou Baseline em **setembro de 2025**, com Chrome 131, Safari 18.4 e
+Firefox 143. O fallback existe só para quem está atrás disso, e devolve o cabeçalho
+clicável no desktop. Quando a distância for grande o bastante, ele pode sair, e aí o bloco
+inteiro do `@supports` no `app/globals.css` some junto.
+
+**O caminho contrário não funciona, e está registrado no CSS porque é a armadilha óbvia:**
+nascer com `open` e fechar por CSS no mobile inverte o botão. O primeiro clique tira o
+`open`, o navegador esconde o que o CSS já escondia e nada acontece na tela; o segundo
+devolve o `open` e o CSS esconde de novo. O painel nunca abre.
+
+O rótulo aparece duas vezes, no `summary` do mobile e num elemento próprio do desktop, e só
+um está no layout por vez. Fazer o `summary` servir aos dois custaria uma parada de
+tabulação no desktop, num cabeçalho que lá não é clicável, anunciando um estado de
+disclosure que a tela não mostra.
+
+**O `tabIndex` do carrossel é medido, e não declarado.** Uma região que rola precisa ser
+alcançável pelo teclado, senão o que está fora da tela fica inacessível. Só que a mesma
+moldura no desktop não rola nada, e um `tabIndex` fixo criaria uma parada de tabulação
+inútil em cada bloco de case. O `TrilhoRolavel` compara `scrollWidth` com `clientWidth`
+por `ResizeObserver` e liga ou desliga o foco conforme a tela. Os atributos são escritos
+direto no DOM em vez de virarem estado, porque estado ali seria `setState` dentro de
+efeito a cada medição, que é o padrão que o ESLint deste projeto proíbe, e traria uma
+renderização a mais sem mudar nada na tela.
+
+### Como verificar o que você fez
+
+`npm run dev` funciona normalmente, tanto com Turbopack quanto com webpack.
+
+**Pergunte antes de subir servidor.** Em geral já existe um rodando na porta 3000. Use
+ele em vez de subir outro.
+
+**Se subir um servidor, derrube antes de encerrar.** Servidor órfão trava a porta, e o
+erro que aparece depois não tem relação óbvia com a causa: o Turbopack falha ao criar o
+processo do PostCSS com `0xc0000142` e parece problema de ambiente ou de CSS, quando é só
+porta ocupada. Isso já custou uma sessão. `TaskStop` no comando em segundo plano não
+mata o processo do node: confira a porta com `netstat -ano` e encerre pelo PID.
+
+---
+
+## Stack decidida
+
+- Next.js com App Router, TypeScript
+- Tailwind, sempre apoiado em design tokens declarados como CSS Variables
+- Conteúdo em arquivos MDX no próprio repositório
+- Deploy na Vercel, plano Hobby, a cada push na branch principal
+- Sem banco de dados, sem serviço de storage
+
+A Samara prefere soluções vanilla e evita dependência externa sem justificativa. Ela
+implementa máscara e validação sem biblioteca. Respeite isso: cada dependência nova
+precisa de motivo.
+
+**Como o Tailwind entra aqui.** Cor nunca vira valor fixo no config. O config aponta para as
+CSS Variables, então a alternância de tema continua acontecendo por CSS e não por classe
+duplicada. Os nomes dos tokens seguem os nomes das variáveis do Figma (accent-rosa,
+text-muted, surface, e assim por diante), não a escala padrão do Tailwind, porque no
+sistema a cor tem significado de camada. A tipografia segue a mesma regra: DM Sans e
+JetBrains Mono, com os tamanhos que estão no Figma.
+
+---
+
+## Estrutura de conteúdo
+
+```
+/conteudo
+  /projetos
+    bajaj.mdx
+    voge-brasil.mdx
+    assistente-de-ia.mdx
+    ...
+  /curriculos
+    CV_Samara_Alanna_PT.pdf
+    CV_Samara_Alanna_EN.pdf
+```
+
+Cada `.mdx` tem frontmatter e corpo em blocos:
+
+```
+---
+slug: bajaj
+titulo: Bajaj
+tipo: engenharia
+tags: [Full stack]
+estado: no-ar
+destaque: true
+ordem: 1
+publicado: true
+---
+
+:::secao{rotulo="LEADS" titulo="Um módulo central para os 106 formulários"}
+O time comercial recebia lead com CPF inválido.
+:::
+
+:::codigo{arquivo="validacao.js"}
+function validarCPF(cpf) { ... }
+:::
+
+:::numeros
+106 | formulários com validação dupla
+113 | arquivos refatorados
+:::
+```
+
+**Campos do frontmatter:**
+
+| Campo            | Valores                                                                           |
+| ---------------- | --------------------------------------------------------------------------------- |
+| `tipo`           | identidade-visual, ux-produto, engenharia                                         |
+| `tipoSecundario` | opcional, mesmos valores                                                          |
+| `estado`         | no-ar, em-construcao                                                              |
+| `tags`           | valores do filtro: UX/UI Design, Full stack, Identidade visual, Projeto de estudo |
+| `descricao`      | texto do card na listagem                                                         |
+| `resumo`         | texto do card na home, mais curto e diferente do da listagem                      |
+| `imagem`         | caminho da captura de prévia, em /public                                          |
+| `ordemHome`      | posição na home. Ausente significa que o projeto não aparece lá                    |
+
+### Imagens do conteúdo
+
+**Sempre WebP, nunca PNG no repositório.** Arquivo grande entra no histórico do Git e não
+sai. As nove capturas iniciais somavam 4975 kB em PNG e ficaram em 578 kB, uma redução de
+88%.
+
+O critério da conversão: **sem perda** para captura de tela com texto, onde ele já sai
+barato e mantém a tipografia intacta, e **qualidade 90** para captura de site com foto,
+onde o sem perda fica pesado e a perda é imperceptível.
+
+As dimensões são lidas do próprio arquivo em build, por `lib/imagens.ts`, que traz
+leitores de cabeçalho escritos à mão para PNG, JPEG e WebP. Não use biblioteca para isso:
+a opção óbvia, `image-size`, carrega duas vulnerabilidades altas sem correção, e alerta
+permanente vira ruído. **SVG não é suportado** e cai para `img` comum, o que não é
+problema porque o next/image também não otimiza SVG.
+
+**Por que existem `descricao` e `resumo`.** No Figma a home e a listagem usam textos
+diferentes para o mesmo projeto. O Bajaj, por exemplo, fala de 77 páginas de concessionária
+na home e de nove frentes de trabalho na listagem. Um campo só obrigaria a escolher um dos
+dois e perder o outro.
+
+**O filtro da listagem é por `tags`, não por `tipo`.** O frame no Figma se chama
+"Filtro - TIPO", mas as cinco pílulas são valores de tags. O nome da camada é que está
+errado.
+
+**Blocos a implementar como componentes:** secao, citacao, codigo, imagens, numeros,
+antes-depois, diagrama, paleta, opcoes. Todos implementados.
+
+### Duas regras de escrita que os blocos impõem
+
+**Linha em branco separa item.** Em `imagens`, `diagrama` e `antes-depois`, cada item vai
+num parágrafo próprio, separado por linha em branco. Sem ela o Markdown junta tudo num
+parágrafo só e o bloco passa a ver um item onde deveria ver vários.
+
+**O bloco de fora precisa de mais dois-pontos que o de dentro.** Uma seção sem nada
+aninhado usa três. Com um bloco dentro, quatro. Com dois níveis, cinco. Se os dois usarem
+a mesma quantidade, o de dentro fecha o de fora e sobra um `:::` solto na página, visível
+para quem lê.
+
+```
+::::secao{rotulo="RESULTADO" titulo="Em números"}
+:::numeros
+106 | formulários com validação dupla | rosa
+:::
+::::
+```
+
+**A cor do número diz a camada.** O terceiro campo do bloco `numeros` aceita rosa,
+lavanda, ciano ou ambar, seguindo o significado de camada do sistema de cor. Sem ele, o
+número sai em rosa.
+
+**O bloco `antes-depois` tem dois formatos.** Com `formato="numero"` ele recebe duas
+linhas de `valor | legenda` e monta a comparação, com o antes apagado e o depois em ciano.
+Com `formato="codigo"` ele recebe dois blocos de código e não repete rótulo, porque cada
+bloco já tem o seu na barra de título. Sem atributo, coloca dois filhos lado a lado com os
+rótulos por cima.
+
+**Doze blocos, e não nove.** Além dos nove previstos, os cases exigiram mais três:
+`destaque`, a caixa com fundo tingido, limitada a uma por página; `duo`, que põe dois
+conteúdos lado a lado, usado na seção de formulários do VOGE, onde o texto fica de um lado
+e o código do outro; e `frase`, uma frase grande com legenda explicativa acima, usada no
+posicionamento do Tech Girls.
+
+**As três avaliações do Bilheteria não entram no site.** Elas são capturas reais de loja
+de aplicativo e de site de reclamação, com nome de pessoas que reclamaram de verdade, e
+duas trazem nome completo. A seção de evidência ficou só com o texto, que já descreve o
+padrão das reclamações sem citar ninguém. As telas de perfil e de evento da imagem grande
+do case são fictícias, com dados inventados e foto de banco de imagens, e essas podem ser
+publicadas.
+
+**O bloco `paleta` tem três formatos.** O padrão é a amostra nua, arredondada, com nome e
+hex embaixo, que é o do Tech Girls. Com `formato="cartao"` vira card com borda, amostra de
+120px no topo e bloco de informação embaixo, que é o do Míriam e do StivalDay. Com
+`formato="inline"` vira amostra de 14px ao lado do hex, numa fileira, que é a mini-paleta
+dos painéis de comparação do Assistente. O atributo `titulo` põe um rótulo acima, para
+quando duas paletas aparecem lado a lado. A linha divide a largura igualmente entre
+quantas cores existirem.
+
+**O bloco `diagrama` é uma etapa por linha,** com explicação opcional no segundo campo, e
+o caminho alternativo vem pelo atributo `desvio`, no formato `condição | o que acontece`.
+
+**O bloco `citacao` aceita `tom="neutro"`,** que desliga o realce da primeira linha. Serve
+para ressalva de um parágrafo só.
+
+**O bloco `duo` aceita `divisor="true"`,** que põe o filete em accent entre as duas
+colunas, igual ao da seção de skills da home.
+
+**O bloco `imagens` tem dois formatos.** O padrão é grade de colunas iguais. Com
+`formato="linha"` vira fileira de altura igual e largura proporcional à imagem, que é o
+que a seção de marca do Míriam precisa, onde um retrato e uma paisagem dividem a linha. Em
+colunas iguais o retrato viraria quase o dobro da altura da paisagem.
+
+**Imagem de fonte tem largura máxima de 2400px.** Um mockup de 4096px para um slot de 471
+gera arquivo de 660 kB que fica no histórico do Git para sempre. Redimensione antes de
+converter para WebP.
+
+**O bloco `opcoes` tem quatro campos:** `rótulo | título | descrição | camada`. A camada
+colore o rótulo e é opcional. Quando o rótulo é ESCOLHIDA, o card ganha borda em accent, e
+não fundo tingido, porque a cota de caixa tingida costuma já estar gasta pelo `destaque`.
+
+**O filete da citação diz a camada.** O atributo `camada` aceita rosa, que é o padrão,
+lavanda, ciano e ambar. No CRUD o "Impacto esperado" usa âmbar porque avisa que o número
+não foi medido. No VOGE a integração usa ciano porque é back-end e dados.
+
+**O diagrama é um card só, com uma linha por caminho.** A primeira linha é o caminho
+principal e o último passo dela sai em ciano. As linhas seguintes são desvios e saem em
+âmbar, com o primeiro campo como condição.
+
+**`tituloCase` existe para quando o case tem nome mais curto que o card.** O card se chama
+"Remake do CRUD de permissões" e a página de case se chama só "CRUD". Ausente, cai no
+`titulo`.
+
+**A ficha técnica vem do frontmatter, não do corpo.** Ela é estruturada e sempre tem os
+mesmos lugares, então no painel vira campo a campo em vez de texto livre. Os rótulos mudam
+por modelo, por isso cada linha carrega o próprio:
+
+```
+ficha:
+  - PAPEL | Desenvolvimento full stack, segurança e infraestrutura
+  - CLIENTE | Bajaj do Brasil, via TecSinapse
+```
+
+**Campos separados por barra vertical.** Em `numeros`, `paleta` e `opcoes`, cada linha é
+um item e os campos são separados por `|`.
+
+```
+:::numeros
+106 | formulários com validação dupla
+:::
+
+:::paleta
+#e6b7d3 | Rosa | design e produto
+:::
+
+:::opcoes
+Página dedicada | Mais passos, mantém o histórico à vista | escolhida
+:::
+```
+
+O terceiro campo é opcional nos três. Em `opcoes` ele marca a opção escolhida. Formatação
+Markdown dentro dessas linhas é perdida, porque só o texto sobrevive à extração.
+
+---
+
+## Organização do projeto
+
+### Páginas e seções
+
+Cada página é uma pasta em `app/`. Dentro dela, uma pasta `_secoes/` com um arquivo por
+seção, nomeado `secao-<nome>.tsx`.
+
+```
+app/
+  page.tsx
+  _secoes/
+    secao-hero.tsx
+    secao-o-que-eu-faco.tsx
+    secao-trabalhos-recentes.tsx
+    secao-sobre-mim.tsx
+  projetos/
+    page.tsx
+    _secoes/
+    [slug]/
+      page.tsx
+  sobre/
+    page.tsx
+    _secoes/
+  stack/
+  contato/
+```
+
+O underscore em `_secoes` é obrigatório. Sem ele o Next trata a pasta como rota.
+
+Os cases não têm seções em arquivo. O conteúdo vem dos MDX e as seções são geradas pelos
+blocos.
+
+### Componentes compartilhados
+
+Fora de `app/`, em `components/`.
+
+```
+components/
+  blocos/     componentes que o MDX invoca: bloco-secao, bloco-codigo, bloco-numeros...
+  layout/     nav, footer, seletor-tema
+  ui/         botao, tag, badge
+```
+
+### Onde o conteúdo vive
+
+**Texto corrido dentro do layout fica no TSX da seção.** O parágrafo do hero, a bio da
+home, a frase de um CTA. É texto que só existe naquele lugar e muda junto com o desenho.
+
+**Lista estruturada é dado, e vive em `/conteudo`.** Os chips da Stack, as certificações,
+os cargos, os cursos, os canais de contato. São listas que crescem sozinhas: chip novo a
+cada tecnologia aprendida, certificação nova a cada curso, cargo novo a cada emprego.
+
+O critério é esse: **muda mais que o layout, é dado.** Se ficar em TSX, o painel da fase
+dois nunca alcança e trocar uma linha de texto vira alteração de código.
+
+```
+conteudo/
+  projetos/       os cases, em MDX
+  stack.ts        grupos de habilidade e setup de trabalho
+  sobre.ts        experiência, formação, certificações
+  contato.ts      canais diretos e assuntos do formulário
+```
+
+Sim, a home é a exceção, e é deliberada: lá o conteúdo é texto corrido, não lista.
+
+### lib/
+
+Código que não é componente nem seção: o plugin de MDX, leitura de arquivo, funções
+puras. Nada que renderize.
+
+```
+lib/
+  mdx.ts      plugin que converte directive em componente
+  texto.ts    extração de texto de children, para os blocos com formato "valor | rótulo"
+```
+
+### Decoração ancora no conteúdo, nunca na viewport
+
+Elemento decorativo posicionado em absoluto, como as luzes do hero e as manchas de seção,
+tem que ancorar no contêiner de conteúdo e não na borda da tela. Eles foram desenhados em
+relação ao texto: a mancha fica atrás do título, a diagonal cruza o hero. Ancorados na
+viewport, eles acompanham a borda enquanto o conteúdo fica centralizado, e em monitor
+largo a luz escorrega para o lado do texto.
+
+Na prática: a camada decorativa vai dentro de um contêiner com `max-width:
+var(--largura-maxima)` e `margin-inline: auto`, igual ao `.faixa`, e não solta com
+`inset-0` na seção.
+
+Isso já aconteceu uma vez, quando o `max-width` entrou. O `max-width` não criou o
+problema, só tornou visível uma dependência que já existia.
+
+### Nome de seção é curto, pelo assunto
+
+O arquivo leva o assunto da seção, não o rótulo que aparece na tela. `secao-skills.tsx` e
+não `secao-o-que-eu-faco.tsx`, `secao-trabalhos.tsx` e não `secao-trabalhos-recentes.tsx`.
+O rótulo visível muda com revisão de texto, e o arquivo não deveria ser renomeado por
+causa disso. O componente dentro acompanha em PascalCase.
+
+```
+app/_secoes/
+  secao-hero.tsx        SecaoHero
+  secao-skills.tsx      SecaoSkills
+  secao-trabalhos.tsx   SecaoTrabalhos
+  secao-sobre.tsx       SecaoSobre
+```
+
+Exceção deliberada: `secao-em-construcao.tsx` mantém o nome longo porque ele espelha o
+valor `estado: em-construcao` do frontmatter. Encurtar quebraria essa ligação.
+
+### Nomenclatura
+
+Arquivo em minúscula com hífen: `secao-o-que-eu-faco.tsx`.
+Componente dentro do arquivo em PascalCase: `SecaoOQueEuFaco`.
+
+Windows e macOS não diferenciam maiúscula de minúscula no nome de arquivo. Linux
+diferencia, e a Vercel builda em Linux. Nome de arquivo inconsistente quebra o build só em
+produção, que é o pior lugar para descobrir.
+
+---
+
+## Sistema de design
+
+**Cor significa camada, não decoração:**
+
+- rosa: design e produto
+- lavanda: front-end
+- ciano: back-end e dados
+- âmbar: ressalva, honestidade, estado em construção
+
+Os valores já foram lidos das variáveis do Figma nos dois modos, conferidos em contraste
+e escritos em `app/globals.css`. **O CSS reflete o estado atual e não precisa ser
+reconferido a cada sessão.** O Figma continua sendo a fonte quando algo mudar lá: se um
+valor for alterado no arquivo, ele é relido e o CSS é atualizado a partir dele, nunca o
+contrário. Não copie hex de texto em conversa, nem invente valor que não exista na
+coleção.
+
+**Tipografia:** DM Sans para corpo e títulos, JetBrains Mono para rótulo, código e dado
+técnico. A alternância entre as duas é o conceito do site (design e código), então
+preserve onde ela existe.
+
+**O badge "Em construção" segue a tipografia das tags, e não a de rótulo em mono.** DM Sans
+regular 12, sem tracking, mesmo padding e mesmo raio, resultando na mesma altura. Do lado
+das tags do card ele é irmão delas, não rótulo de outra família. O que muda de propósito é
+só a cor e a cor da borda, em âmbar. O Figma teve o badge em mono 11 por um tempo, em dez
+lugares, e foi corrigido em 2026-09-02: se ele reaparecer em mono, é regressão.
+
+**Tema:** claro e escuro, controlado por CSS Variables. O Figma tem os dois modos na
+coleção "Cores". A alternância precisa persistir entre sessões.
+
+**Qual tema aparece na primeira visita.** A preferência do sistema operacional manda
+enquanto não existe escolha salva, via `prefers-color-scheme`. Isso é acessibilidade:
+quem configurou o sistema em claro por sensibilidade à luz não deve receber uma tela
+escura de cara. A escolha explícita, no atributo `data-tema` do `html`, sobrescreve a
+preferência do sistema nos dois sentidos. A mecânica e a ordem de especificidade que
+sustentam isso estão comentadas em `app/globals.css`, junto do próprio código.
+
+---
+
+## Regras de conteúdo por tipo de case
+
+Três modelos. O `tipo` do frontmatter decide as seções.
+
+**identidade-visual** (Tech Girls, Míriam, StivalDay): a imagem carrega, texto entre 180 e
+250 palavras. Hero com a marca, contexto, estratégia, sistema (cor e tipografia), logo,
+aplicações.
+
+**ux-produto** (CRUD, Assistente, Bilheteria): o raciocínio carrega, 300 a 400 palavras.
+Hero com a tela, contexto, decisão, sistema, trade-off, status.
+
+**engenharia** (Bajaj, VOGE): código e número carregam, 300 a 400 palavras. Hero, contexto,
+três frentes, em números.
+
+**Projeto de dois tipos** (Spirito): layout do primário, com uma seção extra do secundário.
+
+**Estado em construção:** o case não renderiza o corpo. Só nav, título com badge âmbar,
+frase centralizada "Este projeto ainda está em construção", uma linha de apoio, próximo
+projeto e footer.
+
+---
+
+## Adaptações mobile já definidas no Figma
+
+Leia do arquivo, mas o resumo do comportamento:
+
+- Nav vira hambúrguer. Menu abre como painel, não tela cheia, com os cinco links, o
+  seletor de tema e o CTA. **O seletor de idioma não fica no menu**, e sim no hero, que é
+  onde o Figma o coloca.
+- **O menu mobile tem cinco links e o desktop tem quatro.** O Contato saiu da nav do
+  desktop porque o CTA "Entre em contato" cobre o destino, mas no mobile esse CTA não
+  existe na barra fechada, que é só marca e hambúrguer. Sem o link no menu, o único
+  caminho seria o botão do fim do painel. Por isso `links-nav.ts` exporta duas listas.
+- Padding lateral de 120 vira 24.
+- Todo grid de duas ou três colunas vira coluna única, **com duas exceções, e as duas são
+  conteúdo comparativo curto**: a ficha técnica do case, que fica em duas colunas de 123,
+  e o `antes-depois` com `formato="numero"`, que mantém os dois cards lado a lado.
+  Empilhar destrói a comparação, que é a razão de o bloco existir. As duas estão assim no
+  Figma.
+- "O que eu faço" vira accordion, chevron para baixo. **O lado Design abre por padrão e o
+  lado Código fica fechado**, como está no Figma. Decisão tomada durante o design.
+- Blocos de código viram accordion fechado, com o nome do arquivo no cabeçalho.
+  Código não quebra linha: rolagem horizontal dentro do bloco.
+- Grades de números, paletas e variações de logo viram carrossel horizontal. **O bloco
+  `imagens` com uma coluna só e a paleta `inline` não viram**, porque num caso é uma
+  imagem única e no outro é legenda de quatro amostras de 14px.
+- Diagramas de fluxo empilham com seta para baixo.
+- Alvo de toque mínimo de 44px em tudo que é clicável.
+- **Na home o link de seção desce.** "Todos os projetos" e "Minha trajetória completa"
+  ficam ao lado do rótulo no desktop e depois do conteúdo no mobile. As duas seções são
+  grade de duas linhas por causa disso, para o link não precisar existir duas vezes no
+  HTML.
+- **No Sobre a foto entra entre o título e a apresentação**, com a largura toda, e o
+  "Baixar CV" vai para o fim. No desktop os dois são a coluna da direita. Por isso as
+  quatro partes são filhas diretas da grade e não dois blocos de dois.
+- **O bloco `whoami` da home empilha abaixo da bio.** No Figma ele não aparece no mobile,
+  mas isso foi consequência da adaptação de layout, não decisão de conteúdo. Ele é a
+  metade "código" da alternância que é o conceito do site, e some-lo deixaria o celular
+  vendo só a metade "design".
+- **A escala tipográfica encolhe no mobile.** Os tamanhos foram reduzidos durante o
+  design, então leia a tipografia dos frames de desktop e dos de mobile, nunca só de um.
+  O título do hero, por exemplo, é 80 no desktop e 34 no mobile.
+
+---
+
+## Painel administrativo (fase dois)
+
+**Não bloqueia o lançamento.** O site funciona lendo os MDX direto do repositório. O painel
+entra depois e vira case próprio.
+
+**Autenticação, usuário único:**
+
+- Senha em variável de ambiente, hash Argon2
+- Sessão em cookie httpOnly, secure, sameSite strict. **Nunca localStorage.**
+- Rate limit no login
+- TOTP como segundo fator
+- Mensagem de erro sempre igual, para não permitir enumeração de usuário
+- URL secreta é conveniência, não proteção. Não trate como camada de segurança.
+
+**Como escreve:** sem banco. O painel faz commit nos arquivos MDX pela API do GitHub, o
+push dispara build na Vercel, o site atualiza em um ou dois minutos. Mostre esse estado
+na interface ("publicando" que vira "publicado"), senão a pessoa acha que não salvou.
+
+**Currículo:** PDF vai para o repositório, também via API do GitHub, em base64.
+**Limite de 5 MB no upload**, porque arquivo grande entra no histórico do Git e não sai.
+
+**Telas prontas no Figma:** login (senha e TOTP), lista de projetos, editor de projeto,
+currículo. Nos dois temas.
+
+**Editor:** campo de texto MDX com pré-visualização, mais uma barra que insere o esqueleto
+do bloco no cursor. Não construa formulário por tipo de bloco.
+
+---
+
+## Acessibilidade
+
+Ela lista WCAG na stack e isso precisa aparecer no código.
+
+- **Estado de foco visível em tudo que é focável.** Feito no passo 3, em
+  `app/globals.css`. Não existe no Figma: é requisito, não enfeite.
+- Contraste mínimo AA. As variáveis do Figma já foram corrigidas para isso durante o
+  design, mas confira o resultado renderizado.
+- Navegação por teclado no menu mobile, nos accordions e nos carrosséis.
+- HTML semântico. Ela lista isso na própria stack.
+
+### Regras de estrutura que o passo 9 fixou
+
+**Rótulo de seção é cabeçalho.** Os rótulos em mono e caixa alta que abrem cada seção
+("O QUE EU FAÇO", "EXPERIÊNCIA", "CREDENCIAIS") são `h2`, e os títulos de item dentro delas
+são `h3`. Eles já eram o título da seção na tela, só não eram no HTML, e sem isso a página
+ficava com um `h1` e um monte de `h3` soltos.
+
+**Duas exceções.** O rótulo do cabeçalho de página, aquele que fica acima do `h1`, continua
+`p`: ele é um selo, não um cabeçalho. E no `bloco-secao`, quando existe título grande, o
+rótulo continua `p` e o título é o `h2`; sem título grande, o rótulo vira `h2`, senão a
+seção fica sem cabeçalho nenhum.
+
+**A nav é fixa e o fundo dela é opaco, não desfocado.** O motivo principal não é estético:
+o painel do menu mobile é renderizado dentro da nav e se posiciona pela viewport, e
+`backdrop-filter` criaria bloco de contenção para descendente `fixed`, fazendo o painel
+passar a se posicionar pela barra. O menu quebraria por causa de um efeito visual. Somam-se
+a isso o contraste, que com desfoque passa a depender do que estiver rolando por baixo, e o
+custo de GPU por quadro em página de case que passa de cinco mil pixels. **O filete de baixo
+não está no Figma** e existe porque com fundo opaco o conteúdo some atrás de uma borda
+invisível.
+
+**Nav fixa cobra duas compensações**, as duas em `app/globals.css` e as duas presas ao
+`--altura-nav`: `padding-top` no `body`, que devolve o espaço que ela ocupava, e
+`scroll-padding-top` no `html`, sem o qual o link de pular leva ao conteúdo com a barra por
+cima do começo dele. O `scroll-padding` está no `html`, e não no destino, para valer para
+qualquer âncora futura.
+
+**O menu mobile é modal, e isso são três coisas juntas:** `role="dialog"` com `aria-modal`,
+foco preso no Tab e foco devolvido a quem abriu. O `aria-modal` sozinho não prende o foco
+do teclado, então sem a armadilha a pessoa sai do painel e vai tabulando por uma página que
+não está vendo.
+
+**Cabeçalho duplicado no accordion não é erro.** O `AcordeaoMobile` renderiza o rótulo duas
+vezes, no `summary` e no elemento fixo, e só um está no layout por vez. Ao contar
+cabeçalhos numa auditoria, os dois aparecem no HTML e só um conta.
+
+### Os três níveis de texto, e por que não têm folga
+
+Resolvido em 2026-09-01, nos dois lados, Figma e código. Fica registrado porque quem for
+mexer nesses tokens precisa saber onde está a margem.
+
+O `text-dim` do tema escuro nasceu em 2,15 de contraste e foi subido durante o design para
+passar em AA. A correção funcionou, mas ele acabou colando no `text-muted`: 5,41 contra
+5,06, ou seja 1,07 entre os dois, indistinguível na tela. O mesmo aconteceu no tema claro,
+em grau menor, com 1,30.
+
+O diagnóstico é que **em ambos os temas o nível terciário estava certo e quem tinha se
+aproximado era o secundário.** Por isso a correção subiu o `text-muted` e quase não mexeu
+no `text-dim`.
+
+Valores hoje, com 1,45 de separação nos dois temas:
+
+| Token        | Escuro    | Claro     |
+| ------------ | --------- | --------- |
+| `text`       | `#f0ede8` | `#1a1815` |
+| `text-muted` | `#a09c97` | `#534e4a` |
+| `text-dim`   | `#847f7a` | `#6b6660` |
+
+**O `text-dim` está encostado no piso do AA nos dois temas.** Sobre o `surface-2`, que é o
+fundo mais claro do escuro e o mais escuro do claro, ele dá 4,53 e 4,58 contra o mínimo de
+4,5. Não tem folga nenhuma. Se algum dia for preciso separar mais os níveis, mova o
+`text-muted`. Mexer no `text-dim` ou no `surface-2` quebra AA em texto de card.
+
+Meça sempre contra o `surface-2`, não contra o `bg`. O `bg` é o fundo mais favorável e
+esconde o problema.
+
+Os accents do tema claro têm o mesmo tipo de restrição, registrada em comentário dentro do
+`app/globals.css`, junto das variáveis. **Eles foram escurecidos em 2026-09-02**, no passo
+de acessibilidade: `#b64388`, `#804fd8` e `#36787d` davam 4,08, 4,20 e 4,09 sobre o
+`surface-2` e reprovavam em texto pequeno. Hoje são `#aa3e7f`, `#7a47d6` e `#337075`, com
+4,57, 4,57 e 4,55. **Aqui também quem tinha que se mover era o outro lado:** clarear o
+`surface-2` até resolver o levaria a `#f6f1e9`, que dá 1,01 sobre o `bg` e faz a camada
+deixar de existir.
+
+**Existe um token só para borda de campo de formulário, o `--border-campo`.** Campo é
+componente interativo e o limite de um precisa de 3:1, enquanto a `--border` comum fica em
+1,2 de propósito, porque em card ela é decoração e o card se identifica pelo fundo. Isso
+deixa os campos do contato mais visíveis que no Figma, e é intencional.
+
+---
+
+## Animação
+
+**O layout estático vem primeiro.** Animação é uma passada própria, depois que as páginas
+estiverem fechadas. Não distribua animação no meio da construção das telas.
+
+**Única exceção: a transição de tema.** Trocar claro e escuro sem transição dá um corte
+brusco, então isso entra junto do seletor de tema, no layout base.
+
+### Duas regras que valem para toda a passada
+
+**1. `prefers-reduced-motion` é obrigatório, e não opcional.** Quem configurou o sistema
+para reduzir movimento recebe o site sem animação. Isso precisa estar decidido desde o
+começo: pensado no fim, vira remendo em cada componente. A transição de tema também
+respeita a regra.
+
+**2. Não anime propriedade que causa reflow.** Nada de `height` ou `width`. O par seguro é
+`transform` e `opacity`, que o compositor resolve sem recalcular layout. O accordion é o
+caso mais provável de alguém implementar do jeito fácil e o resultado engasgar, porque
+revelar altura desconhecida não tem solução puramente de compositor. A técnica atual para
+isso é animar `grid-template-rows` de `0fr` para `1fr`, que ainda dispara layout, mas só
+dentro da própria subárvore do accordion. A escolha final fica para a passada de animação,
+e precisa ser consciente.
+
+### A regra que sustenta a passada inteira
+
+**Nenhum estado invisível mora no estilo base.** Quem esconde é sempre o keyframe, com
+`fill-mode` `backwards` ou `both`, ou um atributo que só o JavaScript escreve. Assim o
+elemento aparece se a animação não rodar, por movimento reduzido, por script bloqueado ou
+por qualquer falha. O caminho oposto, esconder no CSS e revelar na animação, transforma
+qualquer defeito em página em branco.
+
+**`opacity` menor que 1 cria bloco de contenção para descendente `position: fixed`**, igual
+ao `backdrop-filter`. Nenhum elemento com `data-revelar` pode ser ancestral da nav, do
+painel do menu ou do link de pular.
+
+### O que anima, e o que não anima
+
+Animam: entrada de bloco ao rolar, hover e foco dos cards, accordion, entrada do menu, o
+hero e a troca de tema. **Não animam:** nav, footer, tags, chips, itens de lista, a troca de
+filtro na listagem, que precisa de resposta imediata e brigaria com o `aria-live` da
+contagem, e o corpo de texto dos cases, que é onde a pessoa passa mais tempo lendo.
+
+**As cinco regras de dosagem da entrada ao rolar** estão comentadas no `app/globals.css`,
+junto do CSS que elas governam. As duas que mais importam: uma vez por elemento e nunca de
+novo, e nada anima na primeira pintura.
+
+### As três ousadias, e por que elas são exceção
+
+O conteúdo geral não compete com a leitura. Três lugares fogem disso de propósito, porque o
+custo é baixo e o ganho é alto.
+
+**O hero anima na carga**, e é o único lugar que faz isso: é a primeira tela e ninguém está
+lendo ainda. São três coisas em sequência, todas em CSS, sem JavaScript: o título revela a
+transição tipográfica, o cartão do tokens.css assenta depois, e as fitas de luz derivam por
+trás. **O título tem as duas fontes empilhadas na mesma célula de grade**, porque trocar
+`font-family` de verdade custaria layout a cada quadro; a cópia em DM Sans leva
+`aria-hidden`. Descartado revelar as linhas do cartão uma a uma: é o efeito que data a
+página mais rápido.
+
+**As fitas de luz custam menos do que parece.** Deslocar camada já rasterizada é trabalho de
+compositor, sem repintura: caro seria animar `filter`, `scale` grande ou algo que mude os
+limites da camada. O que sobrava era manter o compositor acordado, e o
+`components/ui/pausa-fora-da-tela` resolve parando a deriva quando o hero sai da tela.
+Durações de 29, 37 e 43 segundos, que não são múltiplas entre si, fazem o loop não ser
+percebido.
+
+**A troca de tema entra por um círculo que nasce no botão clicado**, pela View Transitions
+API. Transição de mesmo documento é Baseline desde outubro de 2025; sem suporte, ou com
+movimento reduzido, cai na transição de cor que já existia. As variáveis de origem e raio
+são escritas pelo componente, porque dependem de onde o botão está na tela.
+
+**Um bloco por case é a prova visual**, marcado no conteúdo com `prova="true"`. **Uma por
+case: se houver duas marcadas, vale a primeira.** Hoje são o código do Bajaj, a paleta do
+Tech Girls e os números do VOGE. Funciona em `codigo`, `paleta` e `numeros`, **só no
+desktop**, porque no mobile os três viram carrossel ou accordion e a animação brigaria com
+o próprio comportamento. **É o único escalonamento do site**, e é deliberado: uma vez por
+case, no bloco que carrega o argumento.
+
+---
+
+## Pendências conhecidas
+
+- Três avaliações no case Bilheteria mostram nomes reais de terceiros. Não publique essas
+  imagens sem tratar.
+- O seletor de idioma do hero deixa o botão EN desabilitado, porque o site não tem versão
+  em inglês. Isso não vale para o currículo, que existe nos dois idiomas.
+
+---
+
+## Como trabalhar com ela
+
+- **Raciocínio antes do código.** Explique a decisão técnica primeiro, depois entregue.
+- **Comentários em português.**
+- **Aponte riscos de manutenção e segurança mesmo sem ela perguntar.**
+- **Nunca invente** nome de biblioteca, número de versão, URL ou trecho de documentação.
+  Se não tiver fonte verificada, diga isso.
+- **Não preencha lacuna com suposição.** Se a ambiguidade muda o resultado, pergunte.
+- Ela escreve em português do Brasil, inglês intermediário. Termos técnicos em inglês
+  quando for o padrão, explicados em português.
+- Sem travessão no texto.
+
+---
+
+## Ordem sugerida
+
+1. `create-next-app` com TypeScript, App Router, Tailwind e ESLint
+2. Design tokens em CSS Variables, os dois temas, a partir das variáveis do Figma, com o
+   Tailwind configurado para consumir essas variáveis
+3. Layout base: nav, footer, alternância de tema
+4. Componentes de bloco MDX
+5. Home e listagem de projetos
+6. Página de case, com os três modelos
+7. Sobre, Stack, Contato
+8. Mobile: os comportamentos listados acima
+9. Acessibilidade: foco, teclado, contraste
+10. Deploy na Vercel e domínio
+11. Só então o painel
+
+Nada disso é commitado por você.
+
+---
+
+## Orientações de Next.js do template
+
+O `create-next-app` gerou um `AGENTS.md` na raiz com orientações de código atualizado para
+Next.js. Ele fica importado abaixo, então vale junto com este documento. Onde os dois
+divergirem, este documento manda, porque ele carrega as decisões do projeto.
+
+@AGENTS.md

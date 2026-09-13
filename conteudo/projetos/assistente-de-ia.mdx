@@ -1,0 +1,77 @@
+---
+slug: assistente-de-ia
+titulo: Assistente de IA
+tipo: ux-produto
+tags: [UX/UI Design]
+estado: no-ar
+destaque: false
+ordem: 1
+publicado: true
+imagem: /imagens/projetos/assistente-de-ia.webp
+descricao: Copiloto de IA dentro de uma plataforma B2B de atendimento. Isolei o branding num alias de variável antes de a identidade existir, e quando ela chegou o arquivo absorveu sem retrabalho.
+abertura: Recebi a demanda de refazer o layout de um assistente de IA. A engenharia já tinha uma versão funcional no ar, só que ela usava a mesma interface do chat, e a identidade visual do assistente ainda estava sendo criada pela designer sênior. Aqui eu conto como resolvi a cor, como preparei o arquivo para receber uma marca que ainda não existia, e o sistema que saiu disso.
+ficha:
+  - PAPEL | UX/UI Designer
+  - CONTEXTO | Produto interno da TecSinapse
+  - PERÍODO | 2026
+  - ENTREGAS | 47 tokens, 6 componentes, 14 ícones, 15 telas
+  - TIME | PM, designer sênior e dev
+---
+
+{/* CONFIDENCIALIDADE: este case descreve o produto genericamente de propósito. Não
+    substitua "produto interno" ou "ferramenta de atendimento" por nome de produto, mesmo
+    que você encontre um. As telas do chat não entram aqui, e as três telas publicadas
+    foram despersonalizadas durante o design. */}
+
+:::secao{rotulo="CONTEXTO" titulo="Um assistente que tinha ficado igual ao chat"}
+É um assistente de IA que vive dentro de uma ferramenta de atendimento por WhatsApp, usada por times comerciais. Ele entrou no lugar da antiga aba de perfil do cliente. Como foi construído em cima do chat, ficou com a cara do chat: mesmas bolhas, mesmo fundo, mesma caixa de texto.
+
+Com duas conversas abertas lado a lado, o operador tinha que ler para saber com quem estava falando. Os dados do cliente apareciam duas vezes na tela. E a tela inicial não dizia o que o assistente sabia fazer. As telas do chat não entram aqui por confidencialidade.
+:::
+
+:::::secao{rotulo="COR" titulo="Deixei o chat quente e o assistente frio"}
+O chat ficou com o laranja e o creme que já eram dele. Levei o assistente para o azul-marinho, que também já existia na paleta. Além da cor, mudei a superfície e o formato das bolhas.
+
+::::duo
+:::paleta{formato="inline" titulo="QUENTE - CHAT COM O CLIENTE"}
+#F89907
+#F18413
+#FEF9F0
+#FFFFFF
+:::
+
+:::paleta{formato="inline" titulo="FRIO - ASSISTENTE"}
+#093147
+#0E4664
+#DCE9F1
+#EEF4F8
+:::
+::::
+:::::
+
+::::secao{rotulo="ARQUITETURA" titulo="Preparei a troca de marca antes de saber qual marca seria"}
+A identidade do assistente ainda estava sendo decidida. Não dava para esperar por ela, então deixei toda a cor de marca apontando para um único lugar no arquivo. Quando a identidade saísse, bastava mudar ali e as 15 telas mudariam junto. Foi o que aconteceu uma semana depois.
+
+:::diagrama
+15 telas | usam
+assistant/accent | o ponto único
+navy/900 | placeholder descartável
+identidade oficial | troca em 1 lugar
+:::
+::::
+
+:::::secao{rotulo="SISTEMA" titulo="47 tokens e 6 componentes, antes de qualquer tela"}
+Comecei pelos tokens: 47 no total, tirados das cores reais do produto e divididos em três grupos. Depois vieram os seis componentes, todos ligados a esses tokens, e com eles montei as 15 telas do fluxo. Também reescrevi a interface: o campo de pergunta saiu de "Digite um prompt ou /" para "Faça uma pergunta". E fiz uma segunda versão do design system em linguagem comum, para quem é de negócio revisar sem pedir tradução.
+
+::::imagens{colunas="3"}
+![Tela inicial do assistente, com as ações sugeridas](/imagens/cases/assistente-home.webp)
+
+![Assistente gerando a resposta](/imagens/cases/assistente-gerando.webp)
+
+![Resposta gerada, com as ações de copiar e avaliar](/imagens/cases/assistente-resposta.webp)
+::::
+
+::::citacao{tom="neutro"}
+As informações e dados foram alterados para preservar a confidencialidade do produto.
+::::
+:::::

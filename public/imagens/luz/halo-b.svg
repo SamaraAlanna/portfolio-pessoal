@@ -1,0 +1,19 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="1190.04" height="1210.04" viewBox="0 0 1190.04 1210.04" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Luz B - halo" filter="url(#filter0_f_0_8)">
+<path d="M975.015 995.015C505.015 815.015 635.015 455.015 215.015 215.015" stroke="url(#paint0_linear_0_8)" stroke-width="170" stroke-linecap="round"/>
+</g>
+<defs>
+<filter id="filter0_f_0_8" x="0" y="0" width="1190.04" height="1210.04" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feGaussianBlur stdDeviation="65" result="effect1_foregroundBlur_0_8"/>
+</filter>
+<linearGradient id="paint0_linear_0_8" x1="595.015" y1="215.015" x2="595.015" y2="995.015" gradientUnits="userSpaceOnUse">
+<stop stop-color="#5B21B6" stop-opacity="0"/>
+<stop offset="0.2" stop-color="#5B21B6" stop-opacity="0.6"/>
+<stop offset="0.55" stop-color="#7C3AED" stop-opacity="0.6"/>
+<stop offset="0.85" stop-color="#5B21B6" stop-opacity="0.42"/>
+<stop offset="1" stop-color="#5B21B6" stop-opacity="0"/>
+</linearGradient>
+</defs>
+</svg>

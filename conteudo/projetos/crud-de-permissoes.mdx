@@ -1,0 +1,82 @@
+---
+slug: crud-de-permissoes
+titulo: Remake do CRUD de permissões
+tituloCase: CRUD
+tipo: ux-produto
+tags: [UX/UI Design]
+estado: no-ar
+destaque: false
+ordem: 5
+publicado: true
+imagem: /imagens/projetos/crud-de-permissoes.webp
+heroCase: /imagens/cases/crud-hero.webp
+descricao: "Tela de gestão de permissões lenta e que induzia a erro. Redesenhei com 65 tokens, três variações validadas e sete estados documentados para handoff."
+abertura: "A tela de gestão de permissões de um portal administrativo era lenta, não dava feedback de carregamento e induzia a erro de configuração. Redesenhei do design system aos sete estados de interação, documentados para handoff. Aqui eu conto o processo, os estados e as decisões."
+ficha:
+  - PAPEL | Design end-to-end, de requisito a handoff
+  - CONTEXTO | Portal administrativo interno da TecSinapse
+  - PERÍODO | 2026
+  - ENTREGAS | 65 tokens, 10 estilos de texto, 7 componentes, 7 estados
+  - TIME | PM, designer sênior e dev
+---
+
+:::secao{rotulo="CONTEXTO" titulo="O problema estava todo na segunda etapa"}
+O portal gerencia o acesso de usuários a múltiplos produtos. Cada pessoa pode ter acesso a vários produtos, com perfis distintos por produto, entre gerencial, operacional e administrativo, e funcionalidades granulares configuráveis dentro de cada perfil.
+
+A tela de edição tinha duas etapas. A primeira, de dados básicos, funcionava bem. A segunda concentrava os problemas: carregava devagar e sem nenhum feedback visual, listava todos os produtos juntos sem separação, mostrava módulos a que a pessoa nem tinha acesso, e levava a configuração incorreta por falta de clareza.
+:::
+
+:::::secao{rotulo="PROCESSO" titulo="Requisito antes de tela, referência antes de resposta"}
+::::diagrama
+requisitos
+referências
+design system
+3 variações
+7 estados
+handoff
+::::
+
+Mapeei os requisitos a partir da gravação e da transcrição da reunião, e entreguei o documento antes de desenhar qualquer tela. Depois montei 65 tokens, 10 estilos de texto e 7 componentes, e apresentei três variações de layout ao time. A escolhida foi a de busca com chips no topo e duas colunas abaixo, que libera largura para as colunas de conteúdo. Construí boa parte do arquivo por script, operando a Plugin API do Figma, com uma auditoria de geometria para conferir sobreposição e vínculo de instância junto da conferência visual.
+
+::::citacao
+O gestor tinha explorado uma ferramenta de IA de design como ponto de partida. Aproveitei o que servia.
+
+Analisei os exports e separei o que funcionava do que faltava. Funcionava a divisão entre biblioteca e selecionados, e os cards com dropdown de perfil. Faltava a configuração granular de funcionalidade, os estados de interação e o feedback de erro.
+::::
+:::::
+
+::::secao{rotulo="ESTADOS" titulo="Cada estado documentado com anotação de handoff"}
+Com a variação escolhida aprovada, documentei os sete estados da tela. Cada um recebeu um bloco de anotação no próprio Figma, com o contexto, as regras de comportamento, os gatilhos de transição e as observações técnicas para o time. Abaixo, quatro deles.
+
+:::imagens{colunas="2"}
+![Estado de lista vazia](/imagens/cases/crud-estado-vazio.webp)
+
+![Estado de carregamento](/imagens/cases/crud-estado-loading.webp)
+
+![Estado de módulo sendo adicionado](/imagens/cases/crud-estado-adicionando.webp)
+
+![Estado de erro de validação](/imagens/cases/crud-estado-erro.webp)
+:::
+::::
+
+:::::secao{rotulo="DECISÕES" titulo="Cada decisão amarrada a um vetor de erro"}
+::::citacao
+A coluna de funcionalidades fica bloqueada até o perfil ser escolhido.
+
+Esse era o principal vetor de erro da tela anterior: dava para marcar funcionalidade antes de definir o perfil, e a configuração saía incoerente. O checkbox fica em cinza até a escolha do perfil, o que fecha o caminho errado antes de a pessoa entrar nele.
+::::
+
+::::citacao
+Não coloquei nenhum selo de "perfil definido".
+
+O card de módulo configurado certo não recebe indicativo visual positivo. O estado normal já comunica sucesso. Só o erro chama atenção, e isso reduz o ruído numa tela que pode ter muitos módulos ao mesmo tempo.
+::::
+:::::
+
+::::secao{rotulo="IMPACTO ESPERADO"}
+:::citacao{camada="ambar"}
+Impacto esperado. A tela ainda não foi implementada.
+
+O que dá para afirmar é o que cada decisão resolve: o carregamento sem feedback sai com o skeleton, o erro de configuração cai com o bloqueio e a validação antes do salvar, o tempo de configuração cai com os chips e a pré-seleção por perfil, e a manutenção futura fica viável com tokens, estilos e componentes reutilizáveis.
+:::
+::::

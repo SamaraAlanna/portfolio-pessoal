@@ -1,0 +1,1177 @@
+/*
+  Design tokens do portfólio.
+
+  FONTE: coleção "Cores" do arquivo do Figma (chave P0QW4ixXLYZobH8L0pgXe8), lida pelo
+  MCP nos dois modos. O Figma manda. Se um valor mudar lá, ele muda aqui, e nunca o
+  contrário. Não invente token que não exista na coleção.
+
+  NOMES: seguem os nomes das variáveis do Figma, com a barra virando hífen.
+  accent/rosa vira --accent-rosa, tema/icone-sol vira --tema-icone-sol.
+
+  DIVERGÊNCIA CONHECIDA E SINCRONIZADA: quatro valores de texto foram corrigidos depois da
+  leitura, nos dois lados, para separar os três níveis de texto. São --text-muted e
+  --text-dim no escuro, e --text-muted no claro. O Figma já está atualizado com eles.
+*/
+
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------------------
+   Tema escuro. É o padrão do site.
+   --------------------------------------------------------------------------- */
+
+/* Escuro: é a base, e também o que uma escolha explícita por escuro aplica. */
+:root,
+:root[data-tema="escuro"] {
+  color-scheme: dark;
+
+  /* superfícies */
+  --bg: #0c0c0b;
+  --surface: #111110;
+  --surface-2: #171716;
+  --border: #f0ede814; /* --text a 8% */
+
+  /* Borda de campo de formulário, e só dela. Campo é componente interativo, e o limite de
+     um componente interativo precisa de 3:1. A --border comum dá 1,19 aqui, o que é
+     adequado para card, onde ela é decoração e o card se identifica pelo fundo, e
+     insuficiente para um campo, que só se identifica pela borda. Medida no pior caso, que
+     é sobre o --surface-2. */
+  --border-campo: #66635f; /* 3,00 sobre --surface-2, 3,16 sobre --surface */
+
+  /* Texto em três níveis distintos: principal, secundário, terciário.
+     ATENÇÃO ANTES DE MEXER: o --text-dim está encostado no piso do AA. Sobre o
+     --surface-2, que é o fundo mais claro deste tema e onde texto de card vive, ele dá
+     4,53 contra o mínimo de 4,5. Não existe folga aqui. Se precisar separar mais os
+     níveis, mova o --text-muted, que tem folga, e nunca o --text-dim. Escurecer o
+     --text-dim ou clarear o --surface-2 quebra AA. */
+  --text: #f0ede8; /* 16,76 sobre --bg */
+  --text-muted: #a09c97; /* 7,17 sobre --bg, 6,58 sobre --surface-2 */
+  --text-dim: #847f7a; /* 4,94 sobre --bg, 4,53 sobre --surface-2 */
+
+  /* Accent. Cor aqui significa camada, não decoração. */
+  --accent-rosa: #e6b7d3; /* design e produto */
+  --accent-lavanda: #c9b8e8; /* front-end */
+  --accent-ciano: #9fd4d8; /* back-end e dados */
+  --accent-ambar: #e8cfa0; /* ressalva, honestidade, em construção */
+
+  /* Tint, fundo tingido a 10%.
+     Só existem rosa e âmbar. Lavanda e ciano não têm tint na coleção e não devem ser
+     derivados por alfa aqui: o valor nasce no Figma e é lido de lá. */
+  --tint-rosa: #e6b7d31a;
+  --tint-ambar: #e8cfa01a;
+
+  /* Seletor de tema */
+  --tema-icone-sol: #85817c;
+  --tema-fundo-sol: #00000000;
+  --tema-icone-lua: #e6b7d3;
+  --tema-fundo-lua: #e6b7d31a;
+}
+
+/* ---------------------------------------------------------------------------
+   Tokens que não mudam com o tema: tipografia, medida e foco.
+
+   FONTE: frames HOME desktop 1440 e HOME mobile 375 do Figma, lidos nos dois tamanhos.
+   Os valores 14.7, 13.5 e 10.5 que estavam no arquivo foram arredondados para 15, 13 e
+   10 por decisão da Samara: vieram de artboard escalado, não de decisão de design.
+
+   Só DOIS estilos mudam de tamanho entre desktop e mobile, o H1 e o parágrafo do hero.
+   Todo o resto é igual nos dois, e o que muda é layout, não tipografia.
+   --------------------------------------------------------------------------- */
+
+:root {
+  /* Famílias. Os nomes vêm do next/font, no layout. */
+  --fonte-corpo: var(--fonte-dm-sans), system-ui, -apple-system, "Segoe UI", sans-serif;
+  --fonte-mono: var(--fonte-jetbrains), ui-monospace, SFMono-Regular, Consolas, monospace;
+
+  /* Os dois únicos tamanhos fluidos. A interpolação é entre os dois artboards
+     desenhados, 375 e 1440, então nos dois extremos o valor bate exatamente com o
+     Figma e o meio do caminho é interpolado em vez de saltar num breakpoint. */
+  --tipo-h1: clamp(34px, 17.8px + 4.319vw, 80px); /* 34 em 375, 80 em 1440 */
+  --tipo-hero-paragrafo: clamp(15px, 14.296px + 0.188vw, 17px); /* 15 em 375, 17 em 1440 */
+
+  /* Tamanhos fixos, iguais nos dois tamanhos de tela */
+  /* Título de página interna. Terceiro e último valor fluido do sistema, 30 em 375 e 52
+     em 1440. O tracking é o mesmo em em nos dois: -0.6 sobre 30 e -1.04 sobre 52. */
+  --tipo-titulo-pagina: clamp(30px, 22.254px + 2.066vw, 52px);
+
+  /* Título da página de case. Quarto valor fluido, 30 em 375 e 58 em 1440. */
+  --tipo-titulo-case: clamp(30px, 20.141px + 2.629vw, 58px);
+
+  /* Nome do próximo projeto, no rodapé do case. Derivado da altura medida da caixa de
+     texto no Figma, 44 no desktop e 31 no mobile, com entrelinha normal. */
+  --tipo-proximo: clamp(24px, 20.479px + 0.939vw, 34px);
+
+  --tipo-titulo-secao: 26px; /* DM Sans Bold, lado design */
+  --tipo-titulo-secao-mono: 24px; /* JetBrains Mono Medium, lado código */
+  --tipo-titulo-card: 22px;
+  --tipo-link-menu: 22px;
+  --tipo-fechar-menu: 20px;
+  --tipo-logo-footer: 17px;
+  --tipo-logo-nav: 15px;
+  --tipo-corpo: 15px; /* era 14.7 no Figma */
+  --tipo-cta: 13px; /* era 13.5 no Figma */
+  --tipo-copyright: 12px;
+  --tipo-tag: 12px;
+  --tipo-rotulo-secao: 11px;
+  --tipo-rotulo-coluna: 10px; /* era 10.5 no Figma */
+
+  /* Card de projeto. A listagem e a home usam tamanhos diferentes de propósito: o card
+     da listagem é menor porque são nove numa grade, o da home é maior porque são quatro. */
+  --tipo-card-titulo: 17px; /* card da listagem */
+  --tipo-card-descricao: 14px; /* card da listagem */
+  --tipo-card-compacto-titulo: 18px; /* cards menores da home */
+
+  /* Página de case */
+  --tipo-abertura-case: 19px; /* parágrafo logo abaixo do título do case */
+  --tipo-corpo-case: 16px; /* parágrafo dentro das seções do case */
+  --tipo-ficha-rotulo: 10px;
+  --tipo-ficha-valor: 14.5px;
+  --tipo-numero: 44px; /* número da grade de resultado */
+  --tipo-numero-comparado: 40px; /* número do antes e depois */
+  --tipo-legenda: 14.5px; /* legenda de número e de ficha */
+  --tipo-codigo: 12.5px;
+  --tipo-titlebar: 11px; /* rótulo da barra do bloco de código */
+  --tipo-frase-construcao: 34px;
+
+  --tipo-bio: 16px; /* parágrafo da seção sobre mim */
+  --tipo-terminal: 12.5px; /* saída do bloco whoami */
+
+  /* Entrelinha */
+  --lh-h1: 1.02;
+  --lh-corpo: 1.6;
+  --lh-descricao: 1.55;
+  --lh-card-titulo: 1.32;
+  --lh-card-descricao: 1.52;
+  --lh-bio: 1.65;
+  --lh-titulo-case: 1.12;
+  --lh-abertura-case: 1.58;
+
+  /* Em px, e não em proporção, de propósito. A tag e o badge "em construção" precisam ter
+     a mesma altura, e os 26 do Figma saem de 15 de entrelinha, 5 de padding de cada lado e
+     0,5 de borda de cada lado. Sem valor explícito, os dois herdam `normal`, que depende
+     das métricas da fonte: muda entre navegadores e quebra se a família for trocada. */
+  --lh-tag: 15px;
+  --lh-corpo-case: 1.65;
+  --lh-titulo-bloco: 1.35;
+  --lh-codigo: 1.9;
+  --lh-legenda: 1.5;
+
+  /* Tracking em em, e não em px, de propósito: assim o valor continua correto nos dois
+     tamanhos do H1 sem precisar de um segundo token. No Figma são -2.4px sobre 80 e
+     -1.02px sobre 34, que dão exatamente -0.03em nos dois casos. */
+  --tracking-h1: -0.03em;
+  --tracking-rotulo-secao: 0.1em; /* 1.1px sobre 11 */
+  --tracking-rotulo-coluna: 0.12em; /* 1.26px sobre 10.5, preservado no arredondamento */
+  --tracking-titulo-pagina: -0.02em; /* -0.6 sobre 30 e -1.04 sobre 52, o mesmo valor */
+  --tracking-idioma: 0.06em; /* 0.66px sobre 11 */
+  --tracking-titulo-case: -0.02em; /* -1.16 sobre 58, o mesmo valor do título de página */
+  --tracking-numero: -0.02em; /* -0.88 sobre 44 e -0.8 sobre 40 */
+  --tracking-ficha-rotulo: 0.1em; /* 1px sobre 10 */
+  --tracking-titlebar: 0.06em; /* 0.66px sobre 11 */
+
+  /* Faixa de conteúdo.
+
+     A medida vem do bordadesign.com.br, para os dois sites da Samara respirarem igual:
+     max-width de 1200 com 40 de padding lateral. Como o box-sizing é border-box, os 1200
+     incluem o padding, então a faixa útil é 1120.
+
+     Abaixo de 640 o padding cai para 24. Com 40 de cada lado, um telefone de 375 ficaria
+     com 295 de conteúdo, e os grupos de chips da página Stack empilhariam linhas demais.
+
+     Isso substituiu o padding fluido de 24 a 120 que existia antes. Sem max-width, em
+     tela larga o texto se espalhava e a leitura piorava. */
+  --padding-lateral: 24px;
+  --largura-maxima: 1200px;
+
+  /* Altura da nav. Existe como token porque o hero precisa descontá-la da viewport, e um
+     número solto ali sairia de sincronia no dia em que a nav mudasse de altura. O valor
+     é aplicado na própria nav, então os dois lados vêm daqui.
+     São 80 no mobile, por causa do alvo de toque de 44px do hambúrguer, e 64 no desktop. */
+  --altura-nav: 80px;
+
+  /* Topo das páginas internas: 40 no mobile e 96 no desktop, interpolado entre os mesmos
+     dois artboards do resto do sistema. */
+  --espaco-topo-pagina: clamp(40px, 20.28px + 5.258vw, 96px);
+
+  /* Alvo de toque mínimo exigido pelo projeto */
+  --alvo-toque: 44px;
+
+  /* Animação.
+
+     Todo movimento do site sai daqui, e o bloco de prefers-reduced-motion logo abaixo zera
+     estes valores. Quem quiser animar alguma coisa nova usa os tokens: assim ninguém
+     precisa lembrar de escrever a media query de novo, e não existe componente que respeite
+     a preferência pela metade.
+
+     Duração zero, e não animação removida, de propósito. Uma transição de 0ms ainda chega
+     ao estado final, enquanto desligar a animação de um elemento que nasce invisível o
+     deixaria invisível para sempre. */
+  --dur-rapida: 140ms;
+  --dur-media: 220ms;
+  --dur-entrada: 400ms;
+  --curva-saida: cubic-bezier(0.22, 1, 0.36, 1);
+  --deslocamento-entrada: 12px;
+
+  /* Hero. Os atrasos montam a sequência: o texto já está lá quando a página abre, o
+     título troca de fonte, e o cartão assenta depois. */
+  --atraso-titulo: 700ms;
+  --dur-troca-fonte: 500ms;
+  --atraso-cartao: 900ms;
+  --dur-cartao: 600ms;
+  --dur-tema: 620ms;
+  --dur-varredura: 700ms;
+
+  /* Foco. Neutro de propósito: no sistema a cor significa camada, e foco não é camada.
+     Medido contra todos os fundos, fica entre 13,9 e 17,7 nos dois temas. */
+  --foco: var(--text);
+  --foco-espessura: 2px;
+  --foco-folga: 2px;
+}
+
+/* Quem pediu menos movimento recebe o site sem movimento. Zerar os tokens desliga tudo de
+   uma vez, porque toda animação do projeto sai deles. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-rapida: 0ms;
+    --dur-media: 0ms;
+    --dur-entrada: 0ms;
+    --deslocamento-entrada: 0px;
+    --dur-troca-fonte: 0ms;
+    --dur-cartao: 0ms;
+    --dur-tema: 0ms;
+    --dur-varredura: 0ms;
+    --atraso-titulo: 0ms;
+    --atraso-cartao: 0ms;
+  }
+}
+
+/* 40rem é o breakpoint sm do Tailwind, declarado em rem pelo mesmo motivo do corte da
+   nav: para os dois virarem exatamente no mesmo ponto. */
+@media (width >= 40rem) {
+  :root {
+    --padding-lateral: 40px;
+  }
+}
+
+/* O corte acompanha o breakpoint lg do Tailwind, que é 64rem. Declarado em rem, e não em
+   px, para os dois virarem exatamente no mesmo ponto. */
+@media (width >= 64rem) {
+  :root {
+    --altura-nav: 64px;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Tema claro.
+
+   Entra por dois caminhos:
+
+   1. Preferência do sistema operacional, na primeira visita, enquanto não existe escolha
+      salva. Quem configurou o sistema em claro por sensibilidade à luz não recebe uma
+      tela escura de cara.
+   2. Escolha explícita da pessoa, pelo atributo data-tema no html, que sobrescreve a
+      preferência do sistema.
+
+   ESPECIFICIDADE, não reordene sem entender:
+     :root                      0,1,0   a base escura
+     :root:not([data-tema])     0,2,0   só casa enquanto não há escolha salva
+     :root[data-tema="claro"]   0,2,0   vem depois e vence a base
+   Os dois seletores de 0,2,0 nunca casam ao mesmo tempo, porque um exige a ausência do
+   atributo que o outro exige presente. É isso que faz o data-tema sempre ganhar da
+   preferência do sistema, nos dois sentidos.
+
+   MANUTENÇÃO: a paleta aparece duas vezes, e as duas precisam ser idênticas. O bloco
+   abaixo é só espelho. Os comentários e o raciocínio ficam no bloco canônico, o
+   :root[data-tema="claro"], que vem logo depois. Editou um, edite o outro.
+   --------------------------------------------------------------------------- */
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-tema]) {
+    color-scheme: light;
+
+    --bg: #f5f2ee;
+    --surface: #ffffff;
+    --surface-2: #ebe6df;
+    --border: #1a18151a;
+    --border-campo: #86837f;
+
+    --text: #1a1815;
+    --text-muted: #534e4a;
+    --text-dim: #6b6660;
+
+    --accent-rosa: #aa3e7f;
+    --accent-lavanda: #7a47d6;
+    --accent-ciano: #337075;
+    --accent-ambar: #6b5227;
+
+    --tint-rosa: #b6438817;
+    --tint-ambar: #846a3917;
+
+    --tema-icone-sol: #b64388;
+    --tema-fundo-sol: #b6438817;
+    --tema-icone-lua: #6b6660;
+    --tema-fundo-lua: #00000000;
+  }
+}
+
+/* Bloco canônico do tema claro. */
+:root[data-tema="claro"] {
+  color-scheme: light;
+
+  --bg: #f5f2ee;
+  --surface: #ffffff;
+  --surface-2: #ebe6df;
+  --border: #1a18151a; /* --text a 10% */
+  --border-campo: #86837f; /* 3,04 sobre --surface-2, 3,77 sobre --surface */
+
+  --text: #1a1815; /* 15,87 sobre --bg */
+  --text-muted: #534e4a; /* 7,36 sobre --bg, 6,62 sobre --surface-2 */
+  --text-dim: #6b6660; /* 5,09 sobre --bg, 4,58 sobre --surface-2 */
+
+  /* RESTRIÇÃO DE CONTRASTE, LEIA ANTES DE ALTERAR QUALQUER ACCENT DESTE TEMA:
+     rosa, ciano e lavanda estão a menos de 0,1 do mínimo AA sobre o --bg. São 4,54, 4,55
+     e 4,67 contra o piso de 4,5. Qualquer clareamento, por menor que pareça na tela,
+     derruba em AA. Se mexer, recalcule o contraste contra --bg e contra --surface-2
+     antes de commitar. O âmbar tem folga, está em 6,58. */
+  /* Escurecidos em 2026-09-02, no passo de acessibilidade. Os valores anteriores davam
+     4,08, 4,20 e 4,09 sobre o --surface-2, e reprovavam em texto pequeno: o cifrão do
+     whoami, a titlebar de código em destaque e a última etapa do diagrama. Só o L do HLS
+     mudou, matiz e saturação são os mesmos.
+
+     Tentar resolver pelo --surface-2 não funciona: para o pior accent chegar a 4,5 ele
+     precisaria ir a #f6f1e9, que dá 1,01 sobre o --bg e faz a camada deixar de existir. */
+  --accent-rosa: #aa3e7f; /* 5,08 sobre --bg, 4,57 sobre --surface-2 */
+  --accent-lavanda: #7a47d6; /* 5,09 sobre --bg, 4,57 sobre --surface-2 */
+  --accent-ciano: #337075; /* 5,06 sobre --bg, 4,55 sobre --surface-2 */
+  --accent-ambar: #6b5227; /* 6,58 sobre --bg */
+
+  --tint-rosa: #b6438817;
+  --tint-ambar: #846a3917; /* base própria na coleção, não derivada do --accent-ambar */
+
+  --tema-icone-sol: #b64388;
+  --tema-fundo-sol: #b6438817;
+  --tema-icone-lua: #6b6660;
+  --tema-fundo-lua: #00000000;
+}
+
+/* ---------------------------------------------------------------------------
+   Ponte para o Tailwind.
+
+   O "inline" é o que faz a alternância de tema continuar sendo CSS puro: as utilities
+   geradas apontam para var(--token) em vez de copiarem o valor, então trocar o
+   data-tema no html troca o site inteiro, sem classe duplicada e sem cor fixa em config.
+   --------------------------------------------------------------------------- */
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-border: var(--border);
+  --color-border-campo: var(--border-campo);
+
+  --color-text: var(--text);
+  --color-text-muted: var(--text-muted);
+  --color-text-dim: var(--text-dim);
+
+  --color-accent-rosa: var(--accent-rosa);
+  --color-accent-lavanda: var(--accent-lavanda);
+  --color-accent-ciano: var(--accent-ciano);
+  --color-accent-ambar: var(--accent-ambar);
+
+  --color-tint-rosa: var(--tint-rosa);
+  --color-tint-ambar: var(--tint-ambar);
+
+  --color-tema-icone-sol: var(--tema-icone-sol);
+  --color-tema-fundo-sol: var(--tema-fundo-sol);
+  --color-tema-icone-lua: var(--tema-icone-lua);
+  --color-tema-fundo-lua: var(--tema-fundo-lua);
+
+  --font-corpo: var(--fonte-corpo);
+  --font-mono: var(--fonte-mono);
+
+  /* Tipografia. O namespace do Tailwind para tamanho de fonte é --text-*, e o nosso
+     token de cor de texto é --text. São coisas diferentes e não colidem, porque os
+     tokens crus ficam fora do @theme e só entram aqui pela ponte. */
+  --text-h1: var(--tipo-h1);
+  --text-h1--line-height: var(--lh-h1);
+  --text-h1--letter-spacing: var(--tracking-h1);
+
+  --text-hero-paragrafo: var(--tipo-hero-paragrafo);
+  --text-hero-paragrafo--line-height: var(--lh-corpo);
+
+  --text-titulo-secao: var(--tipo-titulo-secao);
+  --text-titulo-secao-mono: var(--tipo-titulo-secao-mono);
+  --text-titulo-card: var(--tipo-titulo-card);
+  --text-link-menu: var(--tipo-link-menu);
+  --text-fechar-menu: var(--tipo-fechar-menu);
+  --text-logo-footer: var(--tipo-logo-footer);
+  --text-logo-nav: var(--tipo-logo-nav);
+  --text-corpo: var(--tipo-corpo);
+  --text-cta: var(--tipo-cta);
+  --text-copyright: var(--tipo-copyright);
+  --text-tag: var(--tipo-tag);
+  --text-tag--line-height: var(--lh-tag);
+
+  --text-rotulo-secao: var(--tipo-rotulo-secao);
+  --text-rotulo-secao--letter-spacing: var(--tracking-rotulo-secao);
+
+  --text-rotulo-coluna: var(--tipo-rotulo-coluna);
+  --text-rotulo-coluna--letter-spacing: var(--tracking-rotulo-coluna);
+
+  --text-titulo-pagina: var(--tipo-titulo-pagina);
+  --text-titulo-pagina--letter-spacing: var(--tracking-titulo-pagina);
+
+  --text-card-titulo: var(--tipo-card-titulo);
+  --text-card-titulo--line-height: var(--lh-card-titulo);
+
+  --text-card-descricao: var(--tipo-card-descricao);
+  --text-card-descricao--line-height: var(--lh-card-descricao);
+
+  --text-card-compacto-titulo: var(--tipo-card-compacto-titulo);
+
+  --text-titulo-case: var(--tipo-titulo-case);
+  --text-titulo-case--line-height: var(--lh-titulo-case);
+  --text-titulo-case--letter-spacing: var(--tracking-titulo-case);
+
+  --text-proximo: var(--tipo-proximo);
+
+  --text-abertura-case: var(--tipo-abertura-case);
+  --text-abertura-case--line-height: var(--lh-abertura-case);
+
+  --text-corpo-case: var(--tipo-corpo-case);
+  --text-corpo-case--line-height: var(--lh-corpo-case);
+
+  --text-titulo-bloco: var(--tipo-titulo-secao);
+  --text-titulo-bloco--line-height: var(--lh-titulo-bloco);
+
+  --text-ficha-rotulo: var(--tipo-ficha-rotulo);
+  --text-ficha-rotulo--letter-spacing: var(--tracking-ficha-rotulo);
+
+  --text-legenda: var(--tipo-legenda);
+  --text-legenda--line-height: var(--lh-legenda);
+
+  --text-numero: var(--tipo-numero);
+  --text-numero--letter-spacing: var(--tracking-numero);
+
+  --text-numero-comparado: var(--tipo-numero-comparado);
+  --text-numero-comparado--letter-spacing: var(--tracking-numero);
+
+  --text-codigo: var(--tipo-codigo);
+  --text-codigo--line-height: var(--lh-codigo);
+
+  --text-titlebar: var(--tipo-titlebar);
+  --text-titlebar--letter-spacing: var(--tracking-titlebar);
+
+  --text-frase-construcao: var(--tipo-frase-construcao);
+
+  --text-bio: var(--tipo-bio);
+  --text-bio--line-height: var(--lh-bio);
+
+  --text-terminal: var(--tipo-terminal);
+}
+
+/* ---------------------------------------------------------------------------
+   Base
+   --------------------------------------------------------------------------- */
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--fonte-corpo);
+}
+
+/* ---------------------------------------------------------------------------
+   Estado de foco.
+
+   Não existe no Figma. É requisito de acessibilidade, não enfeite.
+
+   :focus-visible e não :focus, para o anel aparecer na navegação por teclado e não no
+   clique de mouse. Quando aparece no clique, a tendência é alguém querer removê-lo, que
+   é como o foco some dos projetos.
+
+   :where() zera a especificidade, então qualquer componente sobrescreve sem !important.
+
+   outline e não box-shadow, porque outline não é recortado pelo próprio elemento e
+   respeita o border-radius.
+
+   O afastamento não é estético: é ele que resolve o caso do botão rosa preenchido. O
+   anel não encosta no preenchimento, e o contraste passa a ser medido contra a faixa de
+   fundo entre os dois.
+
+   CUIDADO AO MONTAR COMPONENTE: outline é desenhado para fora e é recortado por
+   ancestral com overflow hidden. Não recorte ancestral de elemento focável, ou reserve
+   padding para o anel.
+
+   tabindex="-1" fica de fora. Ele marca alvo de foco programático, e o único do projeto é
+   o <main>, que existe para o link de pular ter destino. Um anel em volta da página
+   inteira não informa nada: o que diz que o pulo funcionou é a rolagem ter acontecido e o
+   próximo Tab cair no primeiro link do conteúdo.
+   --------------------------------------------------------------------------- */
+
+:where(a, button, input, select, textarea, summary, [tabindex]:not([tabindex="-1"])):focus-visible {
+  outline: var(--foco-espessura) solid var(--foco);
+  outline-offset: var(--foco-folga);
+}
+
+@media (forced-colors: active) {
+  :where(a, button, input, select, textarea, summary, [tabindex]:not([tabindex="-1"])):focus-visible {
+    outline-color: Highlight;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Faixa de conteúdo.
+
+   Centraliza e limita a largura, com o respiro lateral. Vai no elemento que segura o
+   conteúdo, e não na seção, quando a seção tem fundo ou filete que precisa atravessar a
+   tela inteira, como o footer.
+   --------------------------------------------------------------------------- */
+
+.faixa {
+  width: 100%;
+  max-width: var(--largura-maxima);
+  margin-inline: auto;
+  padding-inline: var(--padding-lateral);
+}
+
+/* ---------------------------------------------------------------------------
+   Alvo de toque.
+
+   Aumenta a área clicável sem mexer no desenho: o pseudo-elemento é invisível, fica fora
+   do fluxo e não altera o tamanho visual do botão.
+   --------------------------------------------------------------------------- */
+
+.alvo-toque {
+  position: relative;
+}
+
+.alvo-toque::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  width: max(100%, var(--alvo-toque));
+  height: max(100%, var(--alvo-toque));
+}
+
+/* Variante só vertical, para botões colados lado a lado.
+   Usada nos dois botões do seletor de tema: eles têm 30px e ficam a 2px um do outro,
+   então duas áreas de 44px de largura se sobreporiam em 12px e um roubaria o clique do
+   outro. Aqui a altura vai a 44 e a largura fica a do próprio botão. */
+.alvo-toque-vertical {
+  position: relative;
+}
+
+.alvo-toque-vertical::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  translate: 0 -50%;
+  width: 100%;
+  height: max(100%, var(--alvo-toque));
+}
+
+/* ---------------------------------------------------------------------------
+   Nav fixa.
+
+   Ela fica presa no topo porque as páginas de case passam de cinco mil pixels, e com a
+   nav rolando junto a pessoa fica sem navegação a maior parte do tempo.
+
+   Sair do fluxo pede as duas compensações abaixo, e as duas dependem do mesmo token de
+   altura, que já muda entre mobile e desktop:
+
+   1. O padding no body devolve o espaço que a nav ocupava. Com box-sizing border-box ele
+      cabe dentro do min-height, então o rodapé não desce.
+
+   2. O scroll-padding no html afasta o alvo de qualquer âncora da barra. Sem isso o link
+      de pular leva ao conteúdo e a nav fica por cima do começo dele. Está no html, e não
+      no destino, para valer para toda âncora que existir daqui em diante.
+   --------------------------------------------------------------------------- */
+
+html {
+  scroll-padding-top: calc(var(--altura-nav) + 12px);
+}
+
+body {
+  padding-top: var(--altura-nav);
+}
+
+/* ---------------------------------------------------------------------------
+   Abrir e fechar do accordion.
+
+   Sem JavaScript. Quem abre e fecha é o details, e a altura é interpolada pelo
+   `interpolate-size: allow-keywords`, que permite transicionar de 0 até `auto`.
+
+   ATRÁS DE @supports PORQUE ELE SÓ EXISTE NO CHROMIUM. Firefox e Safari ainda não
+   implementaram, e lá a altura salta, que é exatamente o comportamento que já estava no ar.
+   Ninguém perde nada, e quem tem suporte ganha. Quando os outros implementarem, isso passa
+   a funcionar sozinho.
+
+   REVELAR ALTURA DESCONHECIDA CUSTA LAYOUT, sempre, e não existe alternativa só de
+   compositor. O que dá para fazer é confinar o custo à subárvore do accordion, que é o que
+   acontece aqui. É a mesma conta do `grid-template-rows` de 0fr para 1fr, com uma peça a
+   menos para manter.
+
+   O `content-visibility` entra na transição com `allow-discrete` para o conteúdo não sumir
+   antes de a altura terminar de fechar.
+
+   `overflow: clip` com margem, e não `hidden`: o painel do bloco de código tem dentro dele
+   uma região rolável focável, e recorte em ancestral come o anel de foco. A margem de 6px
+   cobre os 2 de espessura mais os 2 de folga com sobra.
+
+   Só abaixo de 64rem, porque acima disso o painel está sempre aberto e não há o que animar.
+   --------------------------------------------------------------------------- */
+
+@media (width < 64rem) {
+  @supports (interpolate-size: allow-keywords) {
+    :root {
+      interpolate-size: allow-keywords;
+    }
+
+    .acordeao-mobile::details-content {
+      height: 0;
+      overflow: clip;
+      overflow-clip-margin: 6px;
+      transition:
+        height var(--dur-media) var(--curva-saida),
+        content-visibility var(--dur-media) allow-discrete;
+    }
+
+    .acordeao-mobile[open]::details-content {
+      height: auto;
+    }
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Entrada ao rolar.
+
+   CINCO REGRAS, e as duas primeiras são as que separam animação de irritação:
+
+   1. Uma vez por elemento, nunca de novo. Quem revela para de observar.
+   2. Nada anima na primeira pintura. O que já está na tela quando a página abre nasce
+      visível, senão vira animação de carregamento e o hero fica esperando para ser lido.
+   3. Só bloco de seção, nunca item. Chip, tag e linha de lista não animam: animar item é o
+      que dá sensação de confete e atrasa a leitura de verdade.
+   4. Sem escalonamento. Cada bloco cruza o limite em momento diferente, então a sequência
+      já acontece sozinha, sem ninguém esperando a vez.
+   5. Dispara cedo. A margem negativa faz a animação começar com o bloco já um pouco dentro
+      da tela, e terminar antes de o olho chegar nele.
+
+   MOVIMENTO NUNCA ESCONDE CONTEÚDO. O estado oculto está dentro de `no-preference` e só é
+   aplicado por JavaScript. Sem script, ou com movimento reduzido, a página inteira aparece.
+   O jeito errado é o CSS esconder e a animação revelar: aí qualquer falha deixa a tela em
+   branco.
+
+   CUIDADO AO MARCAR UM BLOCO: `opacity` menor que 1 cria bloco de contenção para
+   descendente `position: fixed`, igual ao `backdrop-filter`. Nenhum elemento com
+   `data-revelar` pode ser ancestral da nav, do painel do menu ou do link de pular.
+   --------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-revelar="pendente"] {
+    opacity: 0;
+    translate: 0 var(--deslocamento-entrada);
+  }
+
+  [data-revelar="visivel"] {
+    opacity: 1;
+    translate: 0 0;
+    transition:
+      opacity var(--dur-entrada) var(--curva-saida),
+      translate var(--dur-entrada) var(--curva-saida);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Prova visual do case.
+
+   Um bloco por case, marcado no conteúdo com `prova="true"`, ganha entrada própria. É o
+   bloco que carrega o argumento: o código do Bajaj, a paleta do Tech Girls, os números do
+   VOGE. O resto do corpo do case continua sem animação nenhuma, porque é onde a pessoa
+   passa mais tempo lendo.
+
+   SÓ NO DESKTOP. No mobile os três viram carrossel ou accordion: números e paleta ficam
+   num trilho onde aparece um card e meio, e o código nasce fechado. Animação elaborada ali
+   brigaria com o próprio comportamento mobile. No celular eles recebem a entrada normal de
+   bloco.
+
+   É O ÚNICO ESCALONAMENTO DO SITE, e é deliberado: uma vez por case, no bloco que é a
+   prova. Escalonar tudo é o efeito que envelhece mais rápido.
+   --------------------------------------------------------------------------- */
+
+/* O atraso mora numa variável no item e é herdado pelos filhos, para o número e o cartão
+   dele animarem juntos sem repetir a lista de nth-child. */
+.prova-item:nth-child(1) {
+  --atraso-prova: 0ms;
+}
+
+.prova-item:nth-child(2) {
+  --atraso-prova: 60ms;
+}
+
+.prova-item:nth-child(3) {
+  --atraso-prova: 120ms;
+}
+
+.prova-item:nth-child(4) {
+  --atraso-prova: 180ms;
+}
+
+.prova-item:nth-child(5) {
+  --atraso-prova: 240ms;
+}
+
+.prova-item:nth-child(6) {
+  --atraso-prova: 300ms;
+}
+
+.prova-item:nth-child(7) {
+  --atraso-prova: 360ms;
+}
+
+.prova-item:nth-child(8) {
+  --atraso-prova: 420ms;
+}
+
+@media (width >= 64rem) and (prefers-reduced-motion: no-preference) {
+  /* O bloco de prova não usa a entrada padrão de bloco: quem entra são as partes dele.
+     Especificidade maior que a regra geral, então não depende da ordem no arquivo. */
+  [data-prova][data-revelar="pendente"] {
+    opacity: 1;
+    translate: none;
+  }
+
+  /* O estado inicial das partes só existe depois que o JavaScript marcou o bloco como
+     pendente, pela mesma razão de sempre: nada pode ficar invisível sem script. */
+  [data-prova][data-revelar="pendente"] .prova-item {
+    opacity: 0;
+  }
+
+  [data-prova][data-revelar="visivel"] .prova-item {
+    animation: prova-item-entra var(--dur-entrada) var(--curva-saida)
+      var(--atraso-prova, 0ms) backwards;
+  }
+
+  /* O número assenta: entra maior e encolhe até o tamanho real, junto do cartão dele. */
+  [data-prova][data-revelar="visivel"] .prova-numero dt {
+    animation: prova-valor-assenta var(--dur-entrada) var(--curva-saida)
+      var(--atraso-prova, 0ms) backwards;
+  }
+
+  /* A paleta se preenche: cada amostra parte da cor da superfície e chega na cor real. É
+     background-color, que é pintura de retângulo sólido, sem custo de layout. */
+  [data-prova][data-revelar="pendente"] .prova-amostra {
+    background-color: var(--surface-2);
+  }
+
+  .prova-amostra {
+    transition: background-color var(--dur-entrada) linear;
+    transition-delay: var(--atraso-prova, 0ms);
+  }
+
+  /* O código é revelado por uma varredura de cima para baixo, como se estivesse sendo
+     escrito. Sem fill forwards de propósito: quando a animação acaba o clip-path volta a
+     `none`, e aí o recorte não come o anel de foco da região rolável que existe dentro. */
+  [data-prova][data-revelar="pendente"].prova-codigo {
+    clip-path: inset(0 0 100% 0);
+  }
+
+  [data-prova][data-revelar="visivel"].prova-codigo {
+    animation: prova-varredura var(--dur-varredura) var(--curva-saida) backwards;
+  }
+}
+
+@keyframes prova-item-entra {
+  from {
+    opacity: 0;
+    translate: 0 10px;
+    scale: 0.96;
+  }
+}
+
+@keyframes prova-valor-assenta {
+  from {
+    scale: 1.12;
+  }
+}
+
+@keyframes prova-varredura {
+  from {
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Cartão interativo.
+
+   Não existe no Figma, onde não há estado de hover desenhado. O levante de 2px é
+   `translate`, que o compositor resolve sozinho, e a borda em accent dá o alvo para quem
+   usa mouse.
+
+   Só em ponteiro que faz hover de verdade, senão o toque no celular deixa o card preso no
+   estado de hover depois do clique.
+
+   O foco recebe o mesmo levante, e não só o anel: quem navega por teclado merece a mesma
+   afordância de quem usa mouse.
+   --------------------------------------------------------------------------- */
+
+.cartao-interativo {
+  transition:
+    translate var(--dur-rapida) var(--curva-saida),
+    border-color var(--dur-rapida) linear;
+}
+
+@media (hover: hover) {
+  .cartao-interativo:hover {
+    translate: 0 -2px;
+    border-color: var(--accent-rosa);
+  }
+}
+
+.cartao-interativo:focus-visible {
+  translate: 0 -2px;
+}
+
+/* ---------------------------------------------------------------------------
+   Entrada do painel do menu.
+
+   Só a entrada. A saída é instantânea de propósito: animar o fechamento atrasa o retorno
+   visual de quem tocou num link, e o painel desmonta junto com a troca de rota.
+
+   `@starting-style` dá o estado inicial de um elemento que acabou de entrar no DOM, que é
+   o caso aqui, já que o painel só existe enquanto está aberto. Onde não houver suporte, ele
+   simplesmente aparece.
+   --------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: no-preference) {
+  #menu-mobile {
+    transition:
+      opacity var(--dur-media) var(--curva-saida),
+      translate var(--dur-media) var(--curva-saida);
+  }
+
+  @starting-style {
+    #menu-mobile {
+      opacity: 0;
+      translate: 0 -8px;
+    }
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Troca de tema, pela View Transitions API.
+
+   O tema novo entra por um círculo que cresce a partir do botão clicado. O navegador
+   fotografa o estado antigo e o novo, e o que anima é `clip-path` sobre a foto nova, no
+   compositor. Um momento só, sem custo permanente.
+
+   A foto antiga fica parada por baixo, por isso `animation: none` nela: sem isso o
+   navegador faz um cross-fade padrão que briga com o recorte.
+
+   As três variáveis de origem e raio são escritas pelo seletor de tema, em JavaScript,
+   porque dependem de onde o botão está na tela naquele momento.
+
+   Quem não tem suporte cai na transição de cor logo abaixo, e quem pediu movimento
+   reduzido também: os dois caminhos estão no componente.
+   --------------------------------------------------------------------------- */
+
+::view-transition-old(root) {
+  animation: none;
+}
+
+::view-transition-new(root) {
+  animation: revelar-tema var(--dur-tema) var(--curva-saida);
+}
+
+@keyframes revelar-tema {
+  from {
+    clip-path: circle(0 at var(--tema-origem-x) var(--tema-origem-y));
+  }
+  to {
+    clip-path: circle(var(--tema-raio) at var(--tema-origem-x) var(--tema-origem-y));
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Hero.
+
+   É a única parte do site que anima na carga, e é deliberado: é a primeira tela, ninguém
+   está lendo ainda, e é onde o site tem permissão de impressionar. O resto do conteúdo
+   segue a regra contrária, de não competir com a leitura.
+
+   NENHUM ESTADO INVISÍVEL MORA NO ESTILO BASE. O que esconde é o keyframe, com
+   fill-mode `backwards` ou `both`, então o elemento fica visível se a animação não rodar,
+   por movimento reduzido ou por qualquer falha. O caminho oposto, esconder no CSS e
+   revelar na animação, transforma qualquer defeito em página em branco.
+   --------------------------------------------------------------------------- */
+
+/* As duas fontes ocupam a mesma célula, e a caixa nasce com a largura da maior. É o que
+   permite trocar de fonte sem reflow: o que anima é opacity e translate. */
+.hero-troca-fonte {
+  display: grid;
+  justify-items: start;
+}
+
+.hero-troca-fonte > * {
+  grid-area: 1 / 1;
+}
+
+/* A cópia em DM Sans é decorativa e some no fim. Escondida por padrão para que, sem
+   animação, sobre só a versão final em mono. */
+.hero-fonte-saindo {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-fonte-saindo {
+    animation: hero-fonte-sai var(--dur-troca-fonte) var(--curva-saida)
+      var(--atraso-titulo) both;
+  }
+
+  .hero-fonte-entrando {
+    animation: hero-fonte-entra var(--dur-troca-fonte) var(--curva-saida)
+      var(--atraso-titulo) both;
+  }
+
+  .hero-cartao {
+    animation: hero-cartao-entra var(--dur-cartao) var(--curva-saida)
+      var(--atraso-cartao) backwards;
+  }
+}
+
+@keyframes hero-fonte-sai {
+  from {
+    opacity: 1;
+    translate: 0 0;
+  }
+  to {
+    opacity: 0;
+    translate: 0 -0.12em;
+  }
+}
+
+@keyframes hero-fonte-entra {
+  from {
+    opacity: 0;
+    translate: 0 0.12em;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+/* O scale pequeno é o que dá peso: o cartão assenta em vez de aparecer. */
+@keyframes hero-cartao-entra {
+  from {
+    opacity: 0;
+    translate: 0 18px;
+    scale: 0.985;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Deriva das fitas de luz.
+
+   SÓ `translate`. Deslocar uma camada já rasterizada é trabalho de compositor, sem
+   repintura. Caro seria animar `filter`, `scale` grande ou qualquer coisa que mude os
+   limites da camada, porque aí o navegador rasteriza de novo a cada quadro.
+
+   Sem `will-change`: o navegador promove sozinho enquanto a animação roda e libera a
+   memória quando ela pausa, o que é melhor do que manter três camadas grandes promovidas
+   para sempre.
+
+   DURAÇÕES QUE NÃO SÃO MÚLTIPLAS ENTRE SI. Com 29, 37 e 43 segundos o conjunto não volta
+   a uma configuração reconhecível em tempo útil, então não dá para perceber o loop.
+
+   A amplitude é de 20px sobre elipses de mais de mil, então a deriva nunca revela borda
+   dentro do recorte do hero.
+   --------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: no-preference) {
+  .fita-luz {
+    animation-name: deriva-luz;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+  }
+
+  .fita-luz:nth-child(1) {
+    animation-duration: 29s;
+    --deriva-x: 20px;
+    --deriva-y: -12px;
+  }
+
+  .fita-luz:nth-child(2) {
+    animation-duration: 37s;
+    --deriva-x: -16px;
+    --deriva-y: 14px;
+  }
+
+  .fita-luz:nth-child(3) {
+    animation-duration: 43s;
+    --deriva-x: 12px;
+    --deriva-y: 18px;
+  }
+
+  /* Fora da tela a deriva para. Quem alterna o atributo é o PausaForaDaTela. */
+  [data-pausar-fora="fora"] .fita-luz {
+    animation-play-state: paused;
+  }
+}
+
+@keyframes deriva-luz {
+  to {
+    translate: var(--deriva-x) var(--deriva-y);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Link de pular para o conteúdo.
+
+   Fica escondido acima da borda e desce quando recebe foco. Não usa display none nem
+   visibility hidden, porque elemento escondido assim não é focável, e o link inteiro
+   depende de poder receber foco.
+
+   O deslocamento é por translate, e não por top, para não disparar layout. Sem transição
+   por enquanto: movimento entra na passada de animação, junto do prefers-reduced-motion.
+   --------------------------------------------------------------------------- */
+
+.link-pular {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 60;
+  translate: 0 calc(-100% - 24px);
+  border-radius: 999px;
+  background-color: var(--accent-rosa);
+  padding: 12px 22px;
+  font-size: var(--tipo-corpo);
+  font-weight: 500;
+  color: var(--bg);
+}
+
+.link-pular:focus-visible {
+  translate: 0 0;
+}
+
+/* ---------------------------------------------------------------------------
+   Accordion do mobile.
+
+   O elemento é o details nativo, e não um botão com estado em React. Ele traz teclado,
+   semântica de disclosure e funcionamento sem JavaScript sem custo nenhum de código.
+
+   O ATRIBUTO open É O ESTADO DO MOBILE, que é onde o accordion existe: o lado Design da
+   home nasce aberto, o lado Código e os blocos de código nascem fechados.
+
+   NO DESKTOP O PAINEL ESTÁ SEMPRE ABERTO, independentemente do estado. Isso só é
+   possível pelo ::details-content, porque quem esconde o conteúdo de um details fechado é
+   o próprio navegador, com content-visibility num pseudo-elemento, e não uma regra que dê
+   para vencer por especificidade. Regra de folha de autor ganha da folha do user agent,
+   então basta redeclarar.
+
+   O caminho contrário não funciona, e vale registrar porque é a armadilha óbvia: nascer
+   com open e fechar por CSS no mobile inverte o botão. O primeiro clique tira o open, o
+   navegador esconde o que o CSS já escondia e nada acontece na tela; o segundo devolve o
+   open e o CSS esconde de novo. O painel nunca abre.
+
+   O display do summary e do rótulo fixo é declarado aqui, e não por classe do Tailwind,
+   porque o @supports precisa poder desfazer os dois na mesma ordem de cascata.
+   --------------------------------------------------------------------------- */
+
+/* O marcador nativo sai: quem indica aberto e fechado é o chevron do Figma. */
+.acordeao-mobile > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.acordeao-mobile > summary::-webkit-details-marker {
+  display: none;
+}
+
+.acordeao-chevron {
+  transition: rotate var(--dur-media) var(--curva-saida);
+}
+
+.acordeao-mobile[open] > summary .acordeao-chevron {
+  rotate: 180deg;
+}
+
+/* O rótulo do desktop é outro elemento, e não o mesmo escondido: no desktop o summary sai
+   do layout por inteiro, então ele não deixa parada de tabulação nem anuncia um estado de
+   disclosure que a tela não mostra. */
+.acordeao-rotulo-fixo {
+  display: none;
+}
+
+@media (width >= 64rem) {
+  .acordeao-mobile::details-content {
+    content-visibility: visible;
+  }
+
+  .acordeao-mobile > summary {
+    display: none;
+  }
+
+  .acordeao-rotulo-fixo {
+    display: block;
+  }
+}
+
+/* Navegador sem ::details-content. O desktop não consegue forçar o painel aberto, então o
+   cabeçalho clicável volta e o rótulo fixo sai: a pessoa vê accordions fechados em vez de
+   duas colunas abertas, e nada fica inalcançável. É Baseline desde setembro de 2025, e
+   este bloco existe para quem está atrás disso. */
+@supports not selector(::details-content) {
+  @media (width >= 64rem) {
+    .acordeao-mobile > summary {
+      display: flex;
+    }
+
+    .acordeao-rotulo-fixo {
+      display: none;
+    }
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Transição de tema.
+
+   Única animação que entra antes da passada de animação, porque trocar claro e escuro
+   sem transição dá um corte brusco.
+
+   A classe é aplicada por JavaScript só durante a troca e removida logo depois. Sem
+   isso, uma transição global de cor pegaria junto todo hover de link e botão e deixaria
+   a interface com sensação de atraso.
+   --------------------------------------------------------------------------- */
+
+html.trocando-tema,
+html.trocando-tema *,
+html.trocando-tema *::before,
+html.trocando-tema *::after {
+  transition:
+    background-color var(--dur-media) ease,
+    border-color var(--dur-media) ease,
+    color var(--dur-media) ease,
+    fill var(--dur-media) ease,
+    stroke var(--dur-media) ease,
+    outline-color var(--dur-media) ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.trocando-tema,
+  html.trocando-tema *,
+  html.trocando-tema *::before,
+  html.trocando-tema *::after {
+    transition: none;
+  }
+}

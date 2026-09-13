@@ -1,0 +1,121 @@
+---
+slug: voge-brasil
+titulo: VOGE Brasil
+tipo: engenharia
+tags: [Full stack]
+estado: no-ar
+destaque: true
+ordem: 3
+ordemHome: 0
+publicado: true
+imagem: /imagens/projetos/voge-brasil.webp
+descricao: Site institucional de motos premium em WordPress. Três formulários do zero com validação sem biblioteca e integração de leads com fallback por e-mail.
+resumo: "Marca premium de motos. Desenhei e desenvolvi 8 páginas e 6 sistemas: formulários com validação sem biblioteca, integração com CRM, busca dinâmica de concessionárias, deploy automatizado e revisão de conteúdo."
+abertura: Site institucional da VOGE, marca de motos premium entrando no mercado brasileiro. Fiz 8 páginas, o sistema de formulários inteiro e a integração de leads com o CRM, em dupla com outro desenvolvedor. Aqui eu conto as três frentes principais.
+ficha:
+  - PAPEL | Front-end, validações e integrações
+  - CLIENTE | VOGE Brasil, via TecSinapse
+  - PERÍODO | 2026
+  - STACK | WordPress, PHP, JavaScript vanilla, API REST, Git
+  - TIME | Desenvolvimento em dupla com Paulo Azevedo
+---
+
+:::secao{rotulo="CONTEXTO" titulo="Uma marca premium chegando num mercado novo"}
+A VOGE é uma marca de motocicletas premium em fase de entrada no Brasil. O site precisava apresentar a linha de modelos, organizar a futura rede de concessionárias, mostrar os serviços da marca e converter interesse em contato.
+
+É um projeto vivo: a operação ainda está se estruturando no país, então o site recebe atualização constante. Isso mudou as decisões de arquitetura, porque tudo que ia mudar toda semana precisava ser editável sem tocar em código. O desenvolvimento foi em dupla: fiz 8 páginas, 6 componentes e a revisão de conteúdo, e o Paulo Azevedo fez a home, as páginas de modelo, a institucional, o header, o footer e a hospedagem.
+:::
+
+:::imagens{colunas="1"}
+![Telas do site da VOGE Brasil](/imagens/cases/voge-telas.webp)
+:::
+
+::::::duo
+:::::secao{rotulo="FORMULÁRIOS" titulo="Três validações escritas do zero, sem biblioteca"}
+Escrevi toda a validação em JavaScript puro: CPF com dígitos verificadores e máscara própria, telefone no padrão brasileiro com regra de DDD, e e-mail com heurística contra endereço falso. Somei honeypot contra bot, proteção contra duplo envio e uma segunda camada de validação em PHP no servidor.
+
+::::citacao
+Escrevi na mão por três motivos práticos.
+
+Uma dependência a menos para atualizar, uma superfície a menos de vulnerabilidade num formulário que recebe CPF, e código que eu sei explicar linha por linha quando algo quebra em produção.
+::::
+:::::
+
+:::::codigo{arquivo="validacao.js"}
+```js
+function validarCPF(cpf) {
+  cpf = cpf.replace(/\D/g, '');
+  if (cpf.length !== 11) return false;
+  if (/^(\d)\1{10}$/.test(cpf)) return false;
+
+  let soma = 0, resto;
+
+  for (let i = 0; i < 9; i++) soma += parseInt(cpf[i]) * (10 - i);
+  resto = soma % 11;
+  if ((resto < 2 ? 0 : 11 - resto) !== parseInt(cpf[9])) return false;
+
+  soma = 0;
+  for (let i = 0; i < 10; i++) soma += parseInt(cpf[i]) * (11 - i);
+  resto = soma % 11;
+  return (resto < 2 ? 0 : 11 - resto) === parseInt(cpf[10]);
+}
+
+function maskCPF(v) {
+  v = v.replace(/\D/g, '').slice(0, 11);
+  return v
+    .replace(/(\d{3})(\d)/, '$1.$2')
+    .replace(/(\d{3})(\d)/, '$1.$2')
+    .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+}
+```
+:::::
+::::::
+
+:::::secao{rotulo="INTEGRAÇÃO" titulo="O lead tem dois caminhos até o CRM"}
+Os formulários de test ride e de interesse mandam o lead direto ao CRM da marca por API REST. Quando a pessoa escolhe uma concessionária, o lead vai para o destino daquela unidade dentro do CRM.
+
+Se o envio ao CRM falhar, o lead segue por e-mail automaticamente, então nenhum contato se perde. O sistema lê a resposta da API para confirmar cada recebimento, e as credenciais ficam fora do versionamento.
+
+::::diagrama{desvio="se falhar | envio por e-mail, para o lead não se perder"}
+formulário
+validação
+roteamento por unidade
+CRM
+confirmação 2xx
+::::
+
+::::citacao{camada="ciano"}
+Entrega confirmada, com um segundo caminho de reserva.
+
+Um disparo que ignora a resposta da API pode falhar em silêncio, e em captação de lead isso é dinheiro perdido sem ninguém perceber. O sistema lê a confirmação e, quando ela não vem, aciona o e-mail.
+::::
+:::::
+
+::::secao{rotulo="CONCESSIONÁRIAS" titulo="Um arquivo de dados controla a rede inteira"}
+A página de concessionárias é um sistema de busca completo: filtro em cascata por estado e cidade, mapa, contador de resultado e estado de nenhum resultado. As lojas ficam num arquivo de dados e os cards são montados sozinhos. Ativar uma unidade ou mudar o status dela é editar um campo, e isso reflete na página, no formulário de test ride e no seletor dos formulários de interesse.
+
+:::destaque
+O filtro de busca está pronto e desligado.
+
+Como a marca ainda está inaugurando as primeiras unidades, a versão pública mostra só os cards das que estão abrindo. Filtro de estado e cidade num universo de três lojas só atrapalha. O sistema completo já está implementado e entra em operação quando a rede crescer, sem novo desenvolvimento.
+:::
+::::
+
+::::secao{rotulo="SELETOR DE MANUAL"}
+Na página de Serviços, o seletor de manual funciona em dois níveis: escolhe a categoria, Adventure ou Scooter, e a lista de modelos se atualiza. Ao trocar de categoria ele já assume um modelo padrão e mostra a imagem, então a tela nunca fica vazia. Ao selecionar, a imagem muda e o botão de download aponta para o manual certo.
+
+:::imagens{colunas="1"}
+![Seletor de manual na página de Serviços](/imagens/cases/voge-seletor-manual.webp)
+:::
+::::
+
+::::secao{rotulo="RESULTADO" titulo="Em números"}
+:::numeros{prova="true"}
+8 | páginas desenvolvidas do conceito ao ar | rosa
+0 | bibliotecas externas na validação | rosa
+3 | validações do zero: CPF, telefone e e-mail | lavanda
+2 | camadas de validação, no cliente e no servidor | lavanda
+2 | caminhos de entrega do lead, com fallback | ciano
+1 | arquivo de dados controla a rede inteira | ciano
+:::
+::::
