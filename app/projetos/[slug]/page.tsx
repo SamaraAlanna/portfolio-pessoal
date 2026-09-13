@@ -1,3 +1,4 @@
+import { ViewTransition } from "react";
 import type { Metadata } from "next";
 import { metadataDaPagina } from "@/lib/site";
 import { notFound } from "next/navigation";
@@ -69,7 +70,15 @@ export default async function PaginaCase({ params }: PageProps<"/projetos/[slug]
         <>
           <SecaoFicha ficha={projeto.ficha} />
 
+          {/* O nome só existe quando há hero. Nos cases sem imagem o par não se forma e
+              só o título viaja, que já comunica continuidade. Quando o heroCase for
+              preenchido, o morph passa a funcionar sem tocar neste arquivo. */}
           {projeto.heroCase && hero ? (
+            <ViewTransition
+              name={`capa-${projeto.slug}`}
+              share="morph-projeto"
+              default="none"
+            >
             <div className="faixa pb-[72px]">
               <Image
                 src={projeto.heroCase}
@@ -81,6 +90,7 @@ export default async function PaginaCase({ params }: PageProps<"/projetos/[slug]
                 className="h-auto w-full rounded-[12px]"
               />
             </div>
+            </ViewTransition>
           ) : null}
 
           <div className="flex flex-col gap-[72px] faixa pb-[80px]">

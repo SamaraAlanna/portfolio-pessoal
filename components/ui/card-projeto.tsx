@@ -1,3 +1,4 @@
+import { ViewTransition } from "react";
 import Link from "next/link";
 import Tag from "@/components/ui/tag";
 import BadgeConstrucao from "@/components/ui/badge-construcao";
@@ -21,16 +22,24 @@ export default function CardProjeto({
       href={`/projetos/${projeto.slug}`}
       className="cartao-interativo flex h-full flex-col justify-between rounded-[12px] border-[0.5px] border-border bg-surface"
     >
-      <PreviewProjeto
-        imagem={projeto.imagem}
-        titulo={projeto.titulo}
-        altura="h-[148px]"
-        prioridade={prioridade}
-      />
+      <ViewTransition name={`capa-${projeto.slug}`} share="morph-projeto" default="none">
+        <PreviewProjeto
+          imagem={projeto.imagem}
+          titulo={projeto.titulo}
+          altura="h-[148px]"
+          prioridade={prioridade}
+        />
+      </ViewTransition>
 
       <div className="flex flex-1 flex-col justify-between px-[22px] pt-[20px] pb-[22px]">
         <div className="flex flex-col gap-[10px]">
-          <h2 className="text-card-titulo font-bold text-text">{projeto.titulo}</h2>
+          <ViewTransition
+            name={`titulo-${projeto.slug}`}
+            share="morph-projeto"
+            default="none"
+          >
+            <h2 className="text-card-titulo font-bold text-text">{projeto.titulo}</h2>
+          </ViewTransition>
           <p className="text-card-descricao text-text-muted">{projeto.descricao}</p>
         </div>
 

@@ -1,3 +1,4 @@
+import { ViewTransition } from "react";
 import Link from "next/link";
 import Tag from "@/components/ui/tag";
 import BadgeConstrucao from "@/components/ui/badge-construcao";
@@ -16,9 +17,15 @@ export default function CardProjetoCompacto({ projeto }: { projeto: Projeto }) {
       className="cartao-interativo flex flex-1 flex-col justify-between gap-[16px] rounded-[12px] border-[0.5px] border-border bg-surface p-[26px]"
     >
       <div className="flex flex-col gap-[8px]">
-        <h3 className="text-card-compacto-titulo font-bold text-text">
-          {projeto.titulo}
-        </h3>
+        <ViewTransition
+          name={`titulo-${projeto.slug}`}
+          share="morph-projeto"
+          default="none"
+        >
+          <h3 className="text-card-compacto-titulo font-bold text-text">
+            {projeto.titulo}
+          </h3>
+        </ViewTransition>
         <p className="text-corpo leading-[1.5] text-text-muted">{projeto.resumo}</p>
       </div>
 

@@ -993,6 +993,52 @@ body {
 }
 
 /* ---------------------------------------------------------------------------
+   Transição entre páginas.
+
+   A capa e o título do card viajam para a página de case, pelo `<ViewTransition>` do
+   React, que o App Router ativa sozinho porque navegação já é uma transição. O par se
+   forma pelo `name` igual dos dois lados.
+
+   A classe vem do `share="morph-projeto"`, e é por ela que o tempo é ajustado aqui.
+
+   DUAS CONDIÇÕES QUE A DOCUMENTAÇÃO DO NEXT DEIXA EXPLÍCITAS. O morph só acontece quando o
+   destino renderiza no mesmo commit da navegação, o que vale para rota pré-carregada: as
+   13 rotas do site são estáticas, então estamos no caso bom, mas isso só dá para conferir
+   em build de produção, porque o modo de desenvolvimento não pré-carrega. E durante a
+   transição o hit-testing pula os elementos nomeados, por isso ela é curta.
+
+   CINCO DOS OITO CASES NÃO TÊM IMAGEM DE HERO, e neles só o título viaja. O par de capa
+   simplesmente não se forma, o que degrada bem. Quando o `heroCase` for preenchido, o
+   morph passa a funcionar sem alteração de código.
+
+   O `default="none"` com `share` explícito é o par recomendado pelo guia: sem o `share`, o
+   `default="none"` desligaria o morph em silêncio.
+
+   O tempo do cross-fade da raiz só vale fora da troca de tema, senão sobrescreveria a
+   duração do círculo.
+   --------------------------------------------------------------------------- */
+
+::view-transition-group(.morph-projeto) {
+  animation-duration: 320ms;
+  animation-timing-function: var(--curva-saida);
+}
+
+:root:not(.trocando-tema-circulo)::view-transition-group(root) {
+  animation-duration: 320ms;
+}
+
+/* Receita do guia oficial: com duração zero o conteúdo troca na hora, que é o
+   comportamento padrão do navegador sem transição. */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+}
+
+/* ---------------------------------------------------------------------------
    Troca de tema, pela View Transitions API.
 
    O tema novo entra por um círculo que cresce a partir do botão clicado. O navegador
@@ -1002,6 +1048,16 @@ body {
    A foto antiga fica parada por baixo, por isso `animation: none` nela: sem isso o
    navegador faz um cross-fade padrão que briga com o recorte.
 
+   AS REGRAS EXIGEM A CLASSE `trocando-tema-circulo`, e isso é obrigatório, não estilo.
+   `::view-transition-new(root)` sem qualificação não é regra de troca de tema, é regra de
+   qualquer transição de view. Com a navegação entre páginas usando a mesma API, todo clique
+   em link herdaria o círculo, expandindo a partir das coordenadas do último clique no botão
+   de tema. A classe é posta antes da transição e retirada quando ela termina.
+
+   Se o navegador não casar o seletor, o que acontece é o tema entrar com o cross-fade
+   padrão em vez do círculo. A metade que importa continua garantida: sem a classe, a
+   navegação nunca casa estas regras.
+
    As três variáveis de origem e raio são escritas pelo seletor de tema, em JavaScript,
    porque dependem de onde o botão está na tela naquele momento.
 
@@ -1009,11 +1065,11 @@ body {
    reduzido também: os dois caminhos estão no componente.
    --------------------------------------------------------------------------- */
 
-::view-transition-old(root) {
+:root.trocando-tema-circulo::view-transition-old(root) {
   animation: none;
 }
 
-::view-transition-new(root) {
+:root.trocando-tema-circulo::view-transition-new(root) {
   animation: revelar-tema var(--dur-tema) var(--curva-saida);
 }
 
@@ -1027,81 +1083,112 @@ body {
 }
 
 /* ---------------------------------------------------------------------------
-   As fitas de luz quicam.
+   As fitas de luz.
 
-   UMA ANIMAÇÃO POR EIXO, EM ELEMENTOS ANINHADOS: o invólucro anda no X, a imagem dentro
-   dele anda no Y. Cada uma com dois keyframes e `alternate`.
+   TRÊS NÍVEIS POR FITA, e cada um existe por um motivo diferente:
 
-   ISSO É QUICAR DE VERDADE, e não uma aproximação. Movimento de bola dentro de uma caixa
-   retangular é, matematicamente, duas ondas triangulares independentes, uma por eixo: cada
-   reflexão numa parede vertical inverte o X e não toca no Y, que é exatamente o que
-   `alternate` faz num eixo só. Com `linear` a velocidade é constante e a virada é seca,
-   como em reflexão.
+   - `.fita-cursor` segue o ponteiro, por `transition` e não por animação.
+   - `.fita-eixo-x` anda no eixo X.
+   - a imagem anda no Y e recebe giro, escala e brilho.
 
-   POR QUE NÃO PARECE REPETIR. O `alternate` só retraça o caminho quando os dois eixos têm
-   o mesmo período, que era o defeito da versão anterior, com as duas coordenadas numa
-   animação só. Com períodos coprimos o caminho composto só fecha no mínimo múltiplo comum
-   dos dois ciclos: a fita 1 leva 442 segundos, a 2 leva 418 e a 3 leva 416. E como os três
-   números não são múltiplos entre si, a cena inteira só voltaria à mesma configuração
-   relativa depois de semanas.
+   QUICAR É DUAS ONDAS TRIANGULARES INDEPENDENTES. Movimento de bola dentro de uma caixa
+   retangular é exatamente isso, uma por eixo: reflexão numa parede vertical inverte o X e
+   não toca no Y, que é o que `alternate` faz num eixo só. Com `linear` a velocidade é
+   constante e a virada é seca, como em reflexão. O `alternate` só retraça o caminho quando
+   os dois eixos têm o mesmo período, que era o defeito da primeira versão.
 
-   POR QUE NÃO É JAVASCRIPT. Calcular três posições por quadro é aritmética trivial, mas um
-   laço de requestAnimationFrame obriga a thread principal a acordar a cada 16ms para
-   sempre, recalcular estilo e empurrar para o compositor. Aqui a animação roda inteira no
-   compositor e a thread principal fica livre para a rolagem. É diferença de categoria, não
-   de grau.
+   A IMAGEM TEM QUATRO ANIMAÇÕES AO MESMO TEMPO, e isso não precisa de mais aninhamento
+   porque cada uma mexe numa propriedade diferente: `translate`, `rotate`, `scale` e
+   `opacity`. Todas de compositor. Com períodos longos e sem relação entre si, o conjunto
+   lê como algo vivo.
 
-   AS PAREDES SÃO UMA CAIXA DE AMPLITUDE, e não as bordas do hero. As formas são maiores
-   que a área visível, a maior tem 1500 de largura num contêiner de 1200, e todas são
-   recortadas. Refletir na borda real exigiria deslocar centenas de pixels, e aí o brilho
-   sairia da região que ele foi desenhado para iluminar.
+   VALE DIZER O QUE ISSO NÃO É: nada se deforma. É ilusão construída de transformações
+   rígidas. Deformação real, por `filter`, `border-radius` animado ou filtro SVG, é
+   repintura por quadro de superfície enorme, que é o custo recusado em todo o resto do
+   site. O passo seguinte, se ainda parecer rígido, é quebrar cada luz em manchas
+   sobrepostas que se movem entre si: a união muda de silhueta de verdade e continua sendo
+   só transformação.
 
-   Sem `will-change`: o navegador promove sozinho enquanto a animação roda e libera a
-   memória quando ela pausa.
+   O GIRO DA TERCEIRA FITA PARTE DE 44,49 GRAUS, que é a rotação fixa dela no Figma. O
+   `from` implícito do keyframe pega o valor de base do elemento, então o `to` de cada fita
+   já leva o ângulo inicial embutido.
+
+   O CURSOR NÃO TEM LAÇO POR QUADRO. O JavaScript só escuta `pointermove`, limita a uma
+   escrita por quadro e grava duas variáveis. O atraso não é calculado: é a `transition` do
+   `translate`, que roda no compositor. Parado o mouse, nada roda. E o ouvinte nem é
+   registrado sem ponteiro fino, então em celular o custo é zero.
+
+   Sem `will-change`: o navegador promove sozinho enquanto anima e libera quando pausa.
    --------------------------------------------------------------------------- */
 
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .fita-cursor {
+    translate: calc(var(--mouse-x, 0) * var(--alcance-cursor))
+      calc(var(--mouse-y, 0) * var(--alcance-cursor));
+    transition: translate var(--atraso-cursor-luz) cubic-bezier(0.22, 1, 0.36, 1);
+  }
+}
+
 @media (prefers-reduced-motion: no-preference) {
-  .fita-eixo-x,
-  .fita-eixo-y {
-    animation-timing-function: linear;
-    animation-iteration-count: infinite;
-    animation-direction: alternate;
-  }
-
   .fita-eixo-x {
-    animation-name: fita-anda-x;
-    animation-duration: var(--tempo-x);
+    animation: fita-anda-x var(--tempo-x) linear infinite alternate;
   }
 
-  /* O tempo e o curso do Y são herdados do invólucro, onde os quatro valores da fita
-     ficam juntos. */
   .fita-eixo-y {
-    animation-name: fita-anda-y;
-    animation-duration: var(--tempo-y);
+    animation:
+      fita-anda-y var(--tempo-y) linear infinite alternate,
+      fita-gira var(--tempo-giro) ease-in-out infinite alternate,
+      fita-respira var(--tempo-escala) ease-in-out infinite alternate,
+      fita-brilha var(--tempo-brilho) ease-in-out infinite alternate;
   }
 
-  .fita-eixo-x:nth-child(1) {
+  /* Todos os valores da fita ficam juntos no nível de fora e descem por herança. */
+  .fita-cursor:nth-child(1) {
     --tempo-x: 13s;
     --tempo-y: 17s;
+    --tempo-giro: 41s;
+    --tempo-escala: 29s;
+    --tempo-brilho: 23s;
     --curso-x: 180px;
     --curso-y: -130px;
+    --giro-fim: 6deg;
+    --escala-fim: 1.07;
+    --brilho-fim: 0.78;
+    --alcance-cursor: 46px;
+    --atraso-cursor-luz: 1.5s;
   }
 
-  .fita-eixo-x:nth-child(2) {
+  .fita-cursor:nth-child(2) {
     --tempo-x: 19s;
     --tempo-y: 11s;
+    --tempo-giro: 37s;
+    --tempo-escala: 31s;
+    --tempo-brilho: 19s;
     --curso-x: -180px;
     --curso-y: 140px;
+    --giro-fim: -7deg;
+    --escala-fim: 1.11;
+    --brilho-fim: 0.84;
+    --alcance-cursor: -34px;
+    --atraso-cursor-luz: 1.1s;
   }
 
-  .fita-eixo-x:nth-child(3) {
+  .fita-cursor:nth-child(3) {
     --tempo-x: 16s;
     --tempo-y: 13s;
+    --tempo-giro: 43s;
+    --tempo-escala: 26s;
+    --tempo-brilho: 29s;
     --curso-x: 180px;
     --curso-y: -120px;
+    --giro-fim: 50.5deg;
+    --escala-fim: 1.05;
+    --brilho-fim: 0.72;
+    --alcance-cursor: 28px;
+    --atraso-cursor-luz: 1.9s;
   }
 
-  /* Fora da tela tudo para. Quem alterna o atributo é o PausaForaDaTela. */
+  /* Fora da tela tudo para, e o play-state alcança as quatro animações da imagem. */
   [data-pausar-fora="fora"] .fita-eixo-x,
   [data-pausar-fora="fora"] .fita-eixo-y {
     animation-play-state: paused;
@@ -1117,6 +1204,24 @@ body {
 @keyframes fita-anda-y {
   to {
     translate: 0 var(--curso-y);
+  }
+}
+
+@keyframes fita-gira {
+  to {
+    rotate: var(--giro-fim);
+  }
+}
+
+@keyframes fita-respira {
+  to {
+    scale: var(--escala-fim);
+  }
+}
+
+@keyframes fita-brilha {
+  to {
+    opacity: var(--brilho-fim);
   }
 }
 

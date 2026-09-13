@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { usePathname } from "next/navigation";
 
 /**
  * Pausa animação contínua quando o elemento sai da tela.
@@ -15,8 +16,16 @@ import { useEffect } from "react";
  *
  * Marca o elemento com data-pausar-fora="dentro" ou "fora", e quem lê isso é o CSS, pelo
  * animation-play-state. Nenhum estado em React: o atributo é o estado.
+ *
+ * DEPENDE DO CAMINHO, e isso não é detalhe. Com dependências vazias ele observaria só os
+ * elementos que existiam na montagem. Como o layout persiste entre rotas, sair da home e
+ * voltar traz um hero que é outro nó no DOM, e sem observador ele animaria para sempre,
+ * inclusive fora da tela. Era bug antes de existir transição de página e piora com ela,
+ * porque aí a navegação é toda client-side.
  */
 export default function PausaForaDaTela() {
+  const caminho = usePathname();
+
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
@@ -34,7 +43,8 @@ export default function PausaForaDaTela() {
 
     for (const alvo of alvos) observador.observe(alvo);
     return () => observador.disconnect();
-  }, []);
+    // Refaz na troca de rota, porque os elementos marcados são outros.
+  }, [caminho]);
 
   return null;
 }

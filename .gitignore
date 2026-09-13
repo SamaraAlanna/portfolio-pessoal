@@ -24,6 +24,11 @@
 .DS_Store
 *.pem
 
+# skills de agente
+# O .agents e o skills-lock.json entram no repositório: são a skill e a origem dela.
+# O .claude é onde o instalador expõe a skill para esta máquina, e é artefato local.
+.claude/
+
 # debug
 logs
 *.log

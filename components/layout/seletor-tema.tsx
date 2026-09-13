@@ -111,9 +111,16 @@ export default function SeletorTema() {
     raiz.style.setProperty("--tema-origem-y", `${y}px`);
     raiz.style.setProperty("--tema-raio", `${raio}px`);
 
+    // A classe escopa as regras do círculo. Sem ela, elas valeriam para qualquer transição
+    // de view, inclusive a de navegação entre páginas.
+    raiz.classList.add("trocando-tema-circulo");
+
     // A troca precisa acontecer dentro do callback: é entre a foto do estado anterior e a
     // do novo que o navegador anima.
-    documento.startViewTransition(gravar);
+    const transicao = documento.startViewTransition(gravar);
+    transicao.finished.finally(() => {
+      raiz.classList.remove("trocando-tema-circulo");
+    });
   }
 
   return (

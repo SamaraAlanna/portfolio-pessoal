@@ -1,3 +1,4 @@
+import { ViewTransition } from "react";
 import Link from "next/link";
 import BadgeConstrucao from "@/components/ui/badge-construcao";
 import type { Projeto } from "@/lib/conteudo";
@@ -30,9 +31,15 @@ export default function SecaoCabecalho({ projeto }: { projeto: Projeto }) {
   return (
     <header className="flex flex-col items-start gap-[20px] faixa pt-[36px] pb-[48px]">
       <div className="flex flex-wrap items-center gap-[16px]">
-        <h1 className="text-titulo-case font-extrabold text-text">
-          {projeto.tituloCase ?? projeto.titulo}
-        </h1>
+        <ViewTransition
+          name={`titulo-${projeto.slug}`}
+          share="morph-projeto"
+          default="none"
+        >
+          <h1 className="text-titulo-case font-extrabold text-text">
+            {projeto.tituloCase ?? projeto.titulo}
+          </h1>
+        </ViewTransition>
         {projeto.estado === "em-construcao" ? <BadgeConstrucao /> : null}
       </div>
 

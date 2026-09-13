@@ -152,6 +152,39 @@ card, e não o `tituloCase`: o segundo existe para encurtar na tela, onde a miga
 ficha já dão contexto, e fora da página esse contexto não existe. Um link compartilhado
 chamado "CRUD" não diz nada.
 
+**HSTS vive no `next.config.ts`**, porque o plano Hobby da Vercel não expõe cabeçalho de
+resposta no painel. Está em `max-age` de um ano com `includeSubDomains`, **sem `preload`**.
+O `max-age` é reversível, basta baixar ou zerar que vale na próxima visita de cada pessoa;
+**o preload não é**, porque os navegadores passam a trazer o domínio embutido e a remoção
+depende de ciclo de versão deles. Ele fecha só a janela da primeiríssima visita, antes de o
+cabeçalho ter sido visto uma vez, e para um portfólio isso não paga um compromisso de meses
+sobre todo subdomínio futuro.
+
+**Os outros três cabeçalhos** também vivem lá: `nosniff`, `Referrer-Policy` em
+`strict-origin-when-cross-origin` e proteção contra enquadramento em duas formas,
+`frame-ancestors 'none'` para navegador moderno e `X-Frame-Options: DENY` para os antigos e
+para os scanners. O Referrer-Policy preserva a origem de propósito: é ela que permite ao
+BORDA ver que a visita veio do portfólio, e as URLs do site são slugs públicos sem dado
+sensível.
+
+**A CSP tem uma diretiva só, e isso é completo, não pela metade.** `frame-ancestors` controla
+quem pode embutir o site, e não o que o site carrega. Diretiva não declarada não é aplicada,
+porque não existe `default-src` implícito, então ela não toca em next/image, fonte nem script.
+
+**Uma CSP completa é outro trabalho, e o custo é concreto.** Dois obstáculos reais neste
+projeto: o HTML tem dois scripts inline, o do tema e o payload do RSC, e `script-src` estrito
+pediria nonce, que exige resposta dinâmica e derrubaria a pré-renderização estática das 13
+rotas. E existem atributos `style` inline no hero e no bloco de paleta, que um `style-src`
+estrito quebraria. O resto sairia barato: as fontes são hospedadas localmente pelo
+`next/font`, em `/_next/static/media`, e todas as imagens são do próprio domínio, então
+`'self'` cobriria `font-src` e `img-src`.
+
+**O site mora no domínio raiz, sem www.** O `SITE` do `lib/site.ts` é a raiz, e dele saem
+`metadataBase`, canônicas, `og:url`, sitemap e robots. O www redireciona para a raiz, e isso
+é configurado na Vercel, num lugar só: duplicar em `redirects()` do `next.config.ts` arrisca
+laço. O `includeSubDomains` é o que garante HSTS no www, já que o redirecionamento acontece
+antes da aplicação e a resposta dele não passa pelos cabeçalhos do Next.
+
 **Quando o painel da fase dois entrar, a rota dele precisa ser bloqueada no
 `app/robots.ts`.** E vale lembrar que isso é para não aparecer em busca, e não é
 segurança: quem protege o painel é a autenticação.
@@ -890,6 +923,56 @@ animação CSS roda no compositor e deixa a thread livre. É diferença de categ
 maiores que a área visível e recortadas: refletir na borda real tiraria o brilho da região
 que ele foi desenhado para iluminar. O `components/ui/pausa-fora-da-tela` para tudo quando o
 hero sai da tela.
+
+**A imagem da fita tem quatro animações ao mesmo tempo**, e isso não pede aninhamento porque
+cada uma mexe numa propriedade diferente: `translate`, `rotate`, `scale` e `opacity`. Com
+períodos longos e sem relação entre si, o conjunto lê como algo vivo. **Nada se deforma de
+verdade**: é ilusão feita de transformação rígida, porque deformação real custa repintura
+por quadro de superfície enorme. Se um dia parecer rígido demais, o passo seguinte é quebrar
+cada luz em manchas sobrepostas que se movem entre si.
+
+**As fitas acompanham o ponteiro, e amostragem não é animação.** O
+`components/ui/luz-segue-cursor` só escuta `pointermove`, limita a uma escrita por quadro e
+grava duas variáveis. O atraso é uma `transition` no `translate`, no compositor. Mouse
+parado, nada roda; sem ponteiro fino o ouvinte nem é registrado. Isso é diferente de um laço
+de `requestAnimationFrame`, que acordaria a thread principal a cada 16ms para sempre.
+
+**Os observadores de tela dependem do caminho, e isso é obrigatório.** `RevelarAoRolar`,
+`PausaForaDaTela` e `LuzSegueCursor` vivem no layout, que persiste entre rotas. Com
+dependência vazia eles observariam só os elementos da montagem inicial, e sair da home e
+voltar traz nós novos no DOM. O `PausaForaDaTela` teve exatamente esse bug, corrigido em
+2026-09-13: as luzes animavam para sempre, inclusive fora da tela.
+
+### Transição entre páginas
+
+A capa e o título do card viajam para a página de case, pelo `<ViewTransition>` do React,
+importado de `react`. **Funciona no App Router sem configuração nenhuma**: não instale
+`react@canary` nem ative flag experimental. O par se forma pelo `name` igual dos dois lados,
+`capa-<slug>` e `titulo-<slug>`.
+
+**Cinco dos oito cases não têm `heroCase`**, e neles só o título viaja. O par de capa não se
+forma e degrada bem. Quando o campo for preenchido, o morph passa a funcionar sem tocar em
+código.
+
+**Duas condições da documentação do Next**, que fica em `node_modules/next/dist/docs/`: o
+morph só acontece quando o destino renderiza no mesmo commit da navegação, o que exige rota
+pré-carregada, e **o modo de desenvolvimento não pré-carrega**, então isso só se confere em
+build de produção. Durante a transição o hit-testing pula os elementos nomeados, por isso
+ela dura 320ms.
+
+**O `default="none"` com `share` explícito é o par recomendado**: sem o `share`, o
+`default="none"` desliga o morph em silêncio. É uma das duas armadilhas que o guia oficial
+lista.
+
+**O círculo do tema precisou ser escopado antes disso existir.** As regras estavam escritas
+como `::view-transition-new(root)` sem qualificação, e isso não é regra de troca de tema, é
+regra de qualquer transição de view: toda navegação herdaria o círculo, expandindo a partir
+das coordenadas do último clique no botão de tema. Hoje elas exigem a classe
+`trocando-tema-circulo`, posta e retirada pelo seletor.
+
+**O guia oficial está instalado no repositório**, em `.agents/skills/`, pela skill
+`vercel-react-view-transitions`. Ele traz as receitas de CSS, os padrões e a solução de
+problemas. Leia antes de mexer em transição de view.
 
 **A troca de tema entra por um círculo que nasce no botão clicado**, pela View Transitions
 API. Transição de mesmo documento é Baseline desde outubro de 2025; sem suporte, ou com

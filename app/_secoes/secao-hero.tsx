@@ -14,9 +14,11 @@ import Image from "next/image";
  * currículo: o currículo em inglês existe e está linkado no rodapé.
  *
  * As luzes são decorativas, exportadas do Figma. Ficam com aria-hidden e sem interação.
- * Elas navegam pelo hero e mudam de direção ao tocar o limite. Cada uma é dois elementos:
- * o invólucro anda no eixo X e a imagem anda no Y, com períodos diferentes. O CSS está no
- * app/globals.css, com a explicação de por que isso é quicar de verdade.
+ * Elas navegam pelo hero e mudam de direção ao tocar o limite, giram, respiram e variam de
+ * intensidade, cada coisa no seu período. E acompanham o cursor com atraso.
+ *
+ * Três níveis por fita: o de fora segue o cursor, o do meio anda no eixo X, e a imagem anda
+ * no Y e recebe giro, escala e brilho. O CSS está no app/globals.css.
  */
 export default function SecaoHero() {
   // O hero ocupa a viewport inteira menos a nav.
@@ -46,35 +48,42 @@ export default function SecaoHero() {
       <div
         aria-hidden="true"
         data-pausar-fora="dentro"
+        data-segue-cursor
         className="pointer-events-none absolute inset-0 -z-10 overflow-hidden"
       >
         <div className="relative mx-auto h-full w-full max-w-[var(--largura-maxima)]">
-        <div className="fita-eixo-x absolute top-[-84px] left-[513px] h-[1100px] w-[1500px]">
-          <Image
-            src="/imagens/luz/campo-de-luz.svg"
-            alt=""
-            width={1500}
-            height={1100}
-            className="fita-eixo-y block h-[1100px] w-[1500px] max-w-none"
-          />
+        <div className="fita-cursor absolute top-[-84px] left-[513px] h-[1100px] w-[1500px]">
+          <div className="fita-eixo-x h-full w-full">
+            <Image
+              src="/imagens/luz/campo-de-luz.svg"
+              alt=""
+              width={1500}
+              height={1100}
+              className="fita-eixo-y block h-[1100px] w-[1500px] max-w-none"
+            />
+          </div>
         </div>
-        <div className="fita-eixo-x absolute top-[-86px] left-[640px] h-[780px] w-[760px]">
-          <Image
-            src="/imagens/luz/halo-b.svg"
-            alt=""
-            width={760}
-            height={780}
-            className="fita-eixo-y block h-[780px] w-[760px] max-w-none"
-          />
+        <div className="fita-cursor absolute top-[-86px] left-[640px] h-[780px] w-[760px]">
+          <div className="fita-eixo-x h-full w-full">
+            <Image
+              src="/imagens/luz/halo-b.svg"
+              alt=""
+              width={760}
+              height={780}
+              className="fita-eixo-y block h-[780px] w-[760px] max-w-none"
+            />
+          </div>
         </div>
-        <div className="fita-eixo-x absolute top-[-114px] left-[40px] h-[1403px] w-[1400px]">
-          <Image
-            src="/imagens/luz/halo-a.svg"
-            alt=""
-            width={1400}
-            height={1403}
-            className="fita-eixo-y block h-[1403px] w-[1400px] max-w-none rotate-[44.49deg]"
-          />
+        <div className="fita-cursor absolute top-[-114px] left-[40px] h-[1403px] w-[1400px]">
+          <div className="fita-eixo-x h-full w-full">
+            <Image
+              src="/imagens/luz/halo-a.svg"
+              alt=""
+              width={1400}
+              height={1403}
+              className="fita-eixo-y block h-[1403px] w-[1400px] max-w-none rotate-[44.49deg]"
+            />
+          </div>
         </div>
         </div>
       </div>
