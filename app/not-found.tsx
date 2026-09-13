@@ -36,13 +36,13 @@ export default function NaoEncontrada() {
       <div className="mt-[14px] flex w-full flex-col items-stretch gap-[12px] sm:w-auto sm:flex-row sm:items-center sm:gap-[14px]">
         <Link
           href="/"
-          className="flex items-center justify-center rounded-full bg-accent-rosa px-[26px] py-[15px] text-corpo font-medium whitespace-nowrap text-bg"
+          className="botao-interativo flex items-center justify-center rounded-full bg-accent-rosa px-[26px] py-[15px] text-corpo font-medium whitespace-nowrap text-bg"
         >
           Ir para a home
         </Link>
         <Link
           href="/projetos"
-          className="flex items-center justify-center rounded-full border-[0.5px] border-accent-rosa px-[26px] py-[15px] text-corpo font-medium whitespace-nowrap text-accent-rosa"
+          className="botao-interativo botao-contorno flex items-center justify-center rounded-full border-[0.5px] border-accent-rosa px-[26px] py-[15px] text-corpo font-medium whitespace-nowrap text-accent-rosa"
         >
           Ver os projetos
         </Link>

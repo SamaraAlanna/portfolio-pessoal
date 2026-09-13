@@ -838,6 +838,123 @@ body {
 }
 
 /* ---------------------------------------------------------------------------
+   Digitação do whoami.
+
+   O TEXTO NÃO MUDA DE TAMANHO. Ele ocupa o lugar final desde o primeiro quadro e o que
+   anima é `clip-path`, que abre da esquerda para a direita. A receita clássica de máquina
+   de escrever anima `width` com `steps`, e isso é propriedade de layout mudando a cada
+   passo, que é justamente o que o resto do site evita.
+
+   O `steps` com o número de caracteres é o que faz parecer digitação em vez de cortina:
+   como a fonte é monoespaçada, todo caractere tem a mesma largura e o recorte para na
+   fronteira exata de cada glifo. O número vem do dado, por variável.
+
+   TRÊS MODOS DE FALHA, E OS TRÊS TERMINAM COM O TEXTO VISÍVEL:
+
+   1. Movimento reduzido: o bloco inteiro está dentro de `no-preference`, então não existe
+      animação e os seis valores aparecem completos.
+   2. Sem JavaScript: quem escreve `data-revelar="visivel"` é o observador. Sem ele o
+      atributo fica vazio, o seletor nunca casa e os valores aparecem completos.
+   3. Sem suporte a `steps(var(...))`: a declaração `animation` inteira é descartada como
+      inválida. Como o estado recortado mora só dentro do keyframe, e nunca no estilo base,
+      sobra o texto normal.
+
+   SÓ A PARTIR DE 64rem. Abaixo disso o card fica estreito, os valores longos quebram em
+   duas linhas, e um recorte que abre da esquerda para a direita revela as duas linhas ao
+   mesmo tempo, coluna a coluna.
+
+   O CURSOR fecha a metáfora do terminal, porque sem ele a digitação termina no vazio. Ele
+   nasce invisível e só aparece quando a última linha acaba. Piscar é animação infinita,
+   então ele para quando o bloco sai da tela, pelo mesmo `PausaForaDaTela` das fitas de luz.
+   --------------------------------------------------------------------------- */
+
+.whoami-valor {
+  display: inline-block;
+}
+
+/* Invisível por padrão: é decorativo, e sem animação não tem por que aparecer. */
+.whoami-cursor {
+  display: inline-block;
+  width: 1ch;
+  height: 1em;
+  translate: 0 0.16em;
+  background-color: var(--accent-rosa);
+  opacity: 0;
+}
+
+@media (width >= 64rem) and (prefers-reduced-motion: no-preference) {
+  [data-revelar="visivel"] .whoami-valor {
+    animation: whoami-digita calc(var(--caracteres) * 14ms)
+      steps(var(--caracteres)) var(--atraso-linha) backwards;
+  }
+
+  [data-revelar="visivel"] .whoami-cursor {
+    animation: whoami-pisca 1.1s step-end var(--atraso-cursor) infinite;
+  }
+
+  [data-pausar-fora="fora"] .whoami-cursor {
+    animation-play-state: paused;
+  }
+}
+
+@keyframes whoami-digita {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes whoami-pisca {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  51%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Botão interativo.
+
+   Mesma linguagem do cartão: levante de 2px por `translate`, que o compositor resolve
+   sozinho, e o foco recebe o mesmo, e não só o anel.
+
+   O botão cheio não muda de cor no hover. Clarear ou escurecer o rosa mexeria num valor
+   medido em contraste contra o texto que ele carrega, e não existe token para isso. O
+   levante já dá o retorno.
+
+   O de contorno ganha fundo em `tint-rosa`, que é token que já existe e cujo contraste com
+   o accent já foi medido nos dois temas. Ele vem para a frente sem mudar de cor.
+
+   Só em ponteiro que faz hover de verdade, senão o toque no celular deixa o botão preso no
+   estado depois do clique.
+   --------------------------------------------------------------------------- */
+
+.botao-interativo {
+  transition:
+    translate var(--dur-rapida) var(--curva-saida),
+    background-color var(--dur-rapida) linear;
+}
+
+@media (hover: hover) {
+  .botao-interativo:hover {
+    translate: 0 -2px;
+  }
+
+  .botao-contorno:hover {
+    background-color: var(--tint-rosa);
+  }
+}
+
+.botao-interativo:focus-visible {
+  translate: 0 -2px;
+}
+
+/* ---------------------------------------------------------------------------
    Entrada do painel do menu.
 
    Só a entrada. A saída é instantânea de propósito: animar o fechamento atrasa o retorno

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { SITE, metadataDaPagina } from "@/lib/site";
 import RevelarAoRolar from "@/components/ui/revelar-ao-rolar";
+import PausaForaDaTela from "@/components/ui/pausa-fora-da-tela";
 import { DM_Sans, JetBrains_Mono } from "next/font/google";
 import Nav from "@/components/layout/nav";
 import Footer from "@/components/layout/footer";
@@ -81,6 +82,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         </main>
         <Footer />
         <RevelarAoRolar />
+        <PausaForaDaTela />
       </body>
     </html>
   );

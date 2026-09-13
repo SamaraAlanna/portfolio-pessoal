@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import Link from "next/link";
 import Logo from "@/components/layout/logo";
 import SeletorTema from "@/components/layout/seletor-tema";
-import { linksMenuMobile } from "@/components/layout/links-nav";
+import { linksNav } from "@/components/layout/links-nav";
 
 /**
  * Menu do mobile.
@@ -14,8 +14,6 @@ import { linksMenuMobile } from "@/components/layout/links-nav";
  * O seletor de idioma não entra aqui. Ele vive no hero. O documento dizia o contrário e
  * já foi corrigido.
  *
- * A lista é a do menu mobile, com o Contato, e não a do desktop. Aqui o CTA da nav não
- * existe, então o link é o outro caminho para /contato além do botão do fim do painel.
  *
  * ELE É MODAL, e por isso três coisas andam juntas:
  *
@@ -124,7 +122,7 @@ export default function MenuMobile({
       <div className="h-[23px]" />
 
       <nav aria-label="Principal" className="flex w-full flex-col">
-        {linksMenuMobile.map((link) => {
+        {linksNav.map((link) => {
           const ativo = caminhoAtual === link.destino;
           return (
             <Link
@@ -147,7 +145,7 @@ export default function MenuMobile({
       <Link
         href="/contato"
         onClick={aoFechar}
-        className="flex w-full items-center justify-center rounded-full bg-accent-rosa py-[16px] text-corpo font-medium text-bg"
+        className="botao-interativo flex w-full items-center justify-center rounded-full bg-accent-rosa py-[16px] text-corpo font-medium text-bg"
       >
         Entre em contato
       </Link>

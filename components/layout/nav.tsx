@@ -74,7 +74,7 @@ export default function Nav() {
 
           <Link
             href="/contato"
-            className="rounded-full bg-accent-rosa px-[20px] py-[10px] text-cta font-medium whitespace-nowrap text-bg"
+            className="botao-interativo rounded-full bg-accent-rosa px-[20px] py-[10px] text-cta font-medium whitespace-nowrap text-bg"
           >
             Entre em contato
           </Link>

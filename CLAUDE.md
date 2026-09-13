@@ -622,10 +622,11 @@ Leia do arquivo, mas o resumo do comportamento:
 - Nav vira hambúrguer. Menu abre como painel, não tela cheia, com os cinco links, o
   seletor de tema e o CTA. **O seletor de idioma não fica no menu**, e sim no hero, que é
   onde o Figma o coloca.
-- **O menu mobile tem cinco links e o desktop tem quatro.** O Contato saiu da nav do
-  desktop porque o CTA "Entre em contato" cobre o destino, mas no mobile esse CTA não
-  existe na barra fechada, que é só marca e hambúrguer. Sem o link no menu, o único
-  caminho seria o botão do fim do painel. Por isso `links-nav.ts` exporta duas listas.
+- **Nav e menu mobile usam a mesma lista, com cinco links.** O Contato saiu da nav do
+  desktop por um tempo, porque o CTA "Entre em contato" cobre o destino, e voltou em
+  2026-09-13: link de nav é onde a pessoa procura por hábito, e não achar Contato ali custa
+  mais do que a repetição. Com isso a nav do desktop volta aos oito controles do Figma, e
+  `links-nav.ts` exporta uma lista só.
 - Padding lateral de 120 vira 24.
 - Todo grid de duas ou três colunas vira coluna única, **com duas exceções, e as duas são
   conteúdo comparativo curto**: a ficha técnica do case, que fica em duas colunas de 123,
@@ -845,8 +846,10 @@ painel do menu ou do link de pular.
 
 ### O que anima, e o que não anima
 
-Animam: entrada de bloco ao rolar, hover e foco dos cards, accordion, entrada do menu, o
-hero e a troca de tema. **Não animam:** nav, footer, tags, chips, itens de lista, a troca de
+Animam: entrada de bloco ao rolar, hover e foco dos cards e dos botões, accordion, entrada
+do menu, o hero e a troca de tema. **O botão cheio só levanta, sem mudar de cor**: clarear
+ou escurecer o rosa mexeria num valor medido em contraste contra o texto que ele carrega. O
+de contorno ganha fundo em `tint-rosa`, que é token existente e já medido. **Não animam:** nav, footer, tags, chips, itens de lista, a troca de
 filtro na listagem, que precisa de resposta imediata e brigaria com o `aria-live` da
 contagem, e o corpo de texto dos cases, que é onde a pessoa passa mais tempo lendo.
 
@@ -878,6 +881,15 @@ percebido.
 API. Transição de mesmo documento é Baseline desde outubro de 2025; sem suporte, ou com
 movimento reduzido, cai na transição de cor que já existia. As variáveis de origem e raio
 são escritas pelo componente, porque dependem de onde o botão está na tela.
+
+**O whoami da home é digitado**, e a técnica é a mesma ideia do resto: o texto ocupa o
+lugar final desde o primeiro quadro e o que anima é `clip-path`. A receita clássica de
+máquina de escrever anima `width` com `steps`, e isso é propriedade de layout mudando a
+cada passo. O `steps` com o número de caracteres, que vem do dado por variável, faz o
+recorte parar na fronteira de cada glifo, e isso só funciona porque a fonte é monoespaçada.
+**Só a partir de 64rem**, porque abaixo disso os valores longos quebram em duas linhas e o
+recorte revelaria as duas ao mesmo tempo. O cursor pisca e para quando o bloco sai da tela,
+pelo mesmo `PausaForaDaTela` das fitas de luz, que por isso subiu do hero para o layout.
 
 **Um bloco por case é a prova visual**, marcado no conteúdo com `prova="true"`. **Uma por
 case: se houver duas marcadas, vale a primeira.** Hoje são o código do Bajaj, a paleta do

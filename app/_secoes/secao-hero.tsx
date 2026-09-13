@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { CURRICULO } from "@/lib/site";
 import Image from "next/image";
-import PausaForaDaTela from "@/components/ui/pausa-fora-da-tela";
 
 /**
  * Hero da home.
@@ -128,13 +127,13 @@ export default function SecaoHero() {
           <div className="flex w-full flex-col items-stretch gap-[12px] lg:w-auto lg:flex-row lg:items-center lg:gap-[14px]">
             <Link
               href="/sobre"
-              className="flex items-center justify-center rounded-full bg-accent-rosa px-[26px] py-[15px] text-corpo font-medium whitespace-nowrap text-bg"
+              className="botao-interativo flex items-center justify-center rounded-full bg-accent-rosa px-[26px] py-[15px] text-corpo font-medium whitespace-nowrap text-bg"
             >
               Quem sou eu
             </Link>
             <Link
               href={CURRICULO.pt}
-              className="flex items-center justify-center rounded-full border-[0.5px] border-accent-rosa px-[26px] py-[15px] text-corpo font-medium whitespace-nowrap text-accent-rosa"
+              className="botao-interativo botao-contorno flex items-center justify-center rounded-full border-[0.5px] border-accent-rosa px-[26px] py-[15px] text-corpo font-medium whitespace-nowrap text-accent-rosa"
             >
               Baixar CV
             </Link>
@@ -175,7 +174,6 @@ export default function SecaoHero() {
           </pre>
         </div>
       </div>
-      <PausaForaDaTela />
     </section>
   );
 }

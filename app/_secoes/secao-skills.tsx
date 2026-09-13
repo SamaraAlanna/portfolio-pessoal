@@ -35,6 +35,7 @@ const codigo = [
   "Git, GitHub Actions e deploy automatizado",
   "Validação e segurança sem biblioteca externa",
   "Debug de produção com análise de causa raiz",
+  "Claude e Claude Code no processo de desenvolvimento",
 ];
 
 export default function SecaoSkills() {
