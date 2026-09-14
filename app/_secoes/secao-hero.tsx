@@ -50,7 +50,7 @@ export default function SecaoHero() {
         className="pointer-events-none absolute inset-0 -z-10 overflow-hidden"
       >
         <div className="relative mx-auto h-full w-full max-w-[var(--largura-maxima)]">
-          {[1, 2, 3].map((numero) => (
+          {[1, 2, 3, 4].map((numero) => (
             <div key={numero} className={`luz luz-${numero}`}>
               <div className="luz-eixo-x">
                 <div className="luz-eixo-y">

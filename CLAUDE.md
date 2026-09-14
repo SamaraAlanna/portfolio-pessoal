@@ -918,14 +918,40 @@ que ser pequena e o movimento ficava quase parado. **A saída foi encolher a for
 encolher o deslocamento.**
 
 **A paleta é a dos SVG, lida dos arquivos**: violeta `#5B21B6`, violeta `#7C3AED` e magenta
-`#D82F9E`. Mudou a geometria, não a cor. A opacidade de cada mancha é menor que a do arquivo
+`#D82F9E`. Mudou a geometria, não a cor. **Uma quarta luz em `accent-rosa` entrou em
+2026-09-14**, porque com três formas roxas a cena ficava dominada por roxo.
+
+**O alfa do rosa é medido, e não estimado.** O que importa não é o número do alfa, é quanto
+a luz levanta a luminância do fundo. Sobre o `--bg` escuro, o roxo mais forte da cena,
+`#7C3AED` a 0,50, levanta 0,0352; o rosa `#e6b7d3` levantaria o mesmo com alfa 0,237, porque
+é muito mais claro de partida. Em 0,18 ele fica em torno de 63% do levante do mais forte:
+presente e claramente não dominante. **Cor clara pede alfa menor, e a conta é essa.**
+
+**A quarta luz é menor e fica no canto superior direito**, que era a região vazia: o roxo se
+concentra em cima à esquerda, pela luz 1, e embaixo à direita, pela luz 3. Ela é acento, não
+uma quarta massa igual.
+
+**As manchas da luz 4 têm `animation-delay` negativo**, senão as quatro luzes respirariam no
+mesmo compasso, porque todas as animações partem do carregamento da página. As três
+primeiras continuam em fase entre si, o que é pouco perceptível porque os pais delas se
+movem diferente, mas é o mesmo truque se um dia incomodar. A opacidade de cada mancha é menor que a do arquivo
 original porque três se sobrepõem, e é a soma que precisa bater com a intensidade de antes.
 Como agora a cor está em CSS, dar valores por tema passou a ser trivial, o que antes exigia
 dois arquivos.
 
-**Nada de `filter: blur`.** O gradiente radial já termina em transparente, então o desfoque
-está na própria pintura e é rasterizado uma vez. Animar raio de desfoque seria repintura por
-quadro de superfície grande.
+**A queda do gradiente é `(1 - t²)³`, e não linear.** O primeiro desenho ia da cor cheia até
+`transparent` em duas paradas, parando em 70% do raio, e no ponto de parada a inclinação
+saltava de negativa para zero. O olho lê descontinuidade de inclinação como contorno, e as
+manchas apareciam como elipses recortadas em vez de luz. Esta curva chega a zero com
+inclinação também zero, então não existe ponto onde a queda termina. São onze paradas
+amostrando a curva, o que de quebra reduz o banding. **As paradas terminam na mesma cor com
+alfa zero**, e não na palavra `transparent`, para o matiz não desviar perto da borda.
+
+**O `filter: blur` voltou, e é estático.** A distinção que importa: animar o raio, ou mover
+conteúdo dentro de um elemento desfocado, obriga o filtro a ser reavaliado a cada quadro, e
+isso continua proibido. Desfoque fixo numa mancha que só é transformada é rasterizado uma
+vez. Por isso ele está em cada mancha e não no grupo: no grupo ficaria por cima de três
+filhos que se movem, que é o caso caro. É o primeiro botão a remover se algo engasgar.
 
 **Quicar é duas ondas triangulares independentes.** Uma por eixo, em elementos separados:
 reflexão numa parede vertical inverte o X e não toca no Y, que é o que `alternate` faz num

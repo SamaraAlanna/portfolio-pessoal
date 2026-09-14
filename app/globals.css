@@ -1334,6 +1334,69 @@ body {
   --atraso-cursor-luz: 1.9s;
 }
 
+/* Rosa, para a cena não ficar dominada por roxo. É o `accent-rosa` do sistema.
+
+   O ALFA É MENOS DA METADE DO DOS ROXOS, e isso é medido, não estimado. O que importa não
+   é o número do alfa, é quanto a luz levanta a luminância do fundo. Sobre o `--bg` escuro,
+   o roxo mais forte da cena, #7C3AED a 0,50, levanta 0,0352. O rosa #e6b7d3 levantaria o
+   mesmo com alfa 0,237, porque ele é muito mais claro de partida. Em 0,18 ele fica em
+   torno de 63% do levante do mais forte: presente, e claramente não dominante.
+
+   A proporção entre as três manchas é a mesma das outras luzes, 1 para 0,83 para 0,72,
+   então a soma da união mantém a mesma relação.
+
+   POSIÇÃO NO CANTO SUPERIOR DIREITO, que é a região que sobrava. O roxo se concentra em
+   cima à esquerda, pela luz 1, e embaixo à direita, pela luz 3. Esta fecha a diagonal.
+
+   Menor que as outras, de propósito: ela é acento, não uma quarta massa igual. */
+.luz-4 {
+  --tamanho: clamp(240px, 34vw, 440px);
+  --base-x: 62%;
+  --base-y: 2%;
+  --paradas-1:
+    rgb(230 183 211 / 0.18) 0%,
+    rgb(230 183 211 / 0.1747) 10%,
+    rgb(230 183 211 / 0.1593) 20%,
+    rgb(230 183 211 / 0.1356) 30%,
+    rgb(230 183 211 / 0.1067) 40%,
+    rgb(230 183 211 / 0.0759) 50%,
+    rgb(230 183 211 / 0.0472) 60%,
+    rgb(230 183 211 / 0.0239) 70%,
+    rgb(230 183 211 / 0.0084) 80%,
+    rgb(230 183 211 / 0.0012) 90%,
+    rgb(230 183 211 / 0.0) 100%;
+  --paradas-2:
+    rgb(230 183 211 / 0.15) 0%,
+    rgb(230 183 211 / 0.1455) 10%,
+    rgb(230 183 211 / 0.1327) 20%,
+    rgb(230 183 211 / 0.113) 30%,
+    rgb(230 183 211 / 0.0889) 40%,
+    rgb(230 183 211 / 0.0633) 50%,
+    rgb(230 183 211 / 0.0393) 60%,
+    rgb(230 183 211 / 0.0199) 70%,
+    rgb(230 183 211 / 0.007) 80%,
+    rgb(230 183 211 / 0.001) 90%,
+    rgb(230 183 211 / 0.0) 100%;
+  --paradas-3:
+    rgb(230 183 211 / 0.13) 0%,
+    rgb(230 183 211 / 0.1261) 10%,
+    rgb(230 183 211 / 0.115) 20%,
+    rgb(230 183 211 / 0.098) 30%,
+    rgb(230 183 211 / 0.0771) 40%,
+    rgb(230 183 211 / 0.0548) 50%,
+    rgb(230 183 211 / 0.0341) 60%,
+    rgb(230 183 211 / 0.0172) 70%,
+    rgb(230 183 211 / 0.0061) 80%,
+    rgb(230 183 211 / 0.0009) 90%,
+    rgb(230 183 211 / 0.0) 100%;
+  --tempo-x: 13s;
+  --tempo-y: 43s;
+  --tempo-giro: 59s;
+  --giro-fim: -26deg;
+  --alcance-cursor: -20px;
+  --atraso-cursor-luz: 1.3s;
+}
+
 @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
   .luz {
     translate: calc(var(--mouse-x, 0) * var(--alcance-cursor))
@@ -1388,6 +1451,12 @@ body {
     --desliza-x: 7%;
     --desliza-y: 10%;
     --escala-fim: 1.05;
+  }
+
+  /* As manchas da luz 4 começam fora de fase. Sem isso as quatro luzes respirariam no
+     mesmo compasso, porque todas as animações partem do carregamento da página. */
+  .luz-4 .mancha {
+    animation-delay: -7s, -11s;
   }
 
   /* Fora da tela tudo para, e o play-state alcança as animações de cada elemento. */
