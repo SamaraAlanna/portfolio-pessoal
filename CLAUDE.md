@@ -918,14 +918,21 @@ que ser pequena e o movimento ficava quase parado. **A saída foi encolher a for
 encolher o deslocamento.**
 
 **A paleta é a dos SVG, lida dos arquivos**: violeta `#5B21B6`, violeta `#7C3AED` e magenta
-`#D82F9E`. Mudou a geometria, não a cor. **Uma quarta luz em `accent-rosa` entrou em
+`#D82F9E`. Mudou a geometria, não a cor. **Uma quarta luz, em magenta `#D82F9E`, entrou em
 2026-09-14**, porque com três formas roxas a cena ficava dominada por roxo.
 
-**O alfa do rosa é medido, e não estimado.** O que importa não é o número do alfa, é quanto
-a luz levanta a luminância do fundo. Sobre o `--bg` escuro, o roxo mais forte da cena,
-`#7C3AED` a 0,50, levanta 0,0352; o rosa `#e6b7d3` levantaria o mesmo com alfa 0,237, porque
-é muito mais claro de partida. Em 0,18 ele fica em torno de 63% do levante do mais forte:
-presente e claramente não dominante. **Cor clara pede alfa menor, e a conta é essa.**
+**O alfa é medido, e não estimado.** O que importa não é o número do alfa, é quanto a luz
+levanta a luminância do fundo. Sobre o `--bg` escuro, `#0c0c0b`, o roxo mais forte da cena,
+`#7C3AED` a 0,50, levanta 0,0352. O magenta a 0,40 levanta 0,0317, que é 90% disso. **O 0,40
+não foi escolhido no olho:** é exatamente o pico que o magenta já tem dentro da luz 3, então
+é um valor que a cena já contém.
+
+**O `accent-rosa` do sistema foi testado nesse lugar e não serve.** O `#e6b7d3` é rosa
+pastel, com luminância 0,554 contra 0,191 do magenta. Ele funciona como texto e como acento
+pequeno, mas como massa de luz clareia demais e rouba a atenção: pela mesma conta ele
+empataria com o roxo mais forte já em alfa 0,237, menos da metade, e ainda leria como o
+elemento mais claro da tela. **Cor clara pede alfa menor, e quando o alfa fica pequeno
+demais a massa perde a cor e vira véu.**
 
 **A quarta luz é menor e fica no canto superior direito**, que era a região vazia: o roxo se
 concentra em cima à esquerda, pela luz 1, e embaixo à direita, pela luz 3. Ela é acento, não

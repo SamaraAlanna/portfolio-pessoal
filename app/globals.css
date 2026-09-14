@@ -1334,16 +1334,24 @@ body {
   --atraso-cursor-luz: 1.9s;
 }
 
-/* Rosa, para a cena não ficar dominada por roxo. É o `accent-rosa` do sistema.
+/* Magenta, para a cena não ficar dominada por roxo. É o mesmo `#D82F9E` que a luz 3 já
+   usa, então a família é a mesma e a composição não clareia.
 
-   O ALFA É MENOS DA METADE DO DOS ROXOS, e isso é medido, não estimado. O que importa não
-   é o número do alfa, é quanto a luz levanta a luminância do fundo. Sobre o `--bg` escuro,
-   o roxo mais forte da cena, #7C3AED a 0,50, levanta 0,0352. O rosa #e6b7d3 levantaria o
-   mesmo com alfa 0,237, porque ele é muito mais claro de partida. Em 0,18 ele fica em
-   torno de 63% do levante do mais forte: presente, e claramente não dominante.
+   O ALFA É MEDIDO, E NÃO ESTIMADO. O que importa não é o número do alfa, é quanto a luz
+   levanta a luminância do fundo. Sobre o `--bg` escuro, o roxo mais forte da cena,
+   #7C3AED a 0,50, levanta 0,0352. O magenta a 0,40 levanta 0,0317, que é 90% disso: um par
+   dos roxos, e não um dominador.
 
-   A proporção entre as três manchas é a mesma das outras luzes, 1 para 0,83 para 0,72,
-   então a soma da união mantém a mesma relação.
+   O 0,40 não foi escolhido no olho: é exatamente o pico que o magenta já tem dentro da luz
+   3, então é um valor que a cena já contém e que se sabe que funciona.
+
+   POR QUE NÃO O `accent-rosa` DO SISTEMA. O #e6b7d3 é rosa pastel, com luminância 0,554
+   contra 0,191 do magenta. Ele funciona como texto e como acento pequeno, mas como massa de
+   luz clareia demais e rouba a atenção. Pela mesma conta ele precisaria de alfa 0,237 para
+   empatar com o roxo mais forte, menos da metade, e ainda assim leria como o elemento mais
+   claro da tela.
+
+   A proporção entre as três manchas é a mesma das outras luzes, 1 para 0,83 para 0,72.
 
    POSIÇÃO NO CANTO SUPERIOR DIREITO, que é a região que sobrava. O roxo se concentra em
    cima à esquerda, pela luz 1, e embaixo à direita, pela luz 3. Esta fecha a diagonal.
@@ -1354,41 +1362,41 @@ body {
   --base-x: 62%;
   --base-y: 2%;
   --paradas-1:
-    rgb(230 183 211 / 0.18) 0%,
-    rgb(230 183 211 / 0.1747) 10%,
-    rgb(230 183 211 / 0.1593) 20%,
-    rgb(230 183 211 / 0.1356) 30%,
-    rgb(230 183 211 / 0.1067) 40%,
-    rgb(230 183 211 / 0.0759) 50%,
-    rgb(230 183 211 / 0.0472) 60%,
-    rgb(230 183 211 / 0.0239) 70%,
-    rgb(230 183 211 / 0.0084) 80%,
-    rgb(230 183 211 / 0.0012) 90%,
-    rgb(230 183 211 / 0.0) 100%;
+    rgb(216 47 158 / 0.4) 0%,
+    rgb(216 47 158 / 0.3881) 10%,
+    rgb(216 47 158 / 0.3539) 20%,
+    rgb(216 47 158 / 0.3014) 30%,
+    rgb(216 47 158 / 0.2371) 40%,
+    rgb(216 47 158 / 0.1688) 50%,
+    rgb(216 47 158 / 0.1049) 60%,
+    rgb(216 47 158 / 0.0531) 70%,
+    rgb(216 47 158 / 0.0187) 80%,
+    rgb(216 47 158 / 0.0027) 90%,
+    rgb(216 47 158 / 0.0) 100%;
   --paradas-2:
-    rgb(230 183 211 / 0.15) 0%,
-    rgb(230 183 211 / 0.1455) 10%,
-    rgb(230 183 211 / 0.1327) 20%,
-    rgb(230 183 211 / 0.113) 30%,
-    rgb(230 183 211 / 0.0889) 40%,
-    rgb(230 183 211 / 0.0633) 50%,
-    rgb(230 183 211 / 0.0393) 60%,
-    rgb(230 183 211 / 0.0199) 70%,
-    rgb(230 183 211 / 0.007) 80%,
-    rgb(230 183 211 / 0.001) 90%,
-    rgb(230 183 211 / 0.0) 100%;
+    rgb(216 47 158 / 0.33) 0%,
+    rgb(216 47 158 / 0.3202) 10%,
+    rgb(216 47 158 / 0.292) 20%,
+    rgb(216 47 158 / 0.2487) 30%,
+    rgb(216 47 158 / 0.1956) 40%,
+    rgb(216 47 158 / 0.1392) 50%,
+    rgb(216 47 158 / 0.0865) 60%,
+    rgb(216 47 158 / 0.0438) 70%,
+    rgb(216 47 158 / 0.0154) 80%,
+    rgb(216 47 158 / 0.0023) 90%,
+    rgb(216 47 158 / 0.0) 100%;
   --paradas-3:
-    rgb(230 183 211 / 0.13) 0%,
-    rgb(230 183 211 / 0.1261) 10%,
-    rgb(230 183 211 / 0.115) 20%,
-    rgb(230 183 211 / 0.098) 30%,
-    rgb(230 183 211 / 0.0771) 40%,
-    rgb(230 183 211 / 0.0548) 50%,
-    rgb(230 183 211 / 0.0341) 60%,
-    rgb(230 183 211 / 0.0172) 70%,
-    rgb(230 183 211 / 0.0061) 80%,
-    rgb(230 183 211 / 0.0009) 90%,
-    rgb(230 183 211 / 0.0) 100%;
+    rgb(216 47 158 / 0.29) 0%,
+    rgb(216 47 158 / 0.2814) 10%,
+    rgb(216 47 158 / 0.2566) 20%,
+    rgb(216 47 158 / 0.2185) 30%,
+    rgb(216 47 158 / 0.1719) 40%,
+    rgb(216 47 158 / 0.1223) 50%,
+    rgb(216 47 158 / 0.076) 60%,
+    rgb(216 47 158 / 0.0385) 70%,
+    rgb(216 47 158 / 0.0135) 80%,
+    rgb(216 47 158 / 0.002) 90%,
+    rgb(216 47 158 / 0.0) 100%;
   --tempo-x: 13s;
   --tempo-y: 43s;
   --tempo-giro: 59s;
