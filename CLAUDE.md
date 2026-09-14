@@ -1107,11 +1107,28 @@ inclinação também zero, então não existe ponto onde a queda termina. São o
 amostrando a curva, o que de quebra reduz o banding. **As paradas terminam na mesma cor com
 alfa zero**, e não na palavra `transparent`, para o matiz não desviar perto da borda.
 
-**O `filter: blur` voltou, e é estático.** A distinção que importa: animar o raio, ou mover
-conteúdo dentro de um elemento desfocado, obriga o filtro a ser reavaliado a cada quadro, e
-isso continua proibido. Desfoque fixo numa mancha que só é transformada é rasterizado uma
-vez. Por isso ele está em cada mancha e não no grupo: no grupo ficaria por cima de três
-filhos que se movem, que é o caso caro. É o primeiro botão a remover se algo engasgar.
+**Nada de `filter: blur`, e ele já esteve ali.** Um `blur(30px)` foi acrescentado como
+seguro contra banding e **removido em 2026-09-14**, quando a rolagem do hero para a folha
+começou a engasgar.
+
+**O motivo é área, e não raio.** Um desfoque de 30px sangra cerca de 90px para cada lado, e
+a região filtrada de cada mancha fica 180px maior que a mancha. Somando as doze, a textura
+ia de 51 para 92 MB no desktop a DPR 2, e de 33 para 88 MB num celular a DPR 3, onde ela
+quase triplica, porque o sangramento é fixo em pixels CSS e a densidade de tela é maior.
+Somando: as manchas animam `scale`, que muda a resolução que a textura precisa ter, e em
+camada filtrada isso obriga a rodar o desfoque de novo em vez de só compor a textura pronta.
+
+**O gradiente não precisa dele.** Quem matou a borda dura foi a curva `(1 - t²)³` com onze
+paradas; o desfoque protegia só contra banding. **Se o banding aparecer, a saída é mais
+paradas na curva, e não trazer o filtro de volta.**
+
+**Como diagnosticar engasgo nas luzes, se voltar.** São 20 camadas promovidas, cinco por
+luz: os dois invólucros de eixo, que são baratos porque não pintam nada, e as três manchas,
+que carregam textura. No DevTools: *Rendering → Paint flashing* durante a rolagem diz se elas
+estão sendo repintadas ou só compostas, e o painel *Layers* dá a memória de cada uma. **A
+sentinela do `PausaForaDaTela` não ajuda nesse caso:** ela desliga as luzes depois que a
+folha cobre o hero, e o engasgo acontece durante a rolagem, quando elas precisam estar
+visíveis. O custo precisa cair, não ser adiado.
 
 **Quicar é duas ondas triangulares independentes.** Uma por eixo, em elementos separados:
 reflexão numa parede vertical inverte o X e não toca no Y, que é o que `alternate` faz num

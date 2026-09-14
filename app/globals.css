@@ -1325,16 +1325,21 @@ body {
    AS PARADAS TERMINAM NA MESMA COR COM ALFA ZERO, e não na palavra `transparent`. É a
    garantia de que o matiz não desvia perto da borda, em qualquer espaço de interpolação.
 
-   `filter: blur` VOLTOU, e é desfoque estático. A distinção que importa: animar o raio, ou
-   mover conteúdo dentro de um elemento desfocado, obriga o filtro a ser reavaliado a cada
-   quadro, e isso continua proibido. Desfoque fixo numa mancha que só é transformada é
-   rasterizado uma vez e depois o compositor só move a textura. `scale` pode pedir
-   rasterização nova de vez em quando, e por isso a amplitude dele foi reduzida.
+   NADA DE `filter: blur`, E ELE JÁ ESTEVE AQUI. Um `blur(30px)` foi acrescentado como
+   seguro contra banding e removido em 2026-09-14, quando a rolagem do hero para a folha
+   começou a engasgar.
 
-   O desfoque está em cada mancha, e não no grupo. No grupo ele ficaria por cima de três
-   filhos que se movem, que é exatamente o caso caro. Ele é o botão para remover primeiro se
-   algo engasgar: a curva sozinha já resolve o contorno, e o desfoque é seguro contra
-   banding.
+   O motivo é área, e não raio. Um desfoque de 30px sangra cerca de 90px para cada lado, e a
+   região filtrada de cada mancha fica 180px maior que a mancha. Somando as doze, a textura
+   ia de 51 para 92 MB no desktop a DPR 2, e de 33 para 88 MB num celular a DPR 3, onde ela
+   quase triplica porque o sangramento é fixo em pixels CSS e a densidade de tela é maior.
+
+   E as manchas animam `scale`, que muda a resolução que a textura precisa ter: em camada
+   filtrada isso significa rodar o desfoque de novo, em vez de só compor a textura pronta.
+
+   O gradiente não precisa dele. Quem matou a borda dura foi a curva `(1 - t²)³` com onze
+   paradas, e não o desfoque: ele protegia só contra banding. Se o banding aparecer, a saída
+   é mais paradas na curva, e não trazer o filtro de volta.
 
    QUICAR É DUAS ONDAS TRIANGULARES INDEPENDENTES, uma por eixo, em elementos separados.
    Reflexão numa parede vertical inverte o X e não toca no Y, que é o que `alternate` faz
@@ -1369,7 +1374,6 @@ body {
 .mancha {
   position: absolute;
   border-radius: 50%;
-  filter: blur(30px);
 }
 
 /* Três manchas por luz, com tamanhos, recortes e proporções diferentes. É a diferença
