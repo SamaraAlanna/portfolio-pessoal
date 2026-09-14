@@ -30,12 +30,22 @@
   --surface-2: #171716;
   --border: #f0ede814; /* --text a 8% */
 
-  /* Borda de campo de formulário, e só dela. Campo é componente interativo, e o limite de
-     um componente interativo precisa de 3:1. A --border comum dá 1,19 aqui, o que é
-     adequado para card, onde ela é decoração e o card se identifica pelo fundo, e
-     insuficiente para um campo, que só se identifica pela borda. Medida no pior caso, que
-     é sobre o --surface-2. */
-  --border-campo: #66635f; /* 3,00 sobre --surface-2, 3,16 sobre --surface */
+  /* Borda que precisa ser vista, medida em 3:1.
+
+     O CRITÉRIO DE QUAL DAS DUAS USAR: a --border comum é decoração. Ela delimita card, e
+     card se identifica pelo próprio fundo, então 1,2 basta ali e é de propósito. Use a
+     --border-forte quando a borda é o único sinal, ou seja quando sem ela a coisa some.
+     São dois casos até agora: limite de componente interativo, como campo de formulário e
+     botão de contorno neutro, e fronteira entre duas superfícies da mesma cor, como o
+     filete da folha que sobe sobre o hero.
+
+     CONTRASTE DECIDE SE A LINHA EXISTE, ESPESSURA DECIDE O PESO DELA. As duas coisas são
+     independentes, e trocar uma pela outra é o erro comum: engrossar uma linha fraca deixa
+     um borrão largo em vez de uma linha. O filete da folha tem 3,3 de contraste e 0,5px de
+     espessura, e é fino e nítido ao mesmo tempo.
+
+     Medida no pior caso, que é sobre o --surface-2. */
+  --border-forte: #66635f; /* 3,00 sobre --surface-2, 3,16 sobre --surface */
 
   /* Texto em três níveis distintos: principal, secundário, terciário.
      ATENÇÃO ANTES DE MEXER: o --text-dim está encostado no piso do AA. Sobre o
@@ -300,7 +310,7 @@
     --surface: #ffffff;
     --surface-2: #ebe6df;
     --border: #1a18151a;
-    --border-campo: #86837f;
+    --border-forte: #86837f;
 
     --text: #1a1815;
     --text-muted: #534e4a;
@@ -330,7 +340,7 @@
   --surface: #ffffff;
   --surface-2: #ebe6df;
   --border: #1a18151a; /* --text a 10% */
-  --border-campo: #86837f; /* 3,04 sobre --surface-2, 3,77 sobre --surface */
+  --border-forte: #86837f; /* 3,04 sobre --surface-2, 3,77 sobre --surface */
 
   --text: #1a1815; /* 15,87 sobre --bg */
   --text-muted: #534e4a; /* 7,36 sobre --bg, 6,62 sobre --surface-2 */
@@ -376,7 +386,7 @@
   --color-surface: var(--surface);
   --color-surface-2: var(--surface-2);
   --color-border: var(--border);
-  --color-border-campo: var(--border-campo);
+  --color-border-forte: var(--border-forte);
 
   --color-text: var(--text);
   --color-text-muted: var(--text-muted);
@@ -1030,11 +1040,11 @@ body {
      do hero, fechamento do Sobre.
    - `.botao-contorno`, borda e texto accent: ação secundária de alta intenção, hoje só o
      "Baixar CV".
-   - `.botao-neutro`, borda `--border-campo` e texto `--text`: navegação. Os três links de
+   - `.botao-neutro`, borda `--border-forte` e texto `--text`: navegação. Os três links de
      seção, que são "veja mais disto" e não ação. Tratá-los como o "Baixar CV" diria que
      baixar um currículo e ir para a listagem pesam igual, e não pesam.
 
-   O `--border-campo` foi criado para borda de campo de formulário e ficou sem uso quando o
+   O `--border-forte` foi criado para borda de campo de formulário e ficou sem uso quando o
    formulário saiu. Ele serve aqui pelo mesmo motivo que existia lá: **borda é o que
    identifica componente sem preenchimento, e limite de componente interativo precisa de
    3:1**. Ele dá 3,28 no escuro e 3,38 no claro sobre o `--bg`. A `--border` comum ficaria
@@ -1042,7 +1052,7 @@ body {
 
    OS TRÊS NÃO RESPONDEM IGUAL, E ISSO É O PONTO. O cheio levanta e escurece, porque é a
    ação principal. O de contorno só ganha fundo, sem levante. O neutro só afia a borda, de
-   `--border-campo` para `--text`. Se todos se comportassem igual, a hierarquia se perderia
+   `--border-forte` para `--text`. Se todos se comportassem igual, a hierarquia se perderia
    no hover. Fundo neutro no hover do terceiro não serviria: `--surface` e `--surface-2`
    ficam a menos de 1,2 do `--bg` e o estado seria invisível.
 
@@ -1066,7 +1076,7 @@ body {
 
 /* Navegação não reivindica a cor de ação. */
 .botao-neutro {
-  border-color: var(--border-campo);
+  border-color: var(--border-forte);
   color: var(--text);
 }
 
@@ -1259,10 +1269,10 @@ body {
      Com a borda, a posição intermediária deixa de ser o pior estado do efeito e vira o
      melhor: é o único momento em que dá para ver que são duas superfícies.
 
-     O FILETE USA `--border-campo`, E NÃO A `--border` COMUM. Aqui os dois lados têm a mesma
+     O FILETE USA `--border-forte`, E NÃO A `--border` COMUM. Aqui os dois lados têm a mesma
      cor, então a linha é o único sinal, e precisa ser vista. A `--border` fica em 1,2 sobre
      o `--bg`, que basta quando há troca de fundo ajudando, como no topo do rodapé, e não
-     basta quando ela é sozinha. O `--border-campo` dá 3,28 no escuro e 3,38 no claro.
+     basta quando ela é sozinha. O `--border-forte` dá 3,28 no escuro e 3,38 no claro.
      Contraste decide se a linha existe; espessura decide o peso dela, e por isso ela
      continua com 0,5px.
 
@@ -1275,7 +1285,7 @@ body {
   .hero-folha {
     position: relative;
     z-index: 1;
-    border-top: 0.5px solid var(--border-campo);
+    border-top: 0.5px solid var(--border-forte);
     border-start-start-radius: 24px;
     border-start-end-radius: 24px;
     background-color: var(--bg);

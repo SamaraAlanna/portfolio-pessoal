@@ -113,7 +113,7 @@ sugerida, para a próxima sessão saber de onde continuar sem reabrir tudo.
 - **Passo 9, feito.** Estrutura de cabeçalhos refeita, link de pular no `app/layout.tsx`,
   menu mobile virou modal de verdade, formulário ligado ao aviso de envio, e os três
   accents do tema claro escurecidos para passar em AA sobre o `surface-2`. Token
-  `--border-campo` criado para a borda de campo de formulário.
+  `--border-forte` criado para borda que precisa ser vista, medida em 3:1.
 - **Nav fixa no topo**, com fundo opaco. O `body` ganha `padding-top` e o `html` ganha
   `scroll-padding-top`, os dois pelo token de altura da nav.
 - **Pacote de publicação, feito.** `lib/site.ts` guarda o endereço, o nome e a imagem de
@@ -729,15 +729,16 @@ no primeiro commit do repositório, então dá para recuperar por `git show`. O 
   site, Identidade visual, Vaga ou processo seletivo, Parceria, Outro assunto. A ordem
   importa, o primeiro é o pedido mais comum e o último cobre o resto.
 - **Rótulo** em mono, `text-titlebar` com `tracking-titlebar`, em `text-text-muted`.
-- **Campo**: `rounded-[8px]`, `border-[0.5px] border-border-campo`, `bg-surface`,
+- **Campo**: `rounded-[8px]`, `border-[0.5px] border-border-forte`, `bg-surface`,
   `px-[18px] py-[16px]`, `text-corpo`, placeholder em `text-text-dim`.
 - **Acessibilidade**: `h2` só para leitor de tela ligado ao `form` por `aria-labelledby`, e
   o botão desabilitado ligado ao aviso por `aria-describedby`, senão a pessoa encontra um
   botão morto sem saber por quê.
 
-**O token `--border-campo` ficou sem uso e foi mantido de propósito.** Ele existe porque
-campo é componente interativo e o limite de um precisa de 3:1, e os valores foram medidos
-contra o pior fundo. Apagar agora custaria refazer essa medição quando o formulário voltar.
+**O campo usa `--border-forte`**, que é o token de borda que precisa ser vista. Quando o
+formulário saiu ele ficou sem uso e foi mantido de propósito, e depois ganhou dois usos
+novos, o botão de contorno neutro e o filete da folha do hero. O critério de quando usar ele
+está na seção de acessibilidade.
 
 **Currículo:** PDF vai para o repositório, também via API do GitHub, em base64.
 **Limite de 5 MB no upload**, porque arquivo grande entra no histórico do Git e não sai.
@@ -937,10 +938,27 @@ de acessibilidade: `#b64388`, `#804fd8` e `#36787d` davam 4,08, 4,20 e 4,09 sobr
 `surface-2` até resolver o levaria a `#f6f1e9`, que dá 1,01 sobre o `bg` e faz a camada
 deixar de existir.
 
-**Existe um token só para borda de campo de formulário, o `--border-campo`.** Campo é
-componente interativo e o limite de um precisa de 3:1, enquanto a `--border` comum fica em
-1,2 de propósito, porque em card ela é decoração e o card se identifica pelo fundo. Isso
-deixa os campos do contato mais visíveis que no Figma, e é intencional.
+### As duas bordas, e quando usar cada uma
+
+**`--border` é decoração.** Ela delimita card, e card se identifica pelo próprio fundo, então
+1,2 de contraste basta e é de propósito.
+
+**`--border-forte` é borda que precisa ser vista, medida em 3:1.** O critério é esse: use ela
+quando a borda é o **único** sinal, ou seja quando sem ela a coisa some. Dois casos até
+agora, e o token nasceu no primeiro:
+
+- **Limite de componente interativo**, que precisa de 3:1 por acessibilidade. Campo de
+  formulário e o botão de contorno neutro.
+- **Fronteira entre duas superfícies da mesma cor**, como o filete da folha que sobe sobre o
+  hero, onde os dois lados são `--bg`.
+
+Ele se chamava `--border-campo` e foi renomeado em 2026-09-14, quando ganhou o segundo uso e
+ficou claro que o nome descrevia um caso e não o critério.
+
+**CONTRASTE DECIDE SE A LINHA EXISTE, ESPESSURA DECIDE O PESO DELA.** As duas coisas são
+independentes, e trocar uma pela outra é o erro comum: engrossar uma linha fraca deixa um
+borrão largo em vez de uma linha. O filete da folha tem 3,3 de contraste e 0,5px de
+espessura, e é fino e nítido ao mesmo tempo. Vale para qualquer linha do projeto.
 
 ---
 
@@ -990,11 +1008,11 @@ do menu, o hero e a troca de tema.
 | --- | --- | --- |
 | `.botao-cheio` | fundo accent | o que o site quer que a pessoa faça |
 | `.botao-contorno` | borda e texto accent | ação secundária de alta intenção, hoje só o CV |
-| `.botao-neutro` | borda `--border-campo`, texto `--text` | navegação, os links de seção |
+| `.botao-neutro` | borda `--border-forte`, texto `--text` | navegação, os links de seção |
 
 **Os três não respondem igual, e isso é o ponto.** O cheio levanta e escurece o fundo, pelo
 token `--accent-rosa-hover`. O de contorno só ganha fundo em `tint-rosa`, sem levante. O
-neutro só afia a borda, de `--border-campo` para `--text`. Se todos se comportassem igual, a
+neutro só afia a borda, de `--border-forte` para `--text`. Se todos se comportassem igual, a
 hierarquia se perderia no hover. Fundo neutro no hover do terceiro não serviria: `--surface`
 e `--surface-2` ficam a menos de 1,2 do `--bg` e o estado seria invisível.
 
@@ -1002,7 +1020,7 @@ e `--surface-2` ficam a menos de 1,2 do `--bg` e o estado seria invisível.
 ordem no arquivo. Exclusão obrigaria toda variante nova a lembrar de entrar numa lista de
 `:not`, e ordem quebra quando alguém reordena o CSS.
 
-**O `--border-campo` voltou a ter uso.** Ele foi criado para borda de campo de formulário,
+**O `--border-forte` voltou a ter uso.** Ele foi criado para borda de campo de formulário,
 ficou parado quando o formulário saiu, e serve no botão neutro pelo mesmo motivo: borda é o
 que identifica componente sem preenchimento, e limite de componente interativo precisa de
 3:1. Ele dá 3,28 no escuro e 3,38 no claro sobre o `--bg`, contra 1,2 da `--border` comum,
@@ -1139,7 +1157,7 @@ que ele existe.
    intermediária deixa de ser o pior estado do efeito e vira o melhor**, porque é o único
    momento em que dá para ver que são duas superfícies.
 
-   **O filete usa `--border-campo` e não a `--border` comum.** Aqui os dois lados têm a mesma
+   **O filete usa `--border-forte` e não a `--border` comum.** Aqui os dois lados têm a mesma
    cor, então a linha é o único sinal e precisa ser vista: 3,28 no escuro e 3,38 no claro,
    contra 1,2 da `--border`. Ela funciona nos dois temas sozinha, ficando mais clara que o
    fundo no escuro e mais escura no claro. **Contraste decide se a linha existe; espessura
@@ -1147,9 +1165,8 @@ que ele existe.
    que numa borda de 1440px de largura não se vê, e acima de uns 32 a folha lê como cartão
    flutuante.
 
-   **`--border-campo` passou a ter dois usos**, a borda de campo e o filete da folha, e o
-   nome ficou estreito para o que ele significa: borda que precisa ser vista, a 3:1. Se um
-   dia for renomeado, os dois usos e a seção do formulário no painel mudam junto.
+   **O filete usa `--border-forte`**, que é o token de borda que precisa ser vista. O
+   critério de quando usar ele em vez da `--border` comum está na seção de acessibilidade.
 
 1. **A folha de cima precisa de fundo opaco, `z-index`, largura de borda a borda e uma tela
    de altura.** A skills era transparente e o fundo vinha do `body`. E ela tinha a `faixa`
