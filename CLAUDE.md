@@ -902,40 +902,50 @@ novo, e nada anima na primeira pintura.
 O conteúdo geral não compete com a leitura. Três lugares fogem disso de propósito, porque o
 custo é baixo e o ganho é alto.
 
-**No hero, só as fitas de luz se movem.** A troca de fonte do título e a entrada do cartão
+**No hero, só as luzes se movem.** A troca de fonte do título e a entrada do cartão
 do tokens.css existiram e foram removidas em 2026-09-13: os dois nascem prontos. Nada mais
 anima na carga da página.
 
-**As fitas quicam, e quicar é duas ondas triangulares independentes.** Cada fita é dois
-elementos: o invólucro anda no eixo X, a imagem anda no Y, cada um com dois keyframes,
-`linear` e `alternate`. Não é aproximação de reflexão, é a definição dela: reflexão numa
-parede vertical inverte o X e não toca no Y. **O `alternate` só retraça o caminho quando os
-dois eixos têm o mesmo período**, que era o defeito da primeira versão, com as duas
-coordenadas numa animação só. Com períodos coprimos o caminho composto leva de 416 a 442
-segundos para fechar, e como os três números não são múltiplos entre si a cena só se repete
-depois de semanas.
+**Cada luz do hero é a união de três manchas**, e não uma forma só. É daí que vem a
+silhueta orgânica: cada mancha é um gradiente radial que termina em transparente, e enquanto
+elas deslizam e respiram uma sobre a outra o contorno da união muda de verdade. Nenhuma se
+deforma; a soma sim.
 
-**Não use JavaScript para isso.** A conta é trivial, mas um laço de `requestAnimationFrame`
-obriga a thread principal a acordar a cada 16ms para sempre, numa página feita para rolar. A
-animação CSS roda no compositor e deixa a thread livre. É diferença de categoria.
+**Os SVG do Figma saíram de uso em 2026-09-13, e os arquivos continuam em
+`public/imagens/luz/`.** Eles tinham 1800 e 1285 de largura, maiores que a área visível e
+recortados. Objeto que preenche o quadro não tem para onde viajar, então a amplitude tinha
+que ser pequena e o movimento ficava quase parado. **A saída foi encolher a forma em vez de
+encolher o deslocamento.**
 
-**As paredes são uma caixa de amplitude, e não as bordas do hero**, porque as formas são
-maiores que a área visível e recortadas: refletir na borda real tiraria o brilho da região
-que ele foi desenhado para iluminar. O `components/ui/pausa-fora-da-tela` para tudo quando o
-hero sai da tela.
+**A paleta é a dos SVG, lida dos arquivos**: violeta `#5B21B6`, violeta `#7C3AED` e magenta
+`#D82F9E`. Mudou a geometria, não a cor. A opacidade de cada mancha é menor que a do arquivo
+original porque três se sobrepõem, e é a soma que precisa bater com a intensidade de antes.
+Como agora a cor está em CSS, dar valores por tema passou a ser trivial, o que antes exigia
+dois arquivos.
 
-**A imagem da fita tem quatro animações ao mesmo tempo**, e isso não pede aninhamento porque
-cada uma mexe numa propriedade diferente: `translate`, `rotate`, `scale` e `opacity`. Com
-períodos longos e sem relação entre si, o conjunto lê como algo vivo. **Nada se deforma de
-verdade**: é ilusão feita de transformação rígida, porque deformação real custa repintura
-por quadro de superfície enorme. Se um dia parecer rígido demais, o passo seguinte é quebrar
-cada luz em manchas sobrepostas que se movem entre si.
+**Nada de `filter: blur`.** O gradiente radial já termina em transparente, então o desfoque
+está na própria pintura e é rasterizado uma vez. Animar raio de desfoque seria repintura por
+quadro de superfície grande.
 
-**As fitas acompanham o ponteiro, e amostragem não é animação.** O
+**Quicar é duas ondas triangulares independentes.** Uma por eixo, em elementos separados:
+reflexão numa parede vertical inverte o X e não toca no Y, que é o que `alternate` faz num
+eixo só. O `alternate` só retraçaria o caminho se os dois eixos tivessem o mesmo período,
+que era o defeito da primeira versão.
+
+**O curso é simétrico em volta da posição de base, e isso é acessibilidade.** Com movimento
+reduzido não existe animação, a luz fica na base, e a base precisa ser uma composição boa.
+Se o curso fosse de zero para um lado só, o estado parado seria o canto. O curso usa `vw` e
+`dvh` porque o hero tem a altura da viewport menos a nav.
+
+**Não use JavaScript para o movimento.** A conta é trivial, mas um laço de
+`requestAnimationFrame` obriga a thread principal a acordar a cada 16ms para sempre, numa
+página feita para rolar. A animação CSS roda no compositor. É diferença de categoria.
+
+**O cursor é secundário, e a proporção diz isso**: o movimento próprio percorre centenas de
+pixels, o ponteiro desloca algumas dezenas. Mouse parado, as luzes continuam navegando. O
 `components/ui/luz-segue-cursor` só escuta `pointermove`, limita a uma escrita por quadro e
-grava duas variáveis. O atraso é uma `transition` no `translate`, no compositor. Mouse
-parado, nada roda; sem ponteiro fino o ouvinte nem é registrado. Isso é diferente de um laço
-de `requestAnimationFrame`, que acordaria a thread principal a cada 16ms para sempre.
+grava duas variáveis; o atraso é uma `transition` no `translate`. Sem ponteiro fino o ouvinte
+nem é registrado.
 
 **Os observadores de tela dependem do caminho, e isso é obrigatório.** `RevelarAoRolar`,
 `PausaForaDaTela` e `LuzSegueCursor` vivem no layout, que persiste entre rotas. Com
@@ -986,7 +996,7 @@ cada passo. O `steps` com o número de caracteres, que vem do dado por variável
 recorte parar na fronteira de cada glifo, e isso só funciona porque a fonte é monoespaçada.
 **Só a partir de 64rem**, porque abaixo disso os valores longos quebram em duas linhas e o
 recorte revelaria as duas ao mesmo tempo. O cursor pisca e para quando o bloco sai da tela,
-pelo mesmo `PausaForaDaTela` das fitas de luz, que por isso subiu do hero para o layout.
+pelo mesmo `PausaForaDaTela` das luzes do hero, que por isso subiu do hero para o layout.
 
 **Um bloco por case é a prova visual**, marcado no conteúdo com `prova="true"`. **Uma por
 case: se houver duas marcadas, vale a primeira.** Hoje são o código do Bajaj, a paleta do

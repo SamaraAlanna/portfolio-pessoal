@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { CURRICULO } from "@/lib/site";
-import Image from "next/image";
 
 /**
  * Hero da home.
@@ -14,11 +13,13 @@ import Image from "next/image";
  * currículo: o currículo em inglês existe e está linkado no rodapé.
  *
  * As luzes são decorativas, exportadas do Figma. Ficam com aria-hidden e sem interação.
- * Elas navegam pelo hero e mudam de direção ao tocar o limite, giram, respiram e variam de
- * intensidade, cada coisa no seu período. E acompanham o cursor com atraso.
+ * As luzes são decorativas e não têm interação. Elas navegam pelo hero inteiro, mudam de
+ * direção ao chegar no limite, e a silhueta delas muda enquanto andam, porque cada luz é a
+ * união de três manchas que deslizam uma sobre a outra.
  *
- * Três níveis por fita: o de fora segue o cursor, o do meio anda no eixo X, e a imagem anda
- * no Y e recebe giro, escala e brilho. O CSS está no app/globals.css.
+ * Quatro níveis por luz: o de fora segue o cursor, o seguinte anda no eixo X, o terceiro
+ * anda no Y e gira, e dentro dele ficam as três manchas. A cor e a explicação de cada
+ * decisão estão no app/globals.css.
  */
 export default function SecaoHero() {
   // O hero ocupa a viewport inteira menos a nav.
@@ -36,15 +37,12 @@ export default function SecaoHero() {
           A de fora recorta, e não a seção: a seção contém links e botões, e recortar um
           ancestral de elemento focável cortaria o anel de foco.
 
-          A de dentro é uma faixa centralizada, com a mesma largura máxima do conteúdo. As
-          luzes foram desenhadas em relação ao texto, com a mancha atrás do título e a
-          diagonal cruzando o hero. Ancoradas na borda da tela, em monitor largo elas
-          ficariam à esquerda do texto e o efeito se perderia. */}
-      {/* As três luzes levam largura E altura em classe, e não só as props. O preflight do
-          Tailwind aplica height:auto em toda img, e com só uma das duas dimensões
-          sobrescrita pelo CSS o next/image avisa no console a cada carga. Fixar as duas
-          encerra o aviso e deixa a medida do Figma explícita, que é o que estas luzes
-          precisam: elas são decorativas e não escalam com o conteúdo. */}
+          A de dentro é uma faixa centralizada, com a mesma largura máxima do conteúdo, como
+          manda a regra de decoração ancorar no conteúdo e não na viewport. Ancoradas na
+          borda da tela, em monitor largo as luzes escorregariam para longe do texto.
+
+          CADA LUZ É UM GRUPO DE TRÊS MANCHAS, e não uma imagem. O que muda de silhueta é a
+          união delas deslizando uma sobre a outra. A explicação está no app/globals.css. */}
       <div
         aria-hidden="true"
         data-pausar-fora="dentro"
@@ -52,39 +50,17 @@ export default function SecaoHero() {
         className="pointer-events-none absolute inset-0 -z-10 overflow-hidden"
       >
         <div className="relative mx-auto h-full w-full max-w-[var(--largura-maxima)]">
-        <div className="fita-cursor absolute top-[-84px] left-[513px] h-[1100px] w-[1500px]">
-          <div className="fita-eixo-x h-full w-full">
-            <Image
-              src="/imagens/luz/campo-de-luz.svg"
-              alt=""
-              width={1500}
-              height={1100}
-              className="fita-eixo-y block h-[1100px] w-[1500px] max-w-none"
-            />
-          </div>
-        </div>
-        <div className="fita-cursor absolute top-[-86px] left-[640px] h-[780px] w-[760px]">
-          <div className="fita-eixo-x h-full w-full">
-            <Image
-              src="/imagens/luz/halo-b.svg"
-              alt=""
-              width={760}
-              height={780}
-              className="fita-eixo-y block h-[780px] w-[760px] max-w-none"
-            />
-          </div>
-        </div>
-        <div className="fita-cursor absolute top-[-114px] left-[40px] h-[1403px] w-[1400px]">
-          <div className="fita-eixo-x h-full w-full">
-            <Image
-              src="/imagens/luz/halo-a.svg"
-              alt=""
-              width={1400}
-              height={1403}
-              className="fita-eixo-y block h-[1403px] w-[1400px] max-w-none rotate-[44.49deg]"
-            />
-          </div>
-        </div>
+          {[1, 2, 3].map((numero) => (
+            <div key={numero} className={`luz luz-${numero}`}>
+              <div className="luz-eixo-x">
+                <div className="luz-eixo-y">
+                  <span className="mancha" />
+                  <span className="mancha" />
+                  <span className="mancha" />
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
