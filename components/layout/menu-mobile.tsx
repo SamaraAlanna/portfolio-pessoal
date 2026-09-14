@@ -145,7 +145,7 @@ export default function MenuMobile({
       <Link
         href="/contato"
         onClick={aoFechar}
-        className="botao-interativo flex w-full items-center justify-center rounded-full bg-accent-rosa py-[16px] text-corpo font-medium text-bg"
+        className="botao-interativo botao-cheio flex w-full items-center justify-center rounded-full bg-accent-rosa py-[16px] text-corpo font-medium text-bg"
       >
         Entre em contato
       </Link>

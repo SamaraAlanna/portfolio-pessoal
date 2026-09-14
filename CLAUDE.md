@@ -982,10 +982,41 @@ painel do menu ou do link de pular.
 ### O que anima, e o que não anima
 
 Animam: entrada de bloco ao rolar, hover e foco dos cards e dos botões, accordion, entrada
-do menu, o hero e a troca de tema. **Os dois tipos de botão não respondem igual, e isso é o
-ponto.** O primário levanta e escurece o fundo, pelo token `--accent-rosa-hover`; o de
-contorno só ganha fundo em `tint-rosa`, sem levante. Botão primário é a ação principal e
-responde mais, senão a hierarquia que a cor estabelece se perde no hover.
+do menu, o hero e a troca de tema.
+
+**O botão tem três níveis, e a regra é que a cor accent fica reservada para ação:**
+
+| Classe | Visual | Para quê |
+| --- | --- | --- |
+| `.botao-cheio` | fundo accent | o que o site quer que a pessoa faça |
+| `.botao-contorno` | borda e texto accent | ação secundária de alta intenção, hoje só o CV |
+| `.botao-neutro` | borda `--border-campo`, texto `--text` | navegação, os links de seção |
+
+**Os três não respondem igual, e isso é o ponto.** O cheio levanta e escurece o fundo, pelo
+token `--accent-rosa-hover`. O de contorno só ganha fundo em `tint-rosa`, sem levante. O
+neutro só afia a borda, de `--border-campo` para `--text`. Se todos se comportassem igual, a
+hierarquia se perderia no hover. Fundo neutro no hover do terceiro não serviria: `--surface`
+e `--surface-2` ficam a menos de 1,2 do `--bg` e o estado seria invisível.
+
+**Cada variante é selecionada pela própria classe**, e não por exclusão das outras nem por
+ordem no arquivo. Exclusão obrigaria toda variante nova a lembrar de entrar numa lista de
+`:not`, e ordem quebra quando alguém reordena o CSS.
+
+**O `--border-campo` voltou a ter uso.** Ele foi criado para borda de campo de formulário,
+ficou parado quando o formulário saiu, e serve no botão neutro pelo mesmo motivo: borda é o
+que identifica componente sem preenchimento, e limite de componente interativo precisa de
+3:1. Ele dá 3,28 no escuro e 3,38 no claro sobre o `--bg`, contra 1,2 da `--border` comum,
+que é decoração de card e faria um botão invisível.
+
+**Os três links de seção da home são botões, e não texto com seta.** "Ver stack completa",
+"Todos os projetos" e "Minha trajetória completa", todos neutros, todos na mesma grade de
+duas linhas: ao lado do rótulo no desktop, depois do conteúdo no mobile. **As outras setas
+do site não são links de seção e ficam como estão:** a migalha do case, o próximo projeto,
+o "Ver o case" dentro do card da Tech Girls, as pílulas do BORDA e as setas do
+`bloco-diagrama`.
+
+O botão neutro tem 45px de altura, com 10 de padding, 24 de entrelinha e 1 de borda, então
+não precisa de `alvo-toque-vertical`.
 
 **O escurecimento é token medido, e não filtro de brilho**, porque é cor sobre a qual texto
 é lido. O texto do botão é o `--bg`: 8,49 sobre o hover no escuro e 6,42 no claro, contra

@@ -44,9 +44,9 @@ export default function SecaoTrabalhos() {
 
       <Link
         href="/projetos"
-        className="alvo-toque-vertical text-corpo font-medium text-text lg:col-start-2 lg:row-start-1 lg:justify-self-end"
+        className="botao-interativo botao-neutro flex items-center justify-center rounded-full border-[0.5px] px-[22px] py-[10px] text-corpo font-medium whitespace-nowrap lg:col-start-2 lg:row-start-1 lg:justify-self-end"
       >
-        Todos os projetos <span className="text-accent-rosa">&rarr;</span>
+        Todos os projetos
       </Link>
     </section>
   );

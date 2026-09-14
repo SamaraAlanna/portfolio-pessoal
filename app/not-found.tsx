@@ -36,7 +36,7 @@ export default function NaoEncontrada() {
       <div className="mt-[14px] flex w-full flex-col items-stretch gap-[12px] sm:w-auto sm:flex-row sm:items-center sm:gap-[14px]">
         <Link
           href="/"
-          className="botao-interativo flex items-center justify-center rounded-full bg-accent-rosa px-[26px] py-[15px] text-corpo font-medium whitespace-nowrap text-bg"
+          className="botao-interativo botao-cheio flex items-center justify-center rounded-full bg-accent-rosa px-[26px] py-[15px] text-corpo font-medium whitespace-nowrap text-bg"
         >
           Ir para a home
         </Link>

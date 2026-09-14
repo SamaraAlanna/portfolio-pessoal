@@ -1,3 +1,4 @@
+import Link from "next/link";
 import AcordeaoMobile from "@/components/ui/acordeao-mobile";
 
 /**
@@ -49,12 +50,15 @@ export default function SecaoSkills() {
     // do hero apareciam nas bordas. A `faixa` desceu para o conteúdo: o fundo vai de borda
     // a borda, o texto continua na medida de sempre.
     <section className="hero-folha flex min-h-[calc(100svh-var(--altura-nav))] flex-col justify-center py-[104px]">
-      <div className="flex flex-col gap-[40px] faixa">
-        <h2 className="font-mono text-rotulo-secao font-medium text-accent-rosa">
+      {/* Mesma grade das seções de trabalhos e sobre mim: rótulo e botão na mesma linha
+          no desktop, botão depois do conteúdo no mobile. São três seções fazendo a mesma
+          coisa, e fazer a mesma coisa de três jeitos seria pior que o custo desta grade. */}
+      <div className="grid grid-cols-1 gap-y-[40px] faixa lg:grid-cols-[1fr_auto] lg:items-center">
+        <h2 className="font-mono text-rotulo-secao font-medium text-accent-rosa lg:col-start-1 lg:row-start-1">
           O QUE EU FAÇO
         </h2>
 
-        <div className="flex flex-col items-start lg:flex-row">
+        <div className="flex flex-col items-start lg:col-span-2 lg:row-start-2 lg:flex-row">
           <div className="flex w-full flex-col items-start lg:flex-1 lg:gap-[16px] lg:pr-[56px]">
             <AcordeaoMobile
               padraoAberto
@@ -109,6 +113,13 @@ export default function SecaoSkills() {
             </AcordeaoMobile>
           </div>
         </div>
+
+        <Link
+          href="/stack"
+          className="botao-interativo botao-neutro flex items-center justify-center rounded-full border-[0.5px] px-[22px] py-[10px] text-corpo font-medium whitespace-nowrap lg:col-start-2 lg:row-start-1 lg:justify-self-end"
+        >
+          Ver stack completa
+        </Link>
       </div>
     </section>
   );

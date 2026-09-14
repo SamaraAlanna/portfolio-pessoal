@@ -921,19 +921,34 @@ body {
    Mesma linguagem do cartão: levante de 2px por `translate`, que o compositor resolve
    sozinho, e o foco recebe o mesmo, e não só o anel.
 
-   OS DOIS NÃO RESPONDEM IGUAL, E ISSO É O PONTO. Botão primário é a ação principal e
-   responde mais: levanta e escurece o fundo. O de contorno só ganha fundo, sem levante. Se
-   os dois se comportassem igual, a hierarquia que a cor estabelece se perderia no hover.
+   TRÊS NÍVEIS, E A REGRA É QUE A COR ACCENT FICA RESERVADA PARA AÇÃO:
 
-   O escurecimento do primário usa o token `--accent-rosa-hover`, medido no Figma, e não um
-   filtro de brilho. É cor sobre a qual texto é lido, então precisava ser medida.
+   - `.botao-cheio`, fundo accent: o que o site quer que a pessoa faça. CTA da nav, entrada
+     do hero, fechamento do Sobre.
+   - `.botao-contorno`, borda e texto accent: ação secundária de alta intenção, hoje só o
+     "Baixar CV".
+   - `.botao-neutro`, borda `--border-campo` e texto `--text`: navegação. Os três links de
+     seção, que são "veja mais disto" e não ação. Tratá-los como o "Baixar CV" diria que
+     baixar um currículo e ir para a listagem pesam igual, e não pesam.
 
-   O de contorno ganha `tint-rosa`, token que já existe e cujo contraste com o accent já
-   foi medido nos dois temas.
+   O `--border-campo` foi criado para borda de campo de formulário e ficou sem uso quando o
+   formulário saiu. Ele serve aqui pelo mesmo motivo que existia lá: **borda é o que
+   identifica componente sem preenchimento, e limite de componente interativo precisa de
+   3:1**. Ele dá 3,28 no escuro e 3,38 no claro sobre o `--bg`. A `--border` comum ficaria
+   em 1,2, que é decoração de card: um botão delimitado por ela seria um botão invisível.
 
-   O primário é selecionado por `:not(.botao-contorno)`, e não por ordem no arquivo: os
-   dois seletores teriam a mesma especificidade e quem chegasse depois venceria, o que é o
-   tipo de dependência que quebra quando alguém reordena o arquivo.
+   OS TRÊS NÃO RESPONDEM IGUAL, E ISSO É O PONTO. O cheio levanta e escurece, porque é a
+   ação principal. O de contorno só ganha fundo, sem levante. O neutro só afia a borda, de
+   `--border-campo` para `--text`. Se todos se comportassem igual, a hierarquia se perderia
+   no hover. Fundo neutro no hover do terceiro não serviria: `--surface` e `--surface-2`
+   ficam a menos de 1,2 do `--bg` e o estado seria invisível.
+
+   O escurecimento do cheio usa o token `--accent-rosa-hover`, medido, e não um filtro de
+   brilho. É cor sobre a qual texto é lido, então precisava ser medida.
+
+   CADA VARIANTE É SELECIONADA PELA PRÓPRIA CLASSE, e não por exclusão das outras nem por
+   ordem no arquivo. Exclusão obrigaria cada variante nova a se lembrar de entrar na lista
+   de `:not`, e ordem quebra quando alguém reordena o arquivo.
 
    Só em ponteiro que faz hover de verdade, senão o toque no celular deixa o botão preso no
    estado depois do clique.
@@ -942,11 +957,18 @@ body {
 .botao-interativo {
   transition:
     translate var(--dur-rapida) var(--curva-saida),
-    background-color var(--dur-rapida) linear;
+    background-color var(--dur-rapida) linear,
+    border-color var(--dur-rapida) linear;
+}
+
+/* Navegação não reivindica a cor de ação. */
+.botao-neutro {
+  border-color: var(--border-campo);
+  color: var(--text);
 }
 
 @media (hover: hover) {
-  .botao-interativo:not(.botao-contorno):hover {
+  .botao-cheio:hover {
     translate: 0 -2px;
     background-color: var(--accent-rosa-hover);
   }
@@ -954,16 +976,24 @@ body {
   .botao-contorno:hover {
     background-color: var(--tint-rosa);
   }
+
+  .botao-neutro:hover {
+    border-color: var(--text);
+  }
 }
 
 /* O foco espelha o hover, para quem navega por teclado receber a mesma hierarquia. */
-.botao-interativo:not(.botao-contorno):focus-visible {
+.botao-cheio:focus-visible {
   translate: 0 -2px;
   background-color: var(--accent-rosa-hover);
 }
 
 .botao-contorno:focus-visible {
   background-color: var(--tint-rosa);
+}
+
+.botao-neutro:focus-visible {
+  border-color: var(--text);
 }
 
 /* ---------------------------------------------------------------------------

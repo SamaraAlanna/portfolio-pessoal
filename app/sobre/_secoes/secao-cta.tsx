@@ -15,7 +15,7 @@ export default function SecaoCta() {
       </p>
       <Link
         href="/contato"
-        className="botao-interativo mt-[32px] rounded-full bg-accent-rosa px-[30px] py-[16px] text-corpo font-medium text-bg"
+        className="botao-interativo botao-cheio mt-[32px] rounded-full bg-accent-rosa px-[30px] py-[16px] text-corpo font-medium text-bg"
       >
         Falar comigo
       </Link>

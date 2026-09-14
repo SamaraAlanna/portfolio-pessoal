@@ -111,7 +111,7 @@ export default function SecaoHero() {
           <div className="flex w-full flex-col items-stretch gap-[12px] lg:w-auto lg:flex-row lg:items-center lg:gap-[14px]">
             <Link
               href="/sobre"
-              className="botao-interativo flex items-center justify-center rounded-full bg-accent-rosa px-[26px] py-[15px] text-corpo font-medium whitespace-nowrap text-bg"
+              className="botao-interativo botao-cheio flex items-center justify-center rounded-full bg-accent-rosa px-[26px] py-[15px] text-corpo font-medium whitespace-nowrap text-bg"
             >
               Quem sou eu
             </Link>

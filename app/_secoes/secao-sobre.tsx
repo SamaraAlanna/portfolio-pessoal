@@ -137,9 +137,9 @@ export default function SecaoSobre() {
 
       <Link
         href="/sobre"
-        className="alvo-toque-vertical text-corpo font-medium text-text lg:col-start-2 lg:row-start-1 lg:justify-self-end"
+        className="botao-interativo botao-neutro flex items-center justify-center rounded-full border-[0.5px] px-[22px] py-[10px] text-corpo font-medium whitespace-nowrap lg:col-start-2 lg:row-start-1 lg:justify-self-end"
       >
-        Minha trajetória completa <span className="text-accent-rosa">&rarr;</span>
+        Minha trajetória completa
       </Link>
     </section>
   );
