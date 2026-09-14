@@ -1216,23 +1216,24 @@ recorte parar na fronteira de cada glifo, e isso só funciona porque a fonte é 
 recorte revelaria as duas ao mesmo tempo. O cursor pisca e para quando o bloco sai da tela,
 pelo mesmo `PausaForaDaTela` das luzes do hero, que por isso subiu do hero para o layout.
 
-**A capa do card de destaque da home abre por cortina**, da esquerda para a direita, por
-`clip-path`. A direção é decisão: a capa é paisagem, então o eixo longo dá espaço ao
-movimento; a grade é assimétrica e a abertura termina apontando para os três cards da
-direita; e ela se distingue da varredura do Bajaj, que é vertical e significa código sendo
-escrito. **Se a casa inteira usar a mesma cortina, ela para de significar alguma coisa.**
+**Os cards de trabalhos da home entram pelos lados**, e a assimetria da grade é o assunto:
+o card grande vem da esquerda, os três empilhados vêm da direita. Não é fila, são dois lados
+montando a grade. **Uma cortina por `clip-path` na capa foi tentada antes e descartada.**
 
-**A regra vive na capa e o escopo é a seção.** Ela pega qualquer capa que passe a existir na
-seção de trabalhos, sem ninguém lembrar de marcar card novo, e não pega as oito da listagem.
-**Hoje existe uma capa na home:** o card compacto é só texto, então só o destaque tem
-imagem. Recortar os compactos foi descartado porque recorte sobre texto corta glifo pela
-metade, e glifo cortado lê como defeito; no bloco de código do Bajaj funciona porque código
-aparecendo linha a linha é o que se espera de código.
+**Escalonamento de 80ms, e este é o único lugar da home com escalonamento.** Com quatro
+elementos o deslocamento total é de 240ms, curto o bastante para ler como um movimento só.
+Abaixo de 50ms a sequência vira simultâneo; acima de 120ms o último chega tarde e o olho
+espera, que é onde o efeito envelhece.
 
-**A seção mantém o `data-revelar` e a cortina é sequenciada depois dele**, com atraso. Aqui
-o fade fica, ao contrário da skills, e a diferença é essa: na skills o deslize **era** a
-entrada da seção inteira, e aqui a cortina é detalhe de um elemento dentro de uma seção que
-tem rótulo, botão e quatro cards. Sem o fade, todo o resto entraria seco.
+**A seção não faz mais a própria entrada.** O `data-revelar` continua, porque é ele que o
+observador enxerga e é o gatilho, mas o fade padrão está cancelado ali, como nos blocos de
+prova dos cases. Somar os dois daria deslocamento vertical da seção ao mesmo tempo que
+horizontal dos cards, e a diagonal resultante não é gesto nenhum. **O rótulo e o botão ficam
+sem animação de propósito:** eles são a moldura, os cards são o conteúdo.
+
+**A animação vai no card, e o `cartao-interativo` usa `translate` no hover.** Não colidem,
+porque sem `fill-mode: forwards` o valor volta ao normal no fim. Durante os 640ms da entrada
+o levante não responde, o que ninguém alcança a tempo.
 
 **Um bloco por case é a prova visual**, marcado no conteúdo com `prova="true"`. **Uma por
 case: se houver duas marcadas, vale a primeira.** Hoje são o código do Bajaj, a paleta do

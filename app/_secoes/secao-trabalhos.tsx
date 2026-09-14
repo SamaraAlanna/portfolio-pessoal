@@ -10,11 +10,14 @@ import { lerProjetosDaHome } from "@/lib/conteudo";
  * metade. Quem aparece aqui é decidido pelo campo ordemHome do frontmatter, e não pelos
  * primeiros da listagem, porque no Figma a seleção da home é outra.
  *
- * O `data-cortina` liga a revelação das capas por recorte, e o escopo é a seção de
- * propósito: a regra vive na capa, então ela pega qualquer capa que exista aqui dentro, e
- * só aqui. Solta no `PreviewProjeto`, as oito capas da listagem abririam junto, que é
- * exatamente o escalonamento que o projeto evita. Hoje existe uma capa nesta seção, a do
- * card de destaque, porque o card compacto é só texto.
+ * O `data-entra-cartoes` liga a entrada dos cards, e a assimetria da grade é o assunto do
+ * efeito: o grande vem da esquerda e os três vêm da direita, em sequência. O escopo é a
+ * seção, então a listagem, que usa outro card, não é afetada.
+ *
+ * A SEÇÃO NÃO FAZ MAIS A PRÓPRIA ENTRADA. O `data-revelar` continua, porque é ele que o
+ * observador enxerga e é o gatilho, mas o fade dele está cancelado: quem entra são os
+ * cards. Somar as duas daria deslocamento vertical da seção junto com horizontal dos
+ * cards, e a diagonal resultante não é gesto nenhum.
  */
 export default function SecaoTrabalhos() {
   const projetos = lerProjetosDaHome();
@@ -30,7 +33,7 @@ export default function SecaoTrabalhos() {
     // mobile, como está no Figma, sem repetir o link no HTML.
     <section
       data-revelar
-      data-cortina
+      data-entra-cartoes
       className="grid grid-cols-1 gap-y-[44px] faixa py-[96px] lg:grid-cols-[1fr_auto] lg:items-center"
     >
       <h2 className="font-mono text-rotulo-secao font-medium text-accent-rosa lg:col-start-1 lg:row-start-1">

@@ -14,7 +14,7 @@ export default function CardProjetoCompacto({ projeto }: { projeto: Projeto }) {
   return (
     <Link
       href={`/projetos/${projeto.slug}`}
-      className="cartao-interativo flex flex-1 flex-col justify-between gap-[16px] rounded-[12px] border-[0.5px] border-border bg-surface p-[26px]"
+      className="cartao-compacto cartao-interativo flex flex-1 flex-col justify-between gap-[16px] rounded-[12px] border-[0.5px] border-border bg-surface p-[26px]"
     >
       <div className="flex flex-col gap-[8px]">
         <ViewTransition

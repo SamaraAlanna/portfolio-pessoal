@@ -218,8 +218,7 @@
 
   --dur-tema: 620ms;
   --dur-varredura: 700ms;
-  --dur-cortina: 600ms;
-  --atraso-cortina: 300ms;
+  --deslocamento-lateral: 32px;
 
   /* Foco. Neutro de propósito: no sistema a cor significa camada, e foco não é camada.
      Medido contra todos os fundos, fica entre 13,9 e 17,7 nos dois temas. */
@@ -238,8 +237,7 @@
     --deslocamento-entrada: 0px;
     --dur-tema: 0ms;
     --dur-varredura: 0ms;
-    --dur-cortina: 0ms;
-    --atraso-cortina: 0ms;
+    --deslocamento-lateral: 0px;
   }
 }
 
@@ -687,49 +685,72 @@ body {
 }
 
 /* ---------------------------------------------------------------------------
-   A cortina das capas.
+   A entrada dos cards de trabalhos.
 
-   A capa do card abre da esquerda para a direita, por `clip-path`. O card já está no lugar
-   e nada muda de tamanho: o que anima é o recorte.
+   A GRADE É ASSIMÉTRICA E O EFEITO USA ISSO: o card grande vem da esquerda, os três
+   empilhados vêm da direita. Não é uma fila, são dois lados montando a grade.
 
-   DA ESQUERDA PARA A DIREITA, por três motivos. A capa é paisagem, então o eixo longo dá
-   espaço para o movimento existir sem precisar ser lento. A grade é assimétrica, com o card
-   grande à esquerda e três empilhados à direita, e a abertura termina apontando para o
-   resto do conteúdo em vez de terminar num canto. E ela se distingue da varredura do case
-   do Bajaj, que é de cima para baixo e significa código sendo escrito: se a casa inteira
-   usar a mesma cortina, ela para de significar alguma coisa.
+   ESCALONAMENTO DE 80ms, e este é o único lugar da home com escalonamento. Com quatro
+   elementos o deslocamento total da sequência é de 240ms, curto o bastante para ler como um
+   movimento só e não como fila de espera. Abaixo de 50ms a sequência se perde e vira
+   simultâneo; acima de 120ms o último card chega tarde e o olho espera, que é onde o efeito
+   envelhece.
 
-   A REGRA VIVE NA CAPA E O ESCOPO É A SEÇÃO. Assim ela pega qualquer capa que passe a
-   existir na seção de trabalhos, sem ninguém precisar lembrar de marcar o card novo, e não
-   pega as oito capas da listagem.
+   A SEÇÃO NÃO FAZ A PRÓPRIA ENTRADA. O `data-revelar` continua, porque é ele que o
+   observador enxerga, mas o fade padrão é cancelado aqui. Somar os dois daria deslocamento
+   vertical da seção ao mesmo tempo que horizontal dos cards, e a diagonal resultante não é
+   gesto nenhum. É a mesma decisão dos blocos de prova dos cases.
 
-   ATRASO DEPOIS DA ENTRADA DA SEÇÃO. A seção tem `data-revelar` e entra com opacidade e
-   deslocamento. As duas ao mesmo tempo seriam duas entradas no mesmo lugar, que é o que fez
-   a skills perder o `data-revelar`. Aqui a seção fica, porque a cortina é detalhe de um
-   elemento dentro de uma seção que tem rótulo, botão e quatro cards: sem o fade, todo o
-   resto entraria seco. A saída foi sequenciar.
+   O rótulo e o botão da seção ficam sem animação, e isso é deliberado: eles são a moldura,
+   os cards são o conteúdo. A moldura já estar lá quando o conteúdo chega lê como intenção.
 
-   Sem `fill-mode: forwards`, então o recorte volta a `none` no fim e não sobra ancestral
-   recortado por cima de nada.
+   A ANIMAÇÃO VAI NO CARD, e o `cartao-interativo` usa `translate` no hover. Não colidem:
+   sem `fill-mode: forwards`, o valor volta ao normal no fim e o hover funciona. Durante os
+   640ms da entrada o levante não responde, o que ninguém alcança a tempo.
+
+   O estado invisível só existe sob `pendente`, que quem escreve é o JavaScript. Sem script,
+   ou com movimento reduzido, os quatro cards aparecem inteiros.
    --------------------------------------------------------------------------- */
 
 @media (prefers-reduced-motion: no-preference) {
-  [data-cortina][data-revelar="pendente"] .capa-projeto {
-    clip-path: inset(0 100% 0 0);
+  [data-entra-cartoes][data-revelar="pendente"] {
+    opacity: 1;
+    translate: none;
   }
 
-  [data-cortina][data-revelar="visivel"] .capa-projeto {
-    animation: capa-cortina var(--dur-cortina) var(--curva-saida) var(--atraso-cortina)
-      backwards;
+  [data-entra-cartoes][data-revelar="pendente"] .cartao-destaque,
+  [data-entra-cartoes][data-revelar="pendente"] .cartao-compacto {
+    opacity: 0;
+  }
+
+  [data-entra-cartoes][data-revelar="visivel"] .cartao-destaque {
+    --entra-de: calc(var(--deslocamento-lateral) * -1);
+    animation: cartao-entra var(--dur-entrada) var(--curva-saida) backwards;
+  }
+
+  [data-entra-cartoes][data-revelar="visivel"] .cartao-compacto {
+    --entra-de: var(--deslocamento-lateral);
+    animation: cartao-entra var(--dur-entrada) var(--curva-saida)
+      var(--atraso-cartao, 0ms) backwards;
+  }
+
+  .cartao-compacto:nth-child(1) {
+    --atraso-cartao: 80ms;
+  }
+
+  .cartao-compacto:nth-child(2) {
+    --atraso-cartao: 160ms;
+  }
+
+  .cartao-compacto:nth-child(3) {
+    --atraso-cartao: 240ms;
   }
 }
 
-@keyframes capa-cortina {
+@keyframes cartao-entra {
   from {
-    clip-path: inset(0 100% 0 0);
-  }
-  to {
-    clip-path: inset(0 0 0 0);
+    opacity: 0;
+    translate: var(--entra-de) 0;
   }
 }
 

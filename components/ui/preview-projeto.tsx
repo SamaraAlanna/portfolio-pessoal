@@ -23,7 +23,7 @@ export default function PreviewProjeto({
 
   return (
     <div
-      className={`capa-projeto flex w-full items-center justify-center overflow-hidden rounded-t-[12px] bg-surface-2 ${altura}`}
+      className={`flex w-full items-center justify-center overflow-hidden rounded-t-[12px] bg-surface-2 ${altura}`}
     >
       {imagem && dimensao ? (
         <Image

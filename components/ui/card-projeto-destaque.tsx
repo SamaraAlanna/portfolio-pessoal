@@ -13,7 +13,7 @@ export default function CardProjetoDestaque({ projeto }: { projeto: Projeto }) {
   return (
     <Link
       href={`/projetos/${projeto.slug}`}
-      className="cartao-interativo flex h-full flex-col rounded-[12px] border-[0.5px] border-border bg-surface"
+      className="cartao-destaque cartao-interativo flex h-full flex-col rounded-[12px] border-[0.5px] border-border bg-surface"
     >
       <ViewTransition name={`capa-${projeto.slug}`} share="morph-projeto" default="none">
         <PreviewProjeto
