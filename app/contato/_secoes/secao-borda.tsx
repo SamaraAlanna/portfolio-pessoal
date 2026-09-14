@@ -13,10 +13,13 @@ export default function SecaoBorda() {
     <section className="flex w-full">
       <Link
         href="https://bordadesign.com.br"
+        target="_blank"
+        rel="noopener"
         className="alvo-toque-vertical flex flex-wrap items-center gap-[8px] rounded-[12px] bg-tint-rosa px-[18px] py-[14px] text-card-descricao"
       >
         <span className="text-text-muted">Projeto para empresa ou cliente?</span>
         <span className="font-medium text-accent-rosa">BORDA Design &rarr;</span>
+        <span className="sr-only">(abre em nova aba)</span>
       </Link>
     </section>
   );

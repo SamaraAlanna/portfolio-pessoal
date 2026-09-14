@@ -143,9 +143,16 @@ e nenhum pode divergir: o `metadataBase` do layout, o sitemap e o robots.
 **O `metadataBase` é o que faz o cartão existir.** Sem ele o caminho da imagem sai relativo
 e as plataformas não conseguem buscá-la, e o link aparece sem cartão nenhum.
 
-**A imagem de compartilhamento é PNG, e é a única exceção à regra de WebP.** O suporte a
-WebP em cartão é irregular entre as plataformas, e ali não existe substituto: ou carrega ou
-o link sai sem imagem.
+**A imagem de compartilhamento não é WebP, e essa é a única exceção à regra do projeto.** O
+suporte a WebP em cartão é irregular entre as plataformas, e ali não existe substituto: ou
+carrega ou o link sai sem imagem. JPEG e PNG servem os dois, e hoje o arquivo é JPEG.
+
+**A extensão no `lib/site.ts` precisa bater com o arquivo em `public/imagens`, e não batia.**
+A constante dizia `.png` e o arquivo em disco é `.jpg`, então o `og:image` de todas as 13
+rotas apontava para um arquivo que não existe e **o cartão saía sem imagem em qualquer lugar
+onde o link fosse colado**. Corrigido em 2026-09-14. Fica registrado porque é um defeito de
+categoria ruim: **ele não aparece navegando no site**, só quando alguém compartilha, então
+sobreviveu a todas as conferências visuais. Ao trocar a imagem, confira a extensão.
 
 **Cada case tem cartão próprio**, com o título e a descrição dele. O título usado é o do
 card, e não o `tituloCase`: o segundo existe para encurtar na tela, onde a migalha e a
@@ -184,6 +191,35 @@ estrito quebraria. O resto sairia barato: as fontes são hospedadas localmente p
 é configurado na Vercel, num lugar só: duplicar em `redirects()` do `next.config.ts` arrisca
 laço. O `includeSubDomains` é o que garante HSTS no www, já que o redirecionamento acontece
 antes da aplicação e a resposta dele não passa pelos cabeçalhos do Next.
+
+### Link externo abre em nova aba, e o e-mail não
+
+**Tudo que sai do site abre em nova aba, com `rel="noopener"`:** os dois currículos em PDF,
+o BORDA no rodapé e na página de Contato, o GitHub e o LinkedIn. Antes o site inteiro não
+tinha **um** `target` nem **um** `rel`, e clicar em qualquer um deles abandonava a navegação.
+O PDF é o caso mais claro: abrir o currículo na própria aba tira a pessoa do portfólio no
+meio da leitura, e o caminho de volta é o botão voltar do navegador.
+
+**O `mailto` é a exceção, e é deliberada.** Ele não navega, entrega para o cliente de
+e-mail, e abrir aba para isso deixa uma aba em branco para trás em parte dos navegadores.
+
+**`noopener` sim, `noreferrer` não.** O `noopener` corta o acesso da página aberta à que a
+abriu, pelo `window.opener`, e é o que protege. O `noreferrer` também apaga o cabeçalho de
+origem, e **isso brigaria com uma decisão já tomada**: o `Referrer-Policy` do projeto
+preserva a origem de propósito, para o BORDA conseguir ver que a visita veio do portfólio.
+Pôr `noreferrer` no link do BORDA apagaria exatamente a informação que a política existe
+para deixar passar.
+
+**Cada link que abre em nova aba avisa quem não vê a tela**, com um `sr-only` "(abre em nova
+aba)". Mudança de contexto sem aviso é desorientação para quem usa leitor de tela, e o
+projeto já tem o padrão de texto só para leitor, no "Fechar menu" e nos rótulos de bloco.
+
+**Os canais têm uma fonte só, `conteudo/contato.ts`.** O rodapé lê de lá, pela função
+`canalPor`, em vez de escrever o endereço de novo. **Eles já tinham divergido:** "LinkedIn"
+e "E-mail" no rodapé apontavam para `/contato`, e não para o perfil e para o `mailto`, então
+quem clicava em "E-mail" ia parar numa página em vez do cliente de e-mail. O `canalPor`
+**quebra a compilação** se o canal não existir, porque um `href` vazio deixaria link morto no
+rodapé de todas as páginas.
 
 **Quando o painel da fase dois entrar, a rota dele precisa ser bloqueada no
 `app/robots.ts`.** E vale lembrar que isso é para não aparecer em busca, e não é
@@ -607,6 +643,15 @@ coleção.
 **Tipografia:** DM Sans para corpo e títulos, JetBrains Mono para rótulo, código e dado
 técnico. A alternância entre as duas é o conceito do site (design e código), então
 preserve onde ela existe.
+
+**A marca é "Samara Alanna", sem sufixo.** O `.dev` em accent saiu em 2026-09-14, junto com
+o domínio que ele citava: o site mora em portfoliosamara.com.br, e uma marca que diz `.dev`
+aponta para um endereço que não existe. Ela vive num componente só,
+`components/layout/logo.tsx`, usado pela nav, pelo menu mobile e pelo footer, então os três
+mudaram juntos. **O componente continua em uso e não deve ser removido:** o que sumiu foi o
+`span` do sufixo, e com ele a alternância tipográfica dentro da marca, que agora carrega só
+o lado "código", a fonte mono. A alternância continua no whoami da home, nos rótulos de
+seção e nos blocos de código.
 
 **O badge "Em construção" segue a tipografia das tags, e não a de rótulo em mono.** DM Sans
 regular 12, sem tracking, mesmo padding e mesmo raio, resultando na mesma altura. Do lado
@@ -1071,9 +1116,25 @@ lado do rótulo da seção, e crescer mudaria o layout. Com 10 de padding, 24 de
 é lido. O texto do botão é o `--bg`: 8,49 sobre o hover no escuro e 6,42 no claro, contra
 11,26 e 5,08 no estado normal. No tema claro o hover aumenta o contraste, porque o fundo
 escurece e o texto continua claro. A diferença entre normal e hover é de 1,33 no escuro e
-1,26 no claro, o bastante para notar sem ser brusca. **Não animam:** nav, footer, tags, chips, itens de lista, a troca de
-filtro na listagem, que precisa de resposta imediata e brigaria com o `aria-live` da
-contagem, e o corpo de texto dos cases, que é onde a pessoa passa mais tempo lendo.
+1,26 no claro, o bastante para notar sem ser brusca.
+
+**Não animam:** tags, chips, itens de lista, a troca de filtro na listagem, que precisa de
+resposta imediata e brigaria com o `aria-live` da contagem, e o corpo de texto dos cases,
+que é onde a pessoa passa mais tempo lendo.
+
+**A nav e o footer saíram dessa lista em 2026-09-14**, e a distinção que faltava é esta:
+**entrada e hover não são a mesma coisa.** O que a regra queria evitar era borda de página
+se mexendo enquanto a pessoa lê, e isso continua valendo, nav e footer não têm entrada nem
+movimento próprio. Hover só existe depois que a pessoa já apontou para o link, então não
+compete com nada: é o retorno que confirma o alvo.
+
+**Os links de navegação acendem em rosa no hover**, pela classe `.link-realce`, usada pela
+nav, pelo menu mobile e pelas colunas do footer. Antes eles não tinham resposta de cor
+nenhuma, e o único sinal era o cursor virar mãozinha, o que não diz qual item está sob o
+ponteiro quando eles ficam a 32px um do outro. A duração é `--dur-rapida` em `linear`, a
+mesma dos chips e dos botões. **O estado ativo continua sendo o `--text` do link e o rosa
+não o substitui:** ativo diz onde a pessoa está, hover diz onde o ponteiro está, e o link da
+página atual também acende, porque continua sendo um link.
 
 **As cinco regras de dosagem da entrada ao rolar** estão comentadas no `app/globals.css`,
 junto do CSS que elas governam. As duas que mais importam: uma vez por elemento e nunca de
@@ -1372,6 +1433,11 @@ case, no bloco que carrega o argumento.
 
 ## Pendências conhecidas
 
+- **A imagem de compartilhamento ainda diz "Samara Alanna.dev".** A marca perdeu o sufixo
+  em 2026-09-14, e a imagem em `public/imagens/compartilhamento.jpg` é a única peça que
+  ficou para trás, porque é arquivo exportado e não código. Só a Samara reexporta. Ao
+  substituir, confira a extensão contra a constante `IMAGEM_COMPARTILHAMENTO` do
+  `lib/site.ts`, que já saiu de sincronia uma vez e derrubou o cartão de todas as páginas.
 - Três avaliações no case Bilheteria mostram nomes reais de terceiros. Não publique essas
   imagens sem tratar.
 - O seletor de idioma do hero deixa o botão EN desabilitado, porque o site não tem versão

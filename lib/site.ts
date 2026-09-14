@@ -14,13 +14,20 @@ export const NOME = "Samara Alanna";
 /**
  * Imagem que aparece quando alguém cola o link no LinkedIn, no WhatsApp ou no X.
  *
- * É PNG, e essa é a única exceção à regra de WebP do projeto. O suporte a WebP em cartão
- * de compartilhamento é irregular entre as plataformas, e uma imagem que não carrega ali
- * não tem substituto: o link sai sem cartão nenhum.
+ * A EXTENSÃO AQUI PRECISA BATER COM O ARQUIVO EM `public/imagens`, e não batia: esta linha
+ * dizia `.png` e o arquivo em disco é `.jpg`. O cartão de todas as páginas estava sem
+ * imagem, e **esse defeito não aparece navegando no site**, só quando alguém cola o link
+ * em algum lugar. Corrigido em 2026-09-14. Se a imagem for reexportada em outro formato,
+ * esta linha muda junto.
+ *
+ * JPEG serve tão bem quanto PNG aqui, e por isso a correção foi na linha e não no arquivo.
+ * A regra que vale é não usar WebP: o suporte dele em cartão é irregular entre as
+ * plataformas, e uma imagem que não carrega ali não tem substituto, o link sai sem cartão
+ * nenhum. JPEG e PNG são aceitos em todas.
  *
  * 1200x630 é a medida que Facebook, LinkedIn e X usam para o cartão grande.
  */
-export const IMAGEM_COMPARTILHAMENTO = "/imagens/compartilhamento.png";
+export const IMAGEM_COMPARTILHAMENTO = "/imagens/compartilhamento.jpg";
 
 /**
  * Caminhos dos currículos, em `public/curriculos`.

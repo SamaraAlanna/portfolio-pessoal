@@ -130,7 +130,7 @@ export default function MenuMobile({
               href={link.destino}
               onClick={aoFechar}
               aria-current={ativo ? "page" : undefined}
-              className={`flex w-full items-center border-b border-border py-[18px] text-link-menu font-medium ${
+              className={`link-realce flex w-full items-center border-b border-border py-[18px] text-link-menu font-medium ${
                 ativo ? "text-text" : "text-text-muted"
               }`}
             >

@@ -1179,6 +1179,47 @@ body {
 }
 
 /* ---------------------------------------------------------------------------
+   Realce dos links de navegação.
+
+   Os links da nav, do menu mobile e das colunas do footer acendem em rosa no hover. Eles
+   não tinham resposta de cor nenhuma: o único sinal era o cursor virar mãozinha, o que não
+   diz qual dos itens está sob o ponteiro quando eles ficam a 32px um do outro.
+
+   ISSO REVISA UMA DECISÃO ANTERIOR, e fica anotado para não parecer descuido. A passada de
+   animação listou nav e footer entre o que NÃO anima, para as bordas da página ficarem
+   quietas enquanto a pessoa lê. Hover não é isso: ele só existe depois que a pessoa já
+   apontou para o link, então não compete com a leitura, e é o retorno que confirma o alvo.
+
+   A DURAÇÃO É A MESMA DOS CHIPS E DOS BOTÕES, `--dur-rapida` em `linear`. Um retorno de
+   ponteiro precisa parecer imediato, e curva de saída num trecho tão curto só atrasa o
+   começo. Com movimento reduzido o token vai a zero e a cor troca sem transição, que é o
+   comportamento certo: a informação é a cor, e não o movimento dela.
+
+   O ESTADO ATIVO CONTINUA SENDO O `--text` do próprio link, e o rosa não o substitui. São
+   coisas diferentes: ativo diz onde a pessoa está, hover diz onde o ponteiro está. O link
+   da página atual também acende, porque continua sendo um link e não responder pareceria
+   defeito.
+
+   Só em ponteiro que faz hover de verdade, senão o toque no celular deixa o link preso na
+   cor depois do clique. O foco recebe o mesmo realce, além do anel, para quem navega por
+   teclado ter o mesmo retorno.
+   --------------------------------------------------------------------------- */
+
+.link-realce {
+  transition: color var(--dur-rapida) linear;
+}
+
+@media (hover: hover) {
+  .link-realce:hover {
+    color: var(--accent-rosa);
+  }
+}
+
+.link-realce:focus-visible {
+  color: var(--accent-rosa);
+}
+
+/* ---------------------------------------------------------------------------
    Entrada do painel do menu.
 
    Só a entrada. A saída é instantânea de propósito: animar o fechamento atrasa o retorno

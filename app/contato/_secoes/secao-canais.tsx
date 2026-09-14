@@ -17,6 +17,12 @@ import { canais } from "@/conteudo/contato";
  * Uma coluna só abaixo de 64rem: em três colunas num tablet o endereço de e-mail não cabe
  * sem quebrar feio.
  *
+ * O PERFIL ABRE EM NOVA ABA, O E-MAIL NÃO. Sair do site para o LinkedIn ou para o GitHub
+ * levaria embora a página de contato que a pessoa acabou de abrir. O `mailto` não navega,
+ * entrega para o cliente de e-mail, e abrir aba para isso deixa uma aba em branco para trás
+ * em parte dos navegadores. O `noopener` corta o acesso da página aberta à que a abriu,
+ * pelo `window.opener`.
+ *
  * O rótulo em mono e caixa baixa é o do Figma, e vale como cabeçalho da seção: sem ele,
  * esta seção seria a única da página sem título.
  */
@@ -28,19 +34,26 @@ export default function SecaoCanais() {
       </h2>
 
       <ul className="grid grid-cols-1 items-stretch gap-[24px] lg:grid-cols-3">
-        {canais.map((canal) => (
-          <li key={canal.rotulo} className="flex">
-            <Link
-              href={canal.destino}
-              className="cartao-interativo flex w-full flex-col items-start gap-[10px] rounded-[12px] border-[0.5px] border-border bg-surface px-[26px] pt-[24px] pb-[26px]"
-            >
-              <span className="font-mono text-tag text-text-dim">{canal.rotulo}</span>
-              <span className="text-card-descricao break-words text-text">
-                {canal.valor}
-              </span>
-            </Link>
-          </li>
-        ))}
+        {canais.map((canal) => {
+          const externo = !canal.destino.startsWith("mailto:");
+          return (
+            <li key={canal.rotulo} className="flex">
+              <Link
+                href={canal.destino}
+                {...(externo ? { target: "_blank", rel: "noopener" } : {})}
+                className="cartao-interativo flex w-full flex-col items-start gap-[10px] rounded-[12px] border-[0.5px] border-border bg-surface px-[26px] pt-[24px] pb-[26px]"
+              >
+                <span className="font-mono text-tag text-text-dim">{canal.rotulo}</span>
+                <span className="text-card-descricao break-words text-text">
+                  {canal.valor}
+                </span>
+                {externo ? (
+                  <span className="sr-only">(abre em nova aba)</span>
+                ) : null}
+              </Link>
+            </li>
+          );
+        })}
       </ul>
     </section>
   );

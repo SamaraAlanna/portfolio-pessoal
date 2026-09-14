@@ -117,9 +117,12 @@ export default function SecaoHero() {
             </Link>
             <Link
               href={CURRICULO.pt}
+              target="_blank"
+              rel="noopener"
               className="botao-interativo botao-contorno flex items-center justify-center rounded-full border-[0.5px] border-accent-rosa px-[26px] py-[15px] text-corpo font-medium whitespace-nowrap text-accent-rosa"
             >
               Baixar CV
+              <span className="sr-only"> (abre em nova aba)</span>
             </Link>
           </div>
         </div>

@@ -61,7 +61,7 @@ export default function Nav() {
                 key={link.destino}
                 href={link.destino}
                 aria-current={ativo ? "page" : undefined}
-                className={`text-corpo whitespace-nowrap ${
+                className={`link-realce text-corpo whitespace-nowrap ${
                   ativo ? "text-text" : "text-text-muted"
                 }`}
               >

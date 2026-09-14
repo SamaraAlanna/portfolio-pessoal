@@ -46,9 +46,12 @@ export default function SecaoCabecalho() {
 
       <Link
         href={CURRICULO.pt}
+        target="_blank"
+        rel="noopener"
         className="botao-interativo botao-cheio flex w-full items-center justify-center rounded-full bg-accent-rosa px-[30px] py-[16px] text-corpo font-medium whitespace-nowrap text-bg lg:col-start-2 lg:row-start-2 lg:w-auto lg:justify-self-center lg:self-start"
       >
         Baixar CV
+        <span className="sr-only"> (abre em nova aba)</span>
       </Link>
     </section>
   );

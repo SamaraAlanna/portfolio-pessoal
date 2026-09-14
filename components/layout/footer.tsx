@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Logo from "@/components/layout/logo";
 import { CURRICULO } from "@/lib/site";
+import { canais } from "@/conteudo/contato";
 
 /**
  * Footer.
@@ -10,6 +11,31 @@ import { CURRICULO } from "@/lib/site";
  * colunas mudam. Por isso aqui é um componente só, e o mobile é diferença de layout.
  */
 
+/**
+ * O endereço de cada canal vem do `conteudo/contato.ts`, e não escrito de novo aqui.
+ *
+ * O footer e a página de Contato mostram os mesmos três canais, então eram dois lugares
+ * para manter iguais, e já estavam diferentes: "LinkedIn" e "E-mail" apontavam para
+ * `/contato` em vez de para o perfil e para o `mailto`, e o GitHub tinha a URL escrita à
+ * mão. Quem clicava em "E-mail" no rodapé ia parar numa página, não no cliente de e-mail.
+ *
+ * FALHA NO BUILD SE O CANAL NÃO EXISTIR, de propósito. Renderizar um `href` vazio deixaria
+ * um link morto no rodapé de todas as páginas, que é exatamente o tipo de defeito que
+ * ninguém encontra procurando. Errar o nome do canal aqui passa a quebrar a compilação.
+ */
+function canalPor(rotulo: string) {
+  const canal = canais.find((item) => item.rotulo === rotulo);
+  if (!canal) {
+    throw new Error(`Canal "${rotulo}" não existe em conteudo/contato.ts`);
+  }
+  return canal.destino;
+}
+
+/**
+ * `externo` marca o que sai do site e abre em nova aba. O `mailto` não entra: ele não
+ * navega, entrega para o cliente de e-mail, e abrir aba para isso deixa uma aba em branco
+ * para trás em parte dos navegadores.
+ */
 const colunas = [
   {
     rotulo: "NAVEGAR",
@@ -23,16 +49,16 @@ const colunas = [
   {
     rotulo: "RECURSOS",
     itens: [
-      { rotulo: "Currículo PT", destino: CURRICULO.pt },
-      { rotulo: "Currículo EN", destino: CURRICULO.en },
+      { rotulo: "Currículo PT", destino: CURRICULO.pt, externo: true },
+      { rotulo: "Currículo EN", destino: CURRICULO.en, externo: true },
     ],
   },
   {
     rotulo: "ONDE ME ACHAR",
     itens: [
-      { rotulo: "GitHub", destino: "https://github.com/SamaraAlanna" },
-      { rotulo: "LinkedIn", destino: "/contato" },
-      { rotulo: "E-mail", destino: "/contato" },
+      { rotulo: "GitHub", destino: canalPor("github"), externo: true },
+      { rotulo: "LinkedIn", destino: canalPor("linkedin"), externo: true },
+      { rotulo: "E-mail", destino: canalPor("email") },
     ],
   },
 ];
@@ -55,12 +81,15 @@ export default function Footer() {
 
           <Link
             href="https://bordadesign.com.br"
+            target="_blank"
+            rel="noopener"
             className="alvo-toque-vertical flex items-center gap-[8px] rounded-full bg-tint-rosa px-[12px] py-[8px] whitespace-nowrap"
           >
             <span className="text-cta text-text-muted">Precisa de um projeto?</span>
             <span className="text-cta font-medium text-accent-rosa">
               BORDA Design →
             </span>
+            <span className="sr-only">(abre em nova aba)</span>
           </Link>
         </div>
 
@@ -84,9 +113,15 @@ export default function Footer() {
                 <Link
                   key={item.rotulo}
                   href={item.destino}
-                  className="py-[12px] text-corpo whitespace-nowrap text-text-muted lg:py-0"
+                  {...(item.externo
+                    ? { target: "_blank", rel: "noopener" }
+                    : {})}
+                  className="link-realce py-[12px] text-corpo whitespace-nowrap text-text-muted lg:py-0"
                 >
                   {item.rotulo}
+                  {item.externo ? (
+                    <span className="sr-only"> (abre em nova aba)</span>
+                  ) : null}
                 </Link>
               ))}
             </div>

@@ -1,5 +1,9 @@
 /**
  * Conteúdo da página Contato.
+ *
+ * OS CANAIS NÃO SÃO SÓ DESTA PÁGINA: o rodapé de todas as páginas lê daqui também, pela
+ * coluna "ONDE ME ACHAR". Endereço escrito à mão no rodapé já divergiu uma vez, então este
+ * arquivo é a fonte, e o rodapé quebra a compilação se um canal sumir.
  */
 export type Canal = { rotulo: string; valor: string; destino: string };
 
@@ -12,7 +16,7 @@ export const canais: Canal[] = [
   {
     rotulo: "linkedin",
     valor: "/in/samaraalanna",
-    destino: "https://www.linkedin.com/in/samaraalanna",
+    destino: "https://www.linkedin.com/in/samaraalanna/",
   },
   {
     rotulo: "github",
