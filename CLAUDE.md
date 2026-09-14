@@ -610,8 +610,19 @@ preserve onde ela existe.
 
 **O badge "Em construção" segue a tipografia das tags, e não a de rótulo em mono.** DM Sans
 regular 12, sem tracking, mesmo padding e mesmo raio, resultando na mesma altura. Do lado
-das tags do card ele é irmão delas, não rótulo de outra família. O que muda de propósito é
-só a cor e a cor da borda, em âmbar. O Figma teve o badge em mono 11 por um tempo, em dez
+das tags do card ele é irmão delas, não rótulo de outra família.
+
+**O que o separa da tag é o matiz do texto, e só isso.** A borda é a mesma `--border` delas.
+Ele já teve borda em `accent-ambar` cheio e gritava, e a medição mostrou que **o peso estava
+num eixo só**: o fundo tingido custa 0,2 de contraste contra o card, ou seja nada, e no tema
+claro é até mais fraco que o fundo da tag; o texto empata no claro. A borda é que era dez
+vezes mais forte no escuro e seis no claro. **Trocar o fundo, que é a hipótese natural, não
+teria resolvido e ainda tiraria o badge da família dos chips preenchidos.**
+
+**No hover do card os chips acendem, cada um na sua cor:** as tags em rosa, o badge em âmbar.
+Parado, o badge viraria o chip mais apagado da fileira e pareceria desligado; em rosa, diria
+que é do mesmo tipo que as tags, que é o que âmbar existe para negar. Quem manda é o card:
+os chips não são interativos sozinhos, são descrição do que ele contém. O Figma teve o badge em mono 11 por um tempo, em dez
 lugares, e foi corrigido em 2026-09-02: se ele reaparecer em mono, é regressão.
 
 **Tema:** claro e escuro, controlado por CSS Variables. O Figma tem os dois modos na

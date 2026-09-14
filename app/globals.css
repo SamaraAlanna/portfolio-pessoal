@@ -938,15 +938,49 @@ body {
     border-color var(--dur-rapida) linear;
 }
 
+/* Os chips acendem junto com a borda do card, e é o card que manda: eles não são
+   interativos sozinhos, são descrição do que o card contém. As tags vão todas para rosa,
+   porque a distinção entre elas é o texto e não a cor.
+
+   O BADGE ACENDE EM ÂMBAR, E NÃO EM ROSA. Em repouso ele tem o mesmo peso das tags e se
+   distingue só pelo matiz do texto. Parado no hover viraria o chip mais apagado da fileira
+   e pareceria desligado; em rosa diria que é do mesmo tipo que as tags, que é o que âmbar
+   existe para negar. Acendendo cada um na sua cor, o hover revela a estrutura em vez de
+   achatá-la. */
+.tag-projeto,
+.badge-construcao {
+  transition:
+    color var(--dur-rapida) linear,
+    border-color var(--dur-rapida) linear;
+}
+
 @media (hover: hover) {
   .cartao-interativo:hover {
     translate: 0 -2px;
     border-color: var(--accent-rosa);
   }
+
+  .cartao-interativo:hover .tag-projeto {
+    border-color: var(--accent-rosa);
+    color: var(--accent-rosa);
+  }
+
+  .cartao-interativo:hover .badge-construcao {
+    border-color: var(--accent-ambar);
+  }
 }
 
 .cartao-interativo:focus-visible {
   translate: 0 -2px;
+}
+
+.cartao-interativo:focus-visible .tag-projeto {
+  border-color: var(--accent-rosa);
+  color: var(--accent-rosa);
+}
+
+.cartao-interativo:focus-visible .badge-construcao {
+  border-color: var(--accent-ambar);
 }
 
 /* ---------------------------------------------------------------------------
