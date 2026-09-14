@@ -943,14 +943,16 @@ deixar de existir.
 **`--border` é decoração.** Ela delimita card, e card se identifica pelo próprio fundo, então
 1,2 de contraste basta e é de propósito.
 
-**`--border-forte` é borda que precisa ser vista, medida em 3:1.** O critério é esse: use ela
-quando a borda é o **único** sinal, ou seja quando sem ela a coisa some. Dois casos até
-agora, e o token nasceu no primeiro:
+**`--border-forte` é borda que precisa ser vista para a interface funcionar, medida em 3:1.**
+O critério é funcional, e não estético: **limite de componente interativo**, como campo de
+formulário e botão de contorno neutro, onde 3:1 é requisito de acessibilidade.
 
-- **Limite de componente interativo**, que precisa de 3:1 por acessibilidade. Campo de
-  formulário e o botão de contorno neutro.
-- **Fronteira entre duas superfícies da mesma cor**, como o filete da folha que sobe sobre o
-  hero, onde os dois lados são `--bg`.
+**Fronteira decorativa não entra, mesmo quando os dois lados têm a mesma cor.** O filete da
+folha do hero foi `--border-forte` por um dia: 3,3 de contraste numa linha que atravessa a
+tela inteira lia como régua preta no tema claro. **Medição dizia que a linha precisava ser
+vista; o olho dizia que ela gritava, e numa borda decorativa o olho decide.** Ali quem
+comunica a camada são os cantos arredondados, que revelam o hero nas duas pontas; o filete é
+refinamento sobre eles, não o portador do significado.
 
 Ele se chamava `--border-campo` e foi renomeado em 2026-09-14, quando ganhou o segundo uso e
 ficou claro que o nome descrevia um caso e não o critério.
@@ -1165,8 +1167,9 @@ que ele existe.
    que numa borda de 1440px de largura não se vê, e acima de uns 32 a folha lê como cartão
    flutuante.
 
-   **O filete usa `--border-forte`**, que é o token de borda que precisa ser vista. O
-   critério de quando usar ele em vez da `--border` comum está na seção de acessibilidade.
+   **O filete usa a `--border` comum**, a mesma do topo do rodapé, e é discreto de
+   propósito: quem comunica a camada são os cantos. Ele já foi `--border-forte` e voltou,
+   porque 3,3 de contraste numa linha que atravessa a tela lia como régua preta no claro.
 
 1. **A folha de cima precisa de fundo opaco, `z-index`, largura de borda a borda e uma tela
    de altura.** A skills era transparente e o fundo vinha do `body`. E ela tinha a `faixa`

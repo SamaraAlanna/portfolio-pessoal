@@ -35,9 +35,10 @@
      O CRITÉRIO DE QUAL DAS DUAS USAR: a --border comum é decoração. Ela delimita card, e
      card se identifica pelo próprio fundo, então 1,2 basta ali e é de propósito. Use a
      --border-forte quando a borda é o único sinal, ou seja quando sem ela a coisa some.
-     São dois casos até agora: limite de componente interativo, como campo de formulário e
-     botão de contorno neutro, e fronteira entre duas superfícies da mesma cor, como o
-     filete da folha que sobe sobre o hero.
+     O caso é limite de componente interativo, como campo de formulário e botão de contorno
+     neutro, onde 3:1 é requisito de acessibilidade e não escolha estética. Fronteira
+     decorativa não entra, mesmo quando os dois lados têm a mesma cor: o filete da folha do
+     hero foi `--border-forte` por um dia e lia como régua preta no tema claro.
 
      CONTRASTE DECIDE SE A LINHA EXISTE, ESPESSURA DECIDE O PESO DELA. As duas coisas são
      independentes, e trocar uma pela outra é o erro comum: engrossar uma linha fraca deixa
@@ -1269,12 +1270,15 @@ body {
      Com a borda, a posição intermediária deixa de ser o pior estado do efeito e vira o
      melhor: é o único momento em que dá para ver que são duas superfícies.
 
-     O FILETE USA `--border-forte`, E NÃO A `--border` COMUM. Aqui os dois lados têm a mesma
-     cor, então a linha é o único sinal, e precisa ser vista. A `--border` fica em 1,2 sobre
-     o `--bg`, que basta quando há troca de fundo ajudando, como no topo do rodapé, e não
-     basta quando ela é sozinha. O `--border-forte` dá 3,28 no escuro e 3,38 no claro.
-     Contraste decide se a linha existe; espessura decide o peso dela, e por isso ela
-     continua com 0,5px.
+     O FILETE USA A `--border` COMUM, a mesma do topo do rodapé. Ele já foi `--border-forte`
+     e voltou em 2026-09-14: 3,3 de contraste numa linha que atravessa a tela inteira lia
+     como régua preta no tema claro, não como borda de folha.
+
+     A lição não é sobre o valor, é sobre a classificação. O critério do `--border-forte` é
+     borda que precisa ser vista **para a interface funcionar**, como limite de componente
+     interativo, onde 3:1 é requisito. Aqui quem comunica a camada são os cantos
+     arredondados, que revelam o hero por baixo nas duas pontas. **O filete é refinamento
+     sobre eles, não o portador do significado**, e refinamento usa a borda de decoração.
 
      RAIO DE 24px. Os cards usam 12, e 12 numa borda que atravessa 1440px de largura
      praticamente não se vê. O cartão decorativo do hero usa 18, que é o maior do projeto,
@@ -1285,7 +1289,7 @@ body {
   .hero-folha {
     position: relative;
     z-index: 1;
-    border-top: 0.5px solid var(--border-forte);
+    border-top: 0.5px solid var(--border);
     border-start-start-radius: 24px;
     border-start-end-radius: 24px;
     background-color: var(--bg);
