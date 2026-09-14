@@ -1248,9 +1248,36 @@ body {
     top: var(--altura-nav);
   }
 
+  /* A BORDA DA FOLHA É O QUE FALTAVA, e é ela que resolve o estado intermediário.
+
+     O fundo da folha e o do hero são o mesmo `--bg`. Sem borda, parar no meio da rolagem
+     não mostra uma folha sobre outra: mostra o título do hero cortado por uma linha
+     invisível, o que lê como falha de renderização e não como camada. O estado
+     intermediário não estava feio porque a pessoa parava no lugar errado, estava feio
+     porque não tinha sido desenhado.
+
+     Com a borda, a posição intermediária deixa de ser o pior estado do efeito e vira o
+     melhor: é o único momento em que dá para ver que são duas superfícies.
+
+     O FILETE USA `--border-campo`, E NÃO A `--border` COMUM. Aqui os dois lados têm a mesma
+     cor, então a linha é o único sinal, e precisa ser vista. A `--border` fica em 1,2 sobre
+     o `--bg`, que basta quando há troca de fundo ajudando, como no topo do rodapé, e não
+     basta quando ela é sozinha. O `--border-campo` dá 3,28 no escuro e 3,38 no claro.
+     Contraste decide se a linha existe; espessura decide o peso dela, e por isso ela
+     continua com 0,5px.
+
+     RAIO DE 24px. Os cards usam 12, e 12 numa borda que atravessa 1440px de largura
+     praticamente não se vê. O cartão decorativo do hero usa 18, que é o maior do projeto,
+     então 24 fica na mesma família e lê na escala de uma superfície de borda a borda. Acima
+     de uns 32 a folha começa a ler como cartão flutuante ou modal, que é outra coisa.
+
+     Nos dois cantos aparece um pedaço do hero por baixo, e é isso que comunica a camada. */
   .hero-folha {
     position: relative;
     z-index: 1;
+    border-top: 0.5px solid var(--border-campo);
+    border-start-start-radius: 24px;
+    border-start-end-radius: 24px;
     background-color: var(--bg);
   }
 }

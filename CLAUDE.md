@@ -1132,6 +1132,25 @@ que ele existe.
 
 **Cinco coisas andam juntas, e tirar qualquer uma quebra o conjunto:**
 
+0. **A folha precisa de borda desenhada, e isso é o que resolve o estado intermediário.**
+   O fundo dela e o do hero são o mesmo `--bg`. Sem borda, parar no meio da rolagem não
+   mostra folha sobre folha: mostra o título do hero cortado por uma linha invisível, o que
+   lê como falha de renderização. **Com filete e cantos superiores arredondados, a posição
+   intermediária deixa de ser o pior estado do efeito e vira o melhor**, porque é o único
+   momento em que dá para ver que são duas superfícies.
+
+   **O filete usa `--border-campo` e não a `--border` comum.** Aqui os dois lados têm a mesma
+   cor, então a linha é o único sinal e precisa ser vista: 3,28 no escuro e 3,38 no claro,
+   contra 1,2 da `--border`. Ela funciona nos dois temas sozinha, ficando mais clara que o
+   fundo no escuro e mais escura no claro. **Contraste decide se a linha existe; espessura
+   decide o peso**, e por isso ela continua com 0,5px. **Raio de 24px:** os cards usam 12,
+   que numa borda de 1440px de largura não se vê, e acima de uns 32 a folha lê como cartão
+   flutuante.
+
+   **`--border-campo` passou a ter dois usos**, a borda de campo e o filete da folha, e o
+   nome ficou estreito para o que ele significa: borda que precisa ser vista, a 3:1. Se um
+   dia for renomeado, os dois usos e a seção do formulário no painel mudam junto.
+
 1. **A folha de cima precisa de fundo opaco, `z-index`, largura de borda a borda e uma tela
    de altura.** A skills era transparente e o fundo vinha do `body`. E ela tinha a `faixa`
    na própria seção, então o fundo parava nos 1200 e as luzes do hero apareciam nas bordas
@@ -1161,6 +1180,8 @@ que ele existe.
 5. **Movimento reduzido desliga.** Sticky não anima nada e a pessoa segue no controle da
    rolagem, mas o efeito cria diferença de velocidade entre camadas com o fundo a zero, e
    isso é parallax, citado nominalmente como gatilho vestibular. Sair custa uma declaração.
+   **O filete e os cantos saem junto:** sem hero preso não há camada, e borda de folha sem
+   nada por baixo é decoração sem significado.
 
 **O foco atrás da folha, e por que `scroll-margin` não resolve.** Com o hero preso e
 coberto, um Shift+Tab devolve o foco aos botões dele, o navegador não rola porque considera
