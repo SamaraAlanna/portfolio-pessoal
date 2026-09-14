@@ -1083,6 +1083,46 @@ body {
 }
 
 /* ---------------------------------------------------------------------------
+   O hero preso, e a seção seguinte subindo por cima.
+
+   SEM JAVASCRIPT. `position: sticky` é resolvido pelo compositor, não é ouvinte de
+   rolagem, e não acorda a thread principal a cada quadro. Efeito preso à rolagem feito
+   assim não engasga; feito com `requestAnimationFrame` engasga. A desconfiança com efeito
+   de rolagem é justa, e se aplica à outra implementação.
+
+   O `top` é a altura da nav, porque a nav é fixa e ocupa esse espaço. Com o hero em
+   `100svh - altura-nav`, ele preenche exatamente o que sobra da viewport.
+
+   A FOLHA DE CIMA PRECISA DE FUNDO PRÓPRIO. A seção de skills era transparente e o fundo
+   vinha do `body`. Sem fundo opaco, o hero apareceria através dela e o efeito viraria
+   sujeira. O `z-index` põe a folha acima do hero, que é um contexto de empilhamento por
+   causa do `isolate`.
+
+   O EFEITO É CONTIDO PELO INVÓLUCRO. Sem ele o hero grudaria até o fim do `main`, ou seja
+   a página inteira, e ficaria composto e vivo até o rodapé. As outras três seções não
+   sabem que ele existe.
+
+   MOVIMENTO REDUZIDO DESLIGA, e isso não é excesso de zelo. Sticky não anima nada e a
+   pessoa segue no controle da rolagem, mas o que o efeito cria é diferença de velocidade
+   entre camadas, com o fundo a zero, e isso é parallax. Parallax é citado nominalmente
+   como gatilho vestibular e é um dos casos que a preferência existe para cobrir. Sair
+   custa uma declaração: o hero volta a rolar junto.
+   --------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-preso {
+    position: sticky;
+    top: var(--altura-nav);
+  }
+
+  .hero-folha {
+    position: relative;
+    z-index: 1;
+    background-color: var(--bg);
+  }
+}
+
+/* ---------------------------------------------------------------------------
    As luzes do hero.
 
    CADA LUZ É A UNIÃO DE TRÊS MANCHAS, e não uma forma só. É daí que vem a silhueta

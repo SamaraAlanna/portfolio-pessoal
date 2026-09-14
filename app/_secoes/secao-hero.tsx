@@ -24,14 +24,20 @@ import { CURRICULO } from "@/lib/site";
 export default function SecaoHero() {
   // O hero ocupa a viewport inteira menos a nav.
   //
-  // dvh e não vh: no mobile a barra de endereço some e volta durante a rolagem, e o vh
-  // fica preso à altura maior, o que corta o conteúdo ou faz a página saltar. O dvh
-  // acompanha a altura realmente disponível.
+  // svh, e não dvh nem vh. O vh fica preso à altura maior e corta conteúdo. O dvh
+  // acompanha a altura disponível, que era o certo enquanto o hero rolava junto, mas com
+  // ele preso vira defeito: a barra de endereço do celular some e volta durante a rolagem,
+  // o dvh muda junto, e o hero preso mudaria de altura no meio do movimento, com o título
+  // centralizado andando sozinho. O svh é a menor viewport e não muda. O preço é uma faixa
+  // de fundo embaixo dele quando a barra está escondida, que a seção seguinte cobre logo.
   //
   // min-height e não height: se o conteúdo crescer, em tela baixa ou com fonte
   // aumentada, a seção cresce junto em vez de espremer o conteúdo.
   return (
-    <section className="relative isolate flex min-h-[calc(100dvh-var(--altura-nav))] flex-col justify-center bg-bg">
+    <section
+      data-hero-preso
+      className="hero-preso relative isolate flex min-h-[calc(100svh-var(--altura-nav))] flex-col justify-center bg-bg"
+    >
       {/* Duas camadas, e as duas têm motivo.
 
           A de fora recorta, e não a seção: a seção contém links e botões, e recortar um
@@ -46,6 +52,7 @@ export default function SecaoHero() {
       <div
         aria-hidden="true"
         data-pausar-fora="dentro"
+        data-gatilho="#fim-do-hero"
         data-segue-cursor
         className="pointer-events-none absolute inset-0 -z-10 overflow-hidden"
       >

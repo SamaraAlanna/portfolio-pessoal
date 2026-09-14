@@ -14,6 +14,10 @@ import AcordeaoMobile from "@/components/ui/acordeao-mobile";
  * apresentação, não conteúdo principal.
  *
  * O filete vira horizontal no mobile e separa um accordion do outro.
+ *
+ * ELA É A FOLHA QUE SOBE POR CIMA DO HERO, e por isso não tem `data-revelar`. Seriam duas
+ * entradas no mesmo elemento, e pior: durante o fade ela ficaria semitransparente justo no
+ * momento em que deveria cobrir o hero. O deslize é a entrada dela.
  */
 const design = [
   "Arquitetura da informação e heurísticas de Nielsen",
@@ -40,7 +44,7 @@ const codigo = [
 
 export default function SecaoSkills() {
   return (
-    <section data-revelar className="flex flex-col gap-[40px] faixa py-[104px]">
+    <section className="hero-folha flex flex-col gap-[40px] faixa py-[104px]">
       <h2 className="font-mono text-rotulo-secao font-medium text-accent-rosa">
         O QUE EU FAÇO
       </h2>

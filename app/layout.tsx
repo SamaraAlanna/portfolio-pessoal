@@ -3,6 +3,7 @@ import { SITE, metadataDaPagina } from "@/lib/site";
 import RevelarAoRolar from "@/components/ui/revelar-ao-rolar";
 import PausaForaDaTela from "@/components/ui/pausa-fora-da-tela";
 import LuzSegueCursor from "@/components/ui/luz-segue-cursor";
+import FocoNoHero from "@/components/ui/foco-no-hero";
 import { DM_Sans, JetBrains_Mono } from "next/font/google";
 import Nav from "@/components/layout/nav";
 import Footer from "@/components/layout/footer";
@@ -85,6 +86,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <RevelarAoRolar />
         <PausaForaDaTela />
         <LuzSegueCursor />
+        <FocoNoHero />
       </body>
     </html>
   );

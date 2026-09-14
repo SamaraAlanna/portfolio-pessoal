@@ -17,6 +17,13 @@ import { usePathname } from "next/navigation";
  * Marca o elemento com data-pausar-fora="dentro" ou "fora", e quem lê isso é o CSS, pelo
  * animation-play-state. Nenhum estado em React: o atributo é o estado.
  *
+ * QUEM OBSERVA PODE SER OUTRO ELEMENTO, pelo `data-gatilho` com um seletor. Isso existe
+ * por causa do hero preso: com `position: sticky` ele continua intersectando a viewport
+ * mesmo totalmente coberto pela seção que sobe por cima, e interseção não sabe de oclusão.
+ * O gatilho aponta para a sentinela na fronteira entre as duas seções, que passa para cima
+ * da tela quando a cobertura acontece. Sem isso, as doze manchas do hero animariam atrás de
+ * uma folha opaca.
+ *
  * DEPENDE DO CAMINHO, e isso não é detalhe. Com dependências vazias ele observaria só os
  * elementos que existiam na montagem. Como o layout persiste entre rotas, sair da home e
  * voltar traz um hero que é outro nó no DOM, e sem observador ele animaria para sempre,
@@ -34,14 +41,23 @@ export default function PausaForaDaTela() {
     );
     if (alvos.length === 0) return;
 
+    // Quem é observado nem sempre é quem recebe a marca.
+    const porObservado = new Map<Element, HTMLElement>();
+    for (const alvo of alvos) {
+      const seletor = alvo.dataset.gatilho;
+      const observado = seletor ? document.querySelector(seletor) : alvo;
+      if (observado) porObservado.set(observado, alvo);
+    }
+    if (porObservado.size === 0) return;
+
     const observador = new IntersectionObserver((entradas) => {
       for (const entrada of entradas) {
-        const alvo = entrada.target as HTMLElement;
-        alvo.dataset.pausarFora = entrada.isIntersecting ? "dentro" : "fora";
+        const alvo = porObservado.get(entrada.target);
+        if (alvo) alvo.dataset.pausarFora = entrada.isIntersecting ? "dentro" : "fora";
       }
     });
 
-    for (const alvo of alvos) observador.observe(alvo);
+    for (const observado of porObservado.keys()) observador.observe(observado);
     return () => observador.disconnect();
     // Refaz na troca de rota, porque os elementos marcados são outros.
   }, [caminho]);

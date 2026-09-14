@@ -750,6 +750,108 @@ do bloco no cursor. Não construa formulário por tipo de bloco.
 
 ---
 
+## Trabalho futuro: tradução do site
+
+**O seletor de idioma do hero fica desabilitado até isso acontecer.** A tradução entra
+depois que o site estiver finalizado. Nada aqui é para fazer agora: está escrito para o dia
+da decisão não começar do zero, e para o tamanho não ser surpresa.
+
+O currículo já existe nos dois idiomas, e é a única parte bilíngue hoje.
+
+### 1. Roteamento, e a decisão de como a URL fica
+
+**Subcaminho é o caminho óbvio aqui**, `/en/projetos`, com um segmento dinâmico em `app/`.
+Subdomínio exigiria outro domínio na Vercel, e query string não serve porque buscador trata
+como a mesma página.
+
+O que isso custa, em concreto:
+
+- **As 13 rotas mudam de lugar**, para dentro de um segmento de idioma, com
+  `generateStaticParams` para os dois valores. É a maior mexida estrutural da tarefa.
+- **`lib/site.ts` passa a montar caminho com idioma.** Canônica, `og:url` e sitemap saem de
+  lá, então o ponto de mudança é um só, o que é a boa notícia.
+- **`app/sitemap.ts` dobra**, de 13 para 26 URLs.
+- **O `lang="pt-BR"` do `app/layout.tsx` é fixo hoje** e passa a depender da rota.
+
+**A decisão que precisa ser consciente: a raiz continua sendo português, ou passa a
+redirecionar para `/pt`?** Manter `/` como português preserva todo link já compartilhado e
+tudo que o buscador já indexou. Redirecionar é mais simétrico e quebra os dois.
+
+### 2. Os textos das páginas e dos oito cases
+
+Os MDX ficam em `conteudo/projetos/`. A tradução pede um conjunto paralelo, por pasta ou por
+sufixo no nome, e `lib/conteudo.ts` passa a receber o idioma.
+
+**Nem todo campo do frontmatter viaja.** `titulo`, `descricao`, `resumo`, `abertura` e a
+`ficha` são texto. `slug`, `ordem`, `ordemHome`, `destaque`, `imagem` e `heroCase` são
+estrutura, e duplicar estrutura convida divergência: um `ordem` diferente entre idiomas
+muda a ordem da listagem e o encadeamento de próximo projeto sem ninguém perceber.
+
+**O `slug` é uma decisão com consequência.** Manter o mesmo nos dois idiomas é mais simples
+e mantém funcionando o `name` do `<ViewTransition>`, que hoje é `capa-<slug>` e
+`titulo-<slug>`. Traduzir o slug é melhor para busca, mas aí o seletor de idioma precisa de
+uma tabela de correspondência para saber para onde apontar.
+
+**As `tags` são conteúdo visível**, porque são os rótulos do filtro da listagem, e vivem em
+`lib/filtros.ts`. Elas também precisam de tradução, e o filtro compara por texto.
+
+**A confidencialidade vale igual na versão em inglês.** O case do Assistente descreve o
+produto genericamente de propósito, e tradução não é hora de "esclarecer" nome de produto
+interno. Os nomes proibidos estão no topo deste documento e continuam proibidos.
+
+### 3. Nav, rodapé e textos de interface
+
+Hoje o texto de interface está solto no TSX, e **isso é regra do projeto**: texto corrido
+fica na seção, lista estruturada vai para `/conteudo`. **A tradução quebra essa regra**, e
+essa é a consequência arquitetural que vale antecipar: texto corrido em TSX não se traduz
+sem um dicionário. Ou a regra ganha exceção, ou ela muda.
+
+O que precisa ser varrido, além do óbvio:
+
+- `links-nav.ts`, `nav.tsx`, `menu-mobile.tsx`, `footer.tsx` e o CTA.
+- Toda seção em `app/_secoes/` e nas `_secoes/` das páginas internas.
+- **Os rótulos padrão dos blocos**, como o "ANTES" e o "DEPOIS" do `bloco-antes-depois`.
+- **Os nomes acessíveis, que são os mais fáceis de esquecer porque não aparecem na tela:**
+  `sr-only`, `aria-label`, `alt` de imagem, "Pular para o conteúdo", "Abrir menu", "Fechar
+  menu", "Código de ...", a contagem anunciada do filtro e os textos da página de 404.
+- O `metadata` de cada rota, incluindo título, descrição e o texto alternativo da imagem de
+  compartilhamento.
+
+### 4. hreflang
+
+**O lugar já existe:** `metadataDaPagina`, em `lib/site.ts`, monta o metadata de todas as
+rotas, e é lá que entra `alternates.languages`. O sitemap também aceita alternates.
+
+Três coisas que costumam sair erradas: precisa incluir **`x-default`**; as referências
+precisam ser **recíprocas**, porque buscador ignora hreflang que aponta para uma página que
+não aponta de volta; e cada versão precisa apontar **para si mesma** além da outra.
+
+### 5. O seletor quando as duas versões existirem
+
+**A colocação atual só funciona enquanto ele é decorativo.** Hoje ele vive no hero, e o hero
+só existe na home. Com as duas versões no ar, quem estiver lendo um case não teria como
+trocar de idioma. **Ele provavelmente precisa ir para a nav e para o menu mobile**, o que
+contraria a decisão registrada na seção de mobile, tomada quando ele era estático. Isso é
+mudança de desenho e passa pelo Figma.
+
+O resto:
+
+- **Precisa apontar para a página equivalente, não para a home.** Depende do caminho atual,
+  e da tabela de slugs se os slugs forem traduzidos.
+- **Precisa ser link de verdade**, e não botão, para ser rastreável e abrir em nova aba.
+  Com `hreflang` e `lang` em cada opção, e `aria-current` na ativa.
+- **A escolha vive na URL, e não em cookie.** Cookie com redirecionamento cria a armadilha
+  clássica de a pessoa não conseguir chegar na outra versão.
+
+### Uma decisão de ordem, antes de tudo isso
+
+**A tradução e o painel da fase dois se atropelam, e quem vier depois paga.** O painel
+escreve MDX pela API do GitHub; se ele nascer monolíngue, ganhar idioma depois significa
+mexer no editor, na lista de projetos e no fluxo de publicação. Se a tradução vier primeiro,
+o painel já nasce sabendo. Vale decidir a ordem antes de começar qualquer um dos dois.
+
+---
+
 ## Acessibilidade
 
 Ela lista WCAG na stack e isso precisa aparecer no código.
@@ -986,6 +1088,46 @@ dependência vazia eles observariam só os elementos da montagem inicial, e sair
 voltar traz nós novos no DOM. O `PausaForaDaTela` teve exatamente esse bug, corrigido em
 2026-09-13: as luzes animavam para sempre, inclusive fora da tela.
 
+### O hero preso, e a folha que sobe por cima
+
+Na home o hero fica parado e a seção de skills sobe por cima dele. **É `position: sticky`,
+sem JavaScript**, resolvido pelo compositor: não é ouvinte de rolagem e não acorda a thread
+principal a cada quadro. Efeito de rolagem feito assim não engasga; feito com
+`requestAnimationFrame` engasga.
+
+**O invólucro `hero-pilha` é o que contém o efeito.** Sem ele o hero grudaria até o fim do
+`main`, a página inteira, e ficaria composto até o rodapé. As outras três seções não sabem
+que ele existe.
+
+**Cinco coisas andam juntas, e tirar qualquer uma quebra o conjunto:**
+
+1. **A folha de cima precisa de fundo opaco e `z-index`.** A skills era transparente e o
+   fundo vinha do `body`. Sem fundo próprio o hero aparece através dela.
+2. **A skills perdeu o `data-revelar`.** Seriam duas entradas no mesmo elemento, e durante o
+   fade ela ficaria semitransparente justo quando deveria cobrir o hero. O deslize é a
+   entrada dela.
+3. **O hero usa `svh`, e não `dvh`.** O `dvh` era o certo enquanto ele rolava junto, mas
+   preso vira defeito: a barra de endereço do celular some e volta, o `dvh` muda junto, e o
+   hero mudaria de altura no meio do movimento com o título centralizado andando sozinho. O
+   preço do `svh` é uma faixa de fundo quando a barra está escondida, que a folha cobre.
+4. **A pausa das luzes deixou de poder usar interseção.** Preso, o hero continua
+   intersectando a viewport mesmo totalmente coberto, e **interseção não sabe de oclusão**.
+   Por isso existe a sentinela `#fim-do-hero` e o `data-gatilho` no `PausaForaDaTela`: quem
+   é observado passou a poder ser outro elemento. Sem isso as doze manchas animariam atrás
+   de uma folha opaca.
+5. **Movimento reduzido desliga.** Sticky não anima nada e a pessoa segue no controle da
+   rolagem, mas o efeito cria diferença de velocidade entre camadas com o fundo a zero, e
+   isso é parallax, citado nominalmente como gatilho vestibular. Sair custa uma declaração.
+
+**O foco atrás da folha, e por que `scroll-margin` não resolve.** Com o hero preso e
+coberto, um Shift+Tab devolve o foco aos botões dele, o navegador não rola porque considera
+que já estão visíveis, e o anel é desenhado debaixo da camada opaca. O `scroll-margin` age
+sobre a rolagem que o navegador faz para trazer um elemento à tela, **e essa rolagem nunca
+acontece**: a premissa da regra não é satisfeita. O que resolve é o
+`components/ui/foco-no-hero`, que ao receber foco volta a página ao topo se ela estiver
+rolada. Não é sequestro de rolagem: a pessoa pediu para chegar naquele controle, e levar o
+controle à vista é o que o navegador faria se soubesse de oclusão.
+
 ### Transição entre páginas
 
 A capa e o título do card viajam para a página de case, pelo `<ViewTransition>` do React,
@@ -1045,7 +1187,8 @@ case, no bloco que carrega o argumento.
 - Três avaliações no case Bilheteria mostram nomes reais de terceiros. Não publique essas
   imagens sem tratar.
 - O seletor de idioma do hero deixa o botão EN desabilitado, porque o site não tem versão
-  em inglês. Isso não vale para o currículo, que existe nos dois idiomas.
+  em inglês. Isso não vale para o currículo, que existe nos dois idiomas. **O que a tradução
+  vai exigir está na seção "Trabalho futuro: tradução do site".**
 
 ---
 
