@@ -1100,9 +1100,27 @@ body {
    menor que a do arquivo original porque três se sobrepõem, e a soma é que precisa bater
    com a intensidade de antes.
 
-   NADA DE `filter: blur`. O gradiente radial já termina em transparente, então o desfoque
-   está na própria pintura e é rasterizado uma vez. Animar raio de desfoque seria repintura
-   por quadro de superfície grande, que é o custo recusado no resto do site.
+   A QUEDA DO GRADIENTE É `(1 - t²)³`, E NÃO LINEAR. O primeiro desenho ia da cor cheia até
+   transparente em duas paradas, parando em 70% do raio. No ponto de parada a inclinação
+   saltava de negativa para zero, e o olho lê descontinuidade de inclinação como contorno:
+   as manchas apareciam como elipses recortadas em vez de luz. Esta curva chega a zero com
+   inclinação também zero, então não existe ponto onde a queda "termina". São onze paradas
+   amostrando a curva, o que de quebra reduz o banding, porque o passo de cor entre paradas
+   vizinhas fica menor.
+
+   AS PARADAS TERMINAM NA MESMA COR COM ALFA ZERO, e não na palavra `transparent`. É a
+   garantia de que o matiz não desvia perto da borda, em qualquer espaço de interpolação.
+
+   `filter: blur` VOLTOU, e é desfoque estático. A distinção que importa: animar o raio, ou
+   mover conteúdo dentro de um elemento desfocado, obriga o filtro a ser reavaliado a cada
+   quadro, e isso continua proibido. Desfoque fixo numa mancha que só é transformada é
+   rasterizado uma vez e depois o compositor só move a textura. `scale` pode pedir
+   rasterização nova de vez em quando, e por isso a amplitude dele foi reduzida.
+
+   O desfoque está em cada mancha, e não no grupo. No grupo ele ficaria por cima de três
+   filhos que se movem, que é exatamente o caso caro. Ele é o botão para remover primeiro se
+   algo engasgar: a curva sozinha já resolve o contorno, e o desfoque é seguro contra
+   banding.
 
    QUICAR É DUAS ONDAS TRIANGULARES INDEPENDENTES, uma por eixo, em elementos separados.
    Reflexão numa parede vertical inverte o X e não toca no Y, que é o que `alternate` faz
@@ -1137,35 +1155,36 @@ body {
 .mancha {
   position: absolute;
   border-radius: 50%;
+  filter: blur(30px);
 }
 
 /* Três manchas por luz, com tamanhos, recortes e proporções diferentes. É a diferença
    entre elas que faz a união não parecer um círculo. */
 .mancha:nth-child(1) {
   inset: 0;
+  rotate: -14deg;
   background: radial-gradient(
-    ellipse 64% 80% at 48% 50%,
-    var(--cor-1) 0%,
-    transparent 70%
-  );
+      ellipse 64% 80% at 48% 50%,
+      var(--paradas-1)
+    );
 }
 
 .mancha:nth-child(2) {
   inset: 14% -20% 24% 16%;
+  rotate: 26deg;
   background: radial-gradient(
-    ellipse 82% 64% at 44% 56%,
-    var(--cor-2) 0%,
-    transparent 72%
-  );
+      ellipse 82% 64% at 44% 56%,
+      var(--paradas-2)
+    );
 }
 
 .mancha:nth-child(3) {
   inset: 28% 12% -16% -18%;
+  rotate: -38deg;
   background: radial-gradient(
-    ellipse 70% 74% at 56% 44%,
-    var(--cor-3) 0%,
-    transparent 68%
-  );
+      ellipse 70% 74% at 56% 44%,
+      var(--paradas-3)
+    );
 }
 
 /* Campo de luz: era #5B21B6 a 0,55 num só corpo. */
@@ -1173,9 +1192,42 @@ body {
   --tamanho: clamp(320px, 46vw, 620px);
   --base-x: 24%;
   --base-y: 6%;
-  --cor-1: rgb(91 33 182 / 0.34);
-  --cor-2: rgb(91 33 182 / 0.28);
-  --cor-3: rgb(124 58 237 / 0.24);
+  --paradas-1:
+    rgb(91 33 182 / 0.42) 0%,
+    rgb(91 33 182 / 0.4075) 10%,
+    rgb(91 33 182 / 0.3716) 20%,
+    rgb(91 33 182 / 0.3165) 30%,
+    rgb(91 33 182 / 0.2489) 40%,
+    rgb(91 33 182 / 0.1772) 50%,
+    rgb(91 33 182 / 0.1101) 60%,
+    rgb(91 33 182 / 0.0557) 70%,
+    rgb(91 33 182 / 0.0196) 80%,
+    rgb(91 33 182 / 0.0029) 90%,
+    rgb(91 33 182 / 0.0) 100%;
+  --paradas-2:
+    rgb(91 33 182 / 0.35) 0%,
+    rgb(91 33 182 / 0.3396) 10%,
+    rgb(91 33 182 / 0.3097) 20%,
+    rgb(91 33 182 / 0.2637) 30%,
+    rgb(91 33 182 / 0.2074) 40%,
+    rgb(91 33 182 / 0.1477) 50%,
+    rgb(91 33 182 / 0.0918) 60%,
+    rgb(91 33 182 / 0.0464) 70%,
+    rgb(91 33 182 / 0.0163) 80%,
+    rgb(91 33 182 / 0.0024) 90%,
+    rgb(91 33 182 / 0.0) 100%;
+  --paradas-3:
+    rgb(124 58 237 / 0.3) 0%,
+    rgb(124 58 237 / 0.2911) 10%,
+    rgb(124 58 237 / 0.2654) 20%,
+    rgb(124 58 237 / 0.2261) 30%,
+    rgb(124 58 237 / 0.1778) 40%,
+    rgb(124 58 237 / 0.1266) 50%,
+    rgb(124 58 237 / 0.0786) 60%,
+    rgb(124 58 237 / 0.0398) 70%,
+    rgb(124 58 237 / 0.014) 80%,
+    rgb(124 58 237 / 0.0021) 90%,
+    rgb(124 58 237 / 0.0) 100%;
   --tempo-x: 23s;
   --tempo-y: 31s;
   --tempo-giro: 47s;
@@ -1189,9 +1241,42 @@ body {
   --tamanho: clamp(260px, 36vw, 480px);
   --base-x: 4%;
   --base-y: 44%;
-  --cor-1: rgb(91 33 182 / 0.36);
-  --cor-2: rgb(124 58 237 / 0.3);
-  --cor-3: rgb(91 33 182 / 0.24);
+  --paradas-1:
+    rgb(91 33 182 / 0.44) 0%,
+    rgb(91 33 182 / 0.4269) 10%,
+    rgb(91 33 182 / 0.3893) 20%,
+    rgb(91 33 182 / 0.3316) 30%,
+    rgb(91 33 182 / 0.2608) 40%,
+    rgb(91 33 182 / 0.1856) 50%,
+    rgb(91 33 182 / 0.1153) 60%,
+    rgb(91 33 182 / 0.0584) 70%,
+    rgb(91 33 182 / 0.0205) 80%,
+    rgb(91 33 182 / 0.003) 90%,
+    rgb(91 33 182 / 0.0) 100%;
+  --paradas-2:
+    rgb(124 58 237 / 0.38) 0%,
+    rgb(124 58 237 / 0.3687) 10%,
+    rgb(124 58 237 / 0.3362) 20%,
+    rgb(124 58 237 / 0.2864) 30%,
+    rgb(124 58 237 / 0.2252) 40%,
+    rgb(124 58 237 / 0.1603) 50%,
+    rgb(124 58 237 / 0.0996) 60%,
+    rgb(124 58 237 / 0.0504) 70%,
+    rgb(124 58 237 / 0.0177) 80%,
+    rgb(124 58 237 / 0.0026) 90%,
+    rgb(124 58 237 / 0.0) 100%;
+  --paradas-3:
+    rgb(91 33 182 / 0.3) 0%,
+    rgb(91 33 182 / 0.2911) 10%,
+    rgb(91 33 182 / 0.2654) 20%,
+    rgb(91 33 182 / 0.2261) 30%,
+    rgb(91 33 182 / 0.1778) 40%,
+    rgb(91 33 182 / 0.1266) 50%,
+    rgb(91 33 182 / 0.0786) 60%,
+    rgb(91 33 182 / 0.0398) 70%,
+    rgb(91 33 182 / 0.014) 80%,
+    rgb(91 33 182 / 0.0021) 90%,
+    rgb(91 33 182 / 0.0) 100%;
   --tempo-x: 29s;
   --tempo-y: 19s;
   --tempo-giro: 53s;
@@ -1205,9 +1290,42 @@ body {
   --tamanho: clamp(300px, 42vw, 560px);
   --base-x: 52%;
   --base-y: 40%;
-  --cor-1: rgb(124 58 237 / 0.4);
-  --cor-2: rgb(216 47 158 / 0.32);
-  --cor-3: rgb(124 58 237 / 0.26);
+  --paradas-1:
+    rgb(124 58 237 / 0.5) 0%,
+    rgb(124 58 237 / 0.4851) 10%,
+    rgb(124 58 237 / 0.4424) 20%,
+    rgb(124 58 237 / 0.3768) 30%,
+    rgb(124 58 237 / 0.2964) 40%,
+    rgb(124 58 237 / 0.2109) 50%,
+    rgb(124 58 237 / 0.1311) 60%,
+    rgb(124 58 237 / 0.0663) 70%,
+    rgb(124 58 237 / 0.0233) 80%,
+    rgb(124 58 237 / 0.0034) 90%,
+    rgb(124 58 237 / 0.0) 100%;
+  --paradas-2:
+    rgb(216 47 158 / 0.4) 0%,
+    rgb(216 47 158 / 0.3881) 10%,
+    rgb(216 47 158 / 0.3539) 20%,
+    rgb(216 47 158 / 0.3014) 30%,
+    rgb(216 47 158 / 0.2371) 40%,
+    rgb(216 47 158 / 0.1688) 50%,
+    rgb(216 47 158 / 0.1049) 60%,
+    rgb(216 47 158 / 0.0531) 70%,
+    rgb(216 47 158 / 0.0187) 80%,
+    rgb(216 47 158 / 0.0027) 90%,
+    rgb(216 47 158 / 0.0) 100%;
+  --paradas-3:
+    rgb(124 58 237 / 0.32) 0%,
+    rgb(124 58 237 / 0.3105) 10%,
+    rgb(124 58 237 / 0.2831) 20%,
+    rgb(124 58 237 / 0.2411) 30%,
+    rgb(124 58 237 / 0.1897) 40%,
+    rgb(124 58 237 / 0.135) 50%,
+    rgb(124 58 237 / 0.0839) 60%,
+    rgb(124 58 237 / 0.0424) 70%,
+    rgb(124 58 237 / 0.0149) 80%,
+    rgb(124 58 237 / 0.0022) 90%,
+    rgb(124 58 237 / 0.0) 100%;
   --tempo-x: 17s;
   --tempo-y: 37s;
   --tempo-giro: 41s;
@@ -1253,7 +1371,7 @@ body {
     --tempo-mancha-escala: 29s;
     --desliza-x: 9%;
     --desliza-y: -7%;
-    --escala-fim: 1.12;
+    --escala-fim: 1.06;
   }
 
   .mancha:nth-child(2) {
@@ -1261,7 +1379,7 @@ body {
     --tempo-mancha-escala: 23s;
     --desliza-x: -11%;
     --desliza-y: 8%;
-    --escala-fim: 0.9;
+    --escala-fim: 0.94;
   }
 
   .mancha:nth-child(3) {
@@ -1269,7 +1387,7 @@ body {
     --tempo-mancha-escala: 37s;
     --desliza-x: 7%;
     --desliza-y: 10%;
-    --escala-fim: 1.08;
+    --escala-fim: 1.05;
   }
 
   /* Fora da tela tudo para, e o play-state alcança as animações de cada elemento. */
