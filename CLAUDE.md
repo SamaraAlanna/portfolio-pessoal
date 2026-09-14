@@ -1220,10 +1220,27 @@ pelo mesmo `PausaForaDaTela` das luzes do hero, que por isso subiu do hero para 
 o card grande vem da esquerda, os três empilhados vêm da direita. Não é fila, são dois lados
 montando a grade. **Uma cortina por `clip-path` na capa foi tentada antes e descartada.**
 
-**Escalonamento de 80ms, e este é o único lugar da home com escalonamento.** Com quatro
-elementos o deslocamento total é de 240ms, curto o bastante para ler como um movimento só.
-Abaixo de 50ms a sequência vira simultâneo; acima de 120ms o último chega tarde e o olho
-espera, que é onde o efeito envelhece.
+**Distância e duração andam juntas.** A primeira versão era 32px em 400ms, ou 80px/s, e o
+movimento passava despercebido: não era rápido demais, era **curto** demais. Aumentar só a
+duração teria piorado, porque distância curta em tempo longo lê como arrasto. Hoje são 120px
+em 620ms no desktop, perto de 195px/s, e 72px no mobile, onde a grade é coluna única e a
+assimetria que justifica o gesto não existe.
+
+**O escalonamento é proporcional à duração**, não um número fixo. São 110ms, cerca de 18%
+dos 620: a proporção em que cada card tem início distinguível e o grupo ainda lê como um
+movimento só. Com os 80ms de antes sobre uma entrada longa, os quatro empilhariam e a
+sequência se perderia. A sequência inteira leva 950ms. **Este é o único lugar da home com
+escalonamento.**
+
+**Os valores são tokens:** `--dur-entrada-cartao`, `--intervalo-cartao` e
+`--deslocamento-lateral`, separados do `--dur-entrada` geral porque o gesto é outro. Os
+blocos fazem um fade de 12px; os cards atravessam a grade.
+
+**O `overflow-x: clip` na seção não é enfeite.** `translate` não causa reflow, mas conta como
+estouro rolável: os três cards que entram pela direita empurram a largura do documento e
+aparece barra horizontal durante a animação. Quem entra pela esquerda não causa isso, porque
+estouro à esquerda não é alcançável em leitura da esquerda para a direita. É `clip` e não
+`hidden` de propósito: `hidden` criaria contêiner de rolagem.
 
 **A seção não faz mais a própria entrada.** O `data-revelar` continua, porque é ele que o
 observador enxerga e é o gatilho, mas o fade padrão está cancelado ali, como nos blocos de

@@ -218,7 +218,15 @@
 
   --dur-tema: 620ms;
   --dur-varredura: 700ms;
-  --deslocamento-lateral: 32px;
+  /* Entrada dos cards de trabalhos. Ficam separados do `--dur-entrada` geral porque o
+     gesto é outro: os blocos fazem um fade de 12px, os cards atravessam a grade. Mexer num
+     não deveria mexer no outro.
+
+     A distância é menor no mobile, onde a grade é coluna única e a assimetria que justifica
+     o gesto não existe. O valor de desktop entra no corte de 64rem, junto do resto. */
+  --dur-entrada-cartao: 620ms;
+  --intervalo-cartao: 110ms;
+  --deslocamento-lateral: 72px;
 
   /* Foco. Neutro de propósito: no sistema a cor significa camada, e foco não é camada.
      Medido contra todos os fundos, fica entre 13,9 e 17,7 nos dois temas. */
@@ -237,6 +245,8 @@
     --deslocamento-entrada: 0px;
     --dur-tema: 0ms;
     --dur-varredura: 0ms;
+    --dur-entrada-cartao: 0ms;
+    --intervalo-cartao: 0ms;
     --deslocamento-lateral: 0px;
   }
 }
@@ -254,6 +264,7 @@
 @media (width >= 64rem) {
   :root {
     --altura-nav: 64px;
+    --deslocamento-lateral: 120px;
   }
 }
 
@@ -690,11 +701,25 @@ body {
    A GRADE É ASSIMÉTRICA E O EFEITO USA ISSO: o card grande vem da esquerda, os três
    empilhados vêm da direita. Não é uma fila, são dois lados montando a grade.
 
-   ESCALONAMENTO DE 80ms, e este é o único lugar da home com escalonamento. Com quatro
-   elementos o deslocamento total da sequência é de 240ms, curto o bastante para ler como um
-   movimento só e não como fila de espera. Abaixo de 50ms a sequência se perde e vira
-   simultâneo; acima de 120ms o último card chega tarde e o olho espera, que é onde o efeito
-   envelhece.
+   DISTÂNCIA E DURAÇÃO ANDAM JUNTAS. A primeira versão era 32px em 400ms, ou seja 80px/s, e
+   o movimento passava despercebido: não era rápido demais, era curto demais. Aumentar só a
+   duração teria piorado, porque distância curta em tempo longo lê como arrasto e não como
+   entrada. Hoje são 120px em 620ms no desktop, perto de 195px/s, que é a faixa em que um
+   deslize com desaceleração se lê como entrada.
+
+   ESCALONAMENTO PROPORCIONAL À DURAÇÃO. O intervalo é de 110ms, cerca de 18% dos 620, que é
+   a proporção em que cada card tem início distinguível e o grupo ainda lê como um movimento
+   só. Com 80ms sobre uma entrada longa, os quatro empilhariam demais e a sequência se
+   perderia. A sequência inteira leva 950ms, contando os 330 de deslocamento mais a duração
+   do último.
+
+   O RECORTE HORIZONTAL NÃO É ENFEITE. `translate` não causa reflow, mas conta como estouro
+   rolável: os três cards que entram pela direita empurrariam a largura do documento e
+   apareceria barra de rolagem horizontal durante a animação. Quem entra pela esquerda não
+   causa isso, porque estouro à esquerda não é alcançável em leitura da esquerda para a
+   direita. O `overflow-x: clip` resolve, e é `clip` e não `hidden` de propósito: `hidden`
+   criaria contêiner de rolagem. Os cards em repouso ficam dentro do padding da faixa, então
+   o anel de foco deles está longe da borda de recorte.
 
    A SEÇÃO NÃO FAZ A PRÓPRIA ENTRADA. O `data-revelar` continua, porque é ele que o
    observador enxerga, mas o fade padrão é cancelado aqui. Somar os dois daria deslocamento
@@ -725,25 +750,31 @@ body {
 
   [data-entra-cartoes][data-revelar="visivel"] .cartao-destaque {
     --entra-de: calc(var(--deslocamento-lateral) * -1);
-    animation: cartao-entra var(--dur-entrada) var(--curva-saida) backwards;
+    animation: cartao-entra var(--dur-entrada-cartao) var(--curva-saida) backwards;
   }
 
   [data-entra-cartoes][data-revelar="visivel"] .cartao-compacto {
     --entra-de: var(--deslocamento-lateral);
-    animation: cartao-entra var(--dur-entrada) var(--curva-saida)
+    animation: cartao-entra var(--dur-entrada-cartao) var(--curva-saida)
       var(--atraso-cartao, 0ms) backwards;
   }
 
   .cartao-compacto:nth-child(1) {
-    --atraso-cartao: 80ms;
+    --atraso-cartao: var(--intervalo-cartao);
   }
 
   .cartao-compacto:nth-child(2) {
-    --atraso-cartao: 160ms;
+    --atraso-cartao: calc(var(--intervalo-cartao) * 2);
   }
 
   .cartao-compacto:nth-child(3) {
-    --atraso-cartao: 240ms;
+    --atraso-cartao: calc(var(--intervalo-cartao) * 3);
+  }
+
+  /* Sem isto, os três que vêm da direita empurram a largura do documento e aparece barra
+     horizontal durante a animação. */
+  [data-entra-cartoes] {
+    overflow-x: clip;
   }
 }
 
