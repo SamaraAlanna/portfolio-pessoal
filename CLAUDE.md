@@ -746,10 +746,12 @@ no primeiro commit do repositório, então dá para recuperar por `git show`. O 
   o botão desabilitado ligado ao aviso por `aria-describedby`, senão a pessoa encontra um
   botão morto sem saber por quê.
 
-**O campo usa `--border-forte`**, que é o token de borda que precisa ser vista. Quando o
-formulário saiu ele ficou sem uso e foi mantido de propósito, e depois ganhou dois usos
-novos, o botão de contorno neutro e o filete da folha do hero. O critério de quando usar ele
-está na seção de acessibilidade.
+**O campo usa `--border-forte`**, que é o token de borda que precisa ser vista, e hoje o
+formulário é o único uso previsto dele. Ele já passou pelo filete da folha do hero e pelo
+botão neutro, e saiu dos dois: do filete porque lia como régua preta no tema claro, do botão
+porque os links de seção viraram contorno rosa. **Ele está sem uso nenhum agora**, e é o
+retorno do formulário que justifica mantê-lo. O critério de quando usar está na seção de
+acessibilidade.
 
 **Currículo:** PDF vai para o repositório, também via API do GitHub, em base64.
 **Limite de 5 MB no upload**, porque arquivo grande entra no histórico do Git e não sai.
@@ -1015,39 +1017,55 @@ painel do menu ou do link de pular.
 Animam: entrada de bloco ao rolar, hover e foco dos cards e dos botões, accordion, entrada
 do menu, o hero e a troca de tema.
 
-**O botão tem três níveis, e a regra é que a cor accent fica reservada para ação:**
+**O botão tem dois níveis em uso, e um terceiro parado:**
 
 | Classe | Visual | Para quê |
 | --- | --- | --- |
 | `.botao-cheio` | fundo accent | o que o site quer que a pessoa faça |
-| `.botao-contorno` | borda e texto accent | ação secundária de alta intenção, hoje só o CV |
-| `.botao-neutro` | borda `--border-forte`, texto `--text` | navegação, os links de seção |
+| `.botao-contorno` | borda e texto accent | o CV e os três links de seção da home |
+| `.botao-neutro` | borda `--border-forte`, texto `--text` | **sem uso desde 2026-09-14** |
 
-**Os três não respondem igual, e isso é o ponto.** O cheio levanta e escurece o fundo, pelo
-token `--accent-rosa-hover`. O de contorno só ganha fundo em `tint-rosa`, sem levante. O
-neutro só afia a borda, de `--border-forte` para `--text`. Se todos se comportassem igual, a
-hierarquia se perderia no hover. Fundo neutro no hover do terceiro não serviria: `--surface`
-e `--surface-2` ficam a menos de 1,2 do `--bg` e o estado seria invisível.
+**O terceiro nível existia para os links de seção, e a Samara decidiu tirá-lo de lá em
+2026-09-14**, com a consequência na mão. Fica registrado o que se perdeu, para não voltar
+como descoberta: "Baixar CV" e "ir para a listagem" passam a pesar igual, e a cor accent
+deixa de significar "ação" para significar "clicável". Quem olhar a home e achar que falta
+hierarquia entre os três botões rosa está vendo o preço da decisão, e não um defeito.
+
+**Os que estão em uso não respondem igual.** O cheio levanta e escurece o fundo, pelo token
+`--accent-rosa-hover`. O de contorno só ganha fundo em `tint-rosa`, sem levante. O neutro,
+se voltar, só afia a borda, de `--border-forte` para `--text`: fundo neutro no hover dele
+não serviria, porque `--surface` e `--surface-2` ficam a menos de 1,2 do `--bg` e o estado
+seria invisível.
+
+**`.botao-neutro` e o `--border-forte` ficaram os dois sem nenhum uso**, já que o filete da
+folha do hero voltou para a `--border` comum e o formulário saiu na fase um. Estão parados
+de propósito: apagar custa refazer a medição de 3:1 quando o formulário voltar no painel.
+Se a decisão for apagar, os dois saem juntos, mais as três declarações do token nos dois
+temas e a ponte do `@theme`.
 
 **Cada variante é selecionada pela própria classe**, e não por exclusão das outras nem por
 ordem no arquivo. Exclusão obrigaria toda variante nova a lembrar de entrar numa lista de
 `:not`, e ordem quebra quando alguém reordena o CSS.
 
-**O `--border-forte` voltou a ter uso.** Ele foi criado para borda de campo de formulário,
-ficou parado quando o formulário saiu, e serve no botão neutro pelo mesmo motivo: borda é o
-que identifica componente sem preenchimento, e limite de componente interativo precisa de
-3:1. Ele dá 3,28 no escuro e 3,38 no claro sobre o `--bg`, contra 1,2 da `--border` comum,
-que é decoração de card e faria um botão invisível.
+**O `--border-forte` teve um uso e perdeu de novo.** Ele foi criado para borda de campo de
+formulário, ficou parado quando o formulário saiu, serviu no botão neutro pelo mesmo motivo
+(borda é o que identifica componente sem preenchimento, e limite de componente interativo
+precisa de 3:1) e voltou a ficar parado quando o botão neutro saiu de uso. Os números
+continuam válidos para quando ele voltar: 3,28 no escuro e 3,38 no claro sobre o `--bg`,
+contra 1,2 da `--border` comum, que é decoração de card e faria um botão invisível.
 
 **Os três links de seção da home são botões, e não texto com seta.** "Ver stack completa",
-"Todos os projetos" e "Minha trajetória completa", todos neutros, todos na mesma grade de
-duas linhas: ao lado do rótulo no desktop, depois do conteúdo no mobile. **As outras setas
+"Todos os projetos" e "Minha trajetória completa", todos de contorno rosa, todos na mesma
+grade de duas linhas: ao lado do rótulo no desktop, depois do conteúdo no mobile. **As outras setas
 do site não são links de seção e ficam como estão:** a migalha do case, o próximo projeto,
 o "Ver o case" dentro do card da Tech Girls, as pílulas do BORDA e as setas do
 `bloco-diagrama`.
 
-O botão neutro tem 45px de altura, com 10 de padding, 24 de entrelinha e 1 de borda, então
-não precisa de `alvo-toque-vertical`.
+**Eles mantêm o padding de 22 por 10, e não o de 26 por 15 do "Baixar CV".** O que a Samara
+pediu igual é o tratamento de cor, e não o tamanho: eles vivem numa grade de duas linhas ao
+lado do rótulo da seção, e crescer mudaria o layout. Com 10 de padding, 24 de entrelinha e
+1 de borda eles dão 45px de altura, então continuam acima do alvo de toque sem precisar do
+`alvo-toque-vertical`.
 
 **O escurecimento é token medido, e não filtro de brilho**, porque é cor sobre a qual texto
 é lido. O texto do botão é o `--bg`: 8,49 sobre o hover no escuro e 6,42 no claro, contra
@@ -1281,6 +1299,28 @@ lugar final desde o primeiro quadro e o que anima é `clip-path`. A receita clá
 máquina de escrever anima `width` com `steps`, e isso é propriedade de layout mudando a
 cada passo. O `steps` com o número de caracteres, que vem do dado por variável, faz o
 recorte parar na fronteira de cada glifo, e isso só funciona porque a fonte é monoespaçada.
+
+**O tempo por caractere tem um piso, e não é de gosto: um quadro, 16,7ms a 60Hz.** O
+`steps` divide a duração pelo número de caracteres, então esse é o intervalo entre um
+caractere e o próximo. A digitação nasceu em 14ms e ficava **abaixo do quadro**: em parte
+dos quadros dois caracteres apareciam juntos e o `steps` era engolido pela taxa de
+atualização da tela. Não era rápido demais para gostar, era rápido demais para existir.
+**Corrigido em 2026-09-14 para 32ms**, quase dois quadros por caractere, com folga para tela
+de 120Hz. A sequência inteira foi de 2,29s para 4,72s.
+
+**A pausa entre linhas acompanha o tempo por caractere**, porque ela só lê como fim de linha
+enquanto for claramente maior que o intervalo entre caracteres. Em 90ms contra 14 ela era
+6,4 intervalos; contra 32 seria 2,8, e passaria a ler como um caractere lento. Está em
+120ms, 3,75 intervalos, um meio-termo a favor do total: manter a proporção antiga pediria
+205ms e somaria mais 1,2s à sequência.
+
+**Os dois são token de CSS, e o TypeScript não carrega tempo nenhum.** O tempo por caractere
+já foi uma constante do `secao-sobre.tsx` **e** um valor escrito de novo no CSS, dois lugares
+que precisavam concordar. Hoje o componente manda só contagem, que é dado (quantos
+caracteres a linha tem, quantos caracteres e quantas linhas vieram antes dela), e o CSS
+multiplica por `--dur-caractere` e `--intervalo-linha`. Ajustar a velocidade é mexer num
+token. **O cursor usa a mesma conta de atraso das linhas**, com o total no lugar do
+acumulado, e por isso ela mora numa propriedade só.
 **Só a partir de 64rem**, porque abaixo disso os valores longos quebram em duas linhas e o
 recorte revelaria as duas ao mesmo tempo. O cursor pisca e para quando o bloco sai da tela,
 pelo mesmo `PausaForaDaTela` das luzes do hero, que por isso subiu do hero para o layout.

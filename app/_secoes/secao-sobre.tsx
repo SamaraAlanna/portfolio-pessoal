@@ -27,10 +27,16 @@ import type { CSSProperties } from "react";
  * por caractere, e a seguinte começa quando a anterior termina, mais uma pausa curta.
  * Digitar as seis ao mesmo tempo não pareceria digitação.
  *
- * Os 125 caracteres somam pouco mais de dois segundos com as pausas.
+ * TEMPO NENHUM MORA AQUI, E ISSO É DE PROPÓSITO. Daqui saem só contagens: quantos
+ * caracteres a linha tem, e quantos caracteres e quantas linhas vieram antes dela. Quem
+ * multiplica contagem por tempo é o CSS, nos tokens `--dur-caractere` e
+ * `--intervalo-linha`.
+ *
+ * O tempo por caractere já foi uma constante deste arquivo e estava escrito de novo no
+ * CSS, em dois lugares que precisavam concordar. Mudar a velocidade pedia mexer nos dois,
+ * e errar um deles descolava o cursor do fim da última linha sem quebrar nada visível,
+ * que é o tipo de defeito que ninguém encontra procurando.
  */
-const MS_POR_CARACTERE = 14;
-const PAUSA_ENTRE_LINHAS = 90;
 
 const whoami: [string, string][] = [
   ["nome", "Samara Alanna"],
@@ -41,25 +47,24 @@ const whoami: [string, string][] = [
   ["comunidade", "Tech Girls, administradora"],
 ];
 
-/** Quanto uma linha leva para ser digitada, com a pausa que vem depois dela. */
-function tempoDaLinha(valor: string) {
-  return valor.length * MS_POR_CARACTERE + PAUSA_ENTRE_LINHAS;
-}
-
 /**
- * Cada linha começa quando todas as anteriores terminaram. Calculado uma vez no módulo,
- * porque sai de uma constante e não muda entre renderizações.
+ * Cada linha começa quando todas as anteriores terminaram. O que ela precisa saber para
+ * isso são duas contagens acumuladas: os caracteres que já foram digitados antes dela, e
+ * quantas pausas de fim de linha já aconteceram, que é o próprio índice. Calculado uma vez
+ * no módulo, porque sai de uma constante e não muda entre renderizações.
  */
 const linhas = whoami.map(([rotulo, valor], indice) => ({
   rotulo,
   valor,
-  atraso: whoami
+  caracteresAntes: whoami
     .slice(0, indice)
-    .reduce((total, [, anterior]) => total + tempoDaLinha(anterior), 0),
+    .reduce((total, [, anterior]) => total + anterior.length, 0),
+  linhasAntes: indice,
 }));
 
-const atrasoDoCursor = whoami.reduce(
-  (total, [, valor]) => total + tempoDaLinha(valor),
+/** O cursor só aparece quando a última linha termina, ou seja depois de tudo. */
+const caracteresTotal = whoami.reduce(
+  (total, [, valor]) => total + valor.length,
   0,
 );
 
@@ -100,11 +105,12 @@ export default function SecaoSobre() {
               monoespaçada, o steps com o número de caracteres faz o recorte parar na
               fronteira exata de cada glifo.
 
-              O número de caracteres e o atraso da linha viajam em variável, porque saem do
-              dado. O resto mora no CSS, dentro do media query de movimento reduzido: assim
-              nada some quando a animação não existe. */}
+              As contagens viajam em variável, porque saem do dado. O tempo que multiplica
+              cada uma delas mora no CSS, dentro do media query de movimento reduzido:
+              assim nada some quando a animação não existe, e a velocidade se ajusta num
+              token só. */}
           <dl className="flex w-full flex-col gap-[13px] px-[22px] pt-[22px] pb-[24px] font-mono text-terminal">
-            {linhas.map(({ rotulo, valor, atraso }, indice) => (
+            {linhas.map(({ rotulo, valor, caracteresAntes, linhasAntes }, indice) => (
               <div key={`${rotulo}-${indice}`} className="flex w-full gap-[14px]">
                 <dt className="w-[92px] shrink-0 text-text-dim">{rotulo}</dt>
                 <dd className="flex-1 leading-[1.5] text-text">
@@ -113,7 +119,8 @@ export default function SecaoSobre() {
                     style={
                       {
                         "--caracteres": String(valor.length),
-                        "--atraso-linha": `${atraso}ms`,
+                        "--caracteres-antes": String(caracteresAntes),
+                        "--linhas-antes": String(linhasAntes),
                       } as CSSProperties
                     }
                   >
@@ -124,7 +131,10 @@ export default function SecaoSobre() {
                       aria-hidden="true"
                       className="whoami-cursor"
                       style={
-                        { "--atraso-cursor": `${atrasoDoCursor}ms` } as CSSProperties
+                        {
+                          "--caracteres-antes": String(caracteresTotal),
+                          "--linhas-antes": String(linhas.length),
+                        } as CSSProperties
                       }
                     />
                   ) : null}
@@ -137,7 +147,7 @@ export default function SecaoSobre() {
 
       <Link
         href="/sobre"
-        className="botao-interativo botao-neutro flex items-center justify-center rounded-full border-[0.5px] px-[22px] py-[10px] text-corpo font-medium whitespace-nowrap lg:col-start-2 lg:row-start-1 lg:justify-self-end"
+        className="botao-interativo botao-contorno flex items-center justify-center rounded-full border-[0.5px] border-accent-rosa px-[22px] py-[10px] text-corpo font-medium whitespace-nowrap text-accent-rosa lg:col-start-2 lg:row-start-1 lg:justify-self-end"
       >
         Minha trajetória completa
       </Link>

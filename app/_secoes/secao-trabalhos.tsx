@@ -57,7 +57,7 @@ export default function SecaoTrabalhos() {
 
       <Link
         href="/projetos"
-        className="botao-interativo botao-neutro flex items-center justify-center rounded-full border-[0.5px] px-[22px] py-[10px] text-corpo font-medium whitespace-nowrap lg:col-start-2 lg:row-start-1 lg:justify-self-end"
+        className="botao-interativo botao-contorno flex items-center justify-center rounded-full border-[0.5px] border-accent-rosa px-[22px] py-[10px] text-corpo font-medium whitespace-nowrap text-accent-rosa lg:col-start-2 lg:row-start-1 lg:justify-self-end"
       >
         Todos os projetos
       </Link>

@@ -239,6 +239,22 @@
   --intervalo-cartao: 110ms;
   --deslocamento-lateral: 72px;
 
+  /* Ritmo da digitação do whoami. São os dois únicos números da animação: o CSS multiplica
+     eles pelas contagens que o componente manda, então ajustar a velocidade acontece aqui
+     e em lugar nenhum mais.
+
+     O `--dur-caractere` NÃO PODE FICAR ABAIXO DE 16,7ms, que é um quadro a 60Hz. Ele já foi
+     14ms, e ali o intervalo entre um caractere e o próximo era menor que o quadro: em parte
+     dos quadros dois caracteres apareciam juntos e o `steps` era engolido pela taxa de
+     atualização da tela. Não era rápido demais para gostar, era rápido demais para existir.
+     Os 32ms dão quase dois quadros por caractere, com folga para tela de 120Hz.
+
+     A PAUSA PRECISA FICAR CLARAMENTE ACIMA DO INTERVALO ENTRE CARACTERES, senão ela lê como
+     um caractere lento em vez de fim de linha. Ela acompanha o outro token quando ele muda:
+     em 3,75 vezes o intervalo, a quebra se ouve e o total não estica. */
+  --dur-caractere: 32ms;
+  --intervalo-linha: 120ms;
+
   /* Foco. Neutro de propósito: no sistema a cor significa camada, e foco não é camada.
      Medido contra todos os fundos, fica entre 13,9 e 17,7 nos dois temas. */
   --foco: var(--text);
@@ -259,6 +275,8 @@
     --dur-entrada-cartao: 0ms;
     --intervalo-cartao: 0ms;
     --deslocamento-lateral: 0px;
+    --dur-caractere: 0ms;
+    --intervalo-linha: 0ms;
   }
 }
 
@@ -1014,6 +1032,18 @@ body {
    então ele para quando o bloco sai da tela, pelo mesmo `PausaForaDaTela` das fitas de luz.
    --------------------------------------------------------------------------- */
 
+/* O atraso de qualquer peça é a mesma conta: o tempo dos caracteres que vieram antes dela,
+   mais as pausas de fim de linha que já aconteceram. Para uma linha, "antes" é o que está
+   acima dela; para o cursor, é o texto inteiro. Por isso a conta mora num lugar só, e quem
+   muda é a contagem que o componente escreve. */
+.whoami-valor,
+.whoami-cursor {
+  --atraso-whoami: calc(
+    var(--caracteres-antes) * var(--dur-caractere) + var(--linhas-antes) *
+      var(--intervalo-linha)
+  );
+}
+
 .whoami-valor {
   display: inline-block;
 }
@@ -1030,12 +1060,12 @@ body {
 
 @media (width >= 64rem) and (prefers-reduced-motion: no-preference) {
   [data-revelar="visivel"] .whoami-valor {
-    animation: whoami-digita calc(var(--caracteres) * 14ms)
-      steps(var(--caracteres)) var(--atraso-linha) backwards;
+    animation: whoami-digita calc(var(--caracteres) * var(--dur-caractere))
+      steps(var(--caracteres)) var(--atraso-whoami) backwards;
   }
 
   [data-revelar="visivel"] .whoami-cursor {
-    animation: whoami-pisca 1.1s step-end var(--atraso-cursor) infinite;
+    animation: whoami-pisca 1.1s step-end var(--atraso-whoami) infinite;
   }
 
   [data-pausar-fora="fora"] .whoami-cursor {
@@ -1069,27 +1099,31 @@ body {
    Mesma linguagem do cartão: levante de 2px por `translate`, que o compositor resolve
    sozinho, e o foco recebe o mesmo, e não só o anel.
 
-   TRÊS NÍVEIS, E A REGRA É QUE A COR ACCENT FICA RESERVADA PARA AÇÃO:
+   DOIS NÍVEIS EM USO, E A REGRA ERA QUE A COR ACCENT FICASSE RESERVADA PARA AÇÃO:
 
    - `.botao-cheio`, fundo accent: o que o site quer que a pessoa faça. CTA da nav, entrada
      do hero, fechamento do Sobre.
-   - `.botao-contorno`, borda e texto accent: ação secundária de alta intenção, hoje só o
-     "Baixar CV".
-   - `.botao-neutro`, borda `--border-forte` e texto `--text`: navegação. Os três links de
-     seção, que são "veja mais disto" e não ação. Tratá-los como o "Baixar CV" diria que
-     baixar um currículo e ir para a listagem pesam igual, e não pesam.
+   - `.botao-contorno`, borda e texto accent: o "Baixar CV" e, desde 2026-09-14, os três
+     links de seção da home.
+   - `.botao-neutro`, borda `--border-forte` e texto `--text`: SEM USO desde a mesma data.
 
-   O `--border-forte` foi criado para borda de campo de formulário e ficou sem uso quando o
-   formulário saiu. Ele serve aqui pelo mesmo motivo que existia lá: **borda é o que
-   identifica componente sem preenchimento, e limite de componente interativo precisa de
-   3:1**. Ele dá 3,28 no escuro e 3,38 no claro sobre o `--bg`. A `--border` comum ficaria
-   em 1,2, que é decoração de card: um botão delimitado por ela seria um botão invisível.
+   O TERCEIRO NÍVEL EXISTIA PARA OS LINKS DE SEÇÃO e a Samara decidiu, com a consequência
+   na mão, que eles vestem contorno rosa. O que se perde está registrado para não ser
+   redescoberto como novidade: "Baixar CV" e "ir para a listagem" passam a pesar igual, e a
+   cor accent deixa de significar "ação" para significar "clicável". Quem olhar a home
+   depois disso e achar que falta hierarquia entre os três botões rosa está vendo o preço,
+   e não um defeito.
 
-   OS TRÊS NÃO RESPONDEM IGUAL, E ISSO É O PONTO. O cheio levanta e escurece, porque é a
-   ação principal. O de contorno só ganha fundo, sem levante. O neutro só afia a borda, de
-   `--border-forte` para `--text`. Se todos se comportassem igual, a hierarquia se perderia
-   no hover. Fundo neutro no hover do terceiro não serviria: `--surface` e `--surface-2`
-   ficam a menos de 1,2 do `--bg` e o estado seria invisível.
+   `.botao-neutro` FICOU SEM NENHUM USO, e o `--border-forte` junto, já que o filete da
+   folha do hero voltou para a `--border` comum e o formulário saiu na fase um. Os dois
+   estão parados de propósito, esperando decisão: apagar custa refazer a medição de 3:1
+   quando o formulário voltar no painel. Se a decisão for apagar, os dois saem juntos, mais
+   as três declarações do token nos dois temas e a ponte do `@theme`.
+
+   NÃO RESPONDEM IGUAL, E ISSO É O PONTO. O cheio levanta e escurece, porque é a ação
+   principal. O de contorno só ganha fundo, sem levante. O neutro, se voltar, só afia a
+   borda, de `--border-forte` para `--text`: fundo neutro no hover dele não serviria, porque
+   `--surface` e `--surface-2` ficam a menos de 1,2 do `--bg` e o estado seria invisível.
 
    O escurecimento do cheio usa o token `--accent-rosa-hover`, medido, e não um filtro de
    brilho. É cor sobre a qual texto é lido, então precisava ser medida.
