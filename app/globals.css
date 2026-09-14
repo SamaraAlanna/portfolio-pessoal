@@ -218,6 +218,8 @@
 
   --dur-tema: 620ms;
   --dur-varredura: 700ms;
+  --dur-cortina: 600ms;
+  --atraso-cortina: 300ms;
 
   /* Foco. Neutro de propósito: no sistema a cor significa camada, e foco não é camada.
      Medido contra todos os fundos, fica entre 13,9 e 17,7 nos dois temas. */
@@ -236,6 +238,8 @@
     --deslocamento-entrada: 0px;
     --dur-tema: 0ms;
     --dur-varredura: 0ms;
+    --dur-cortina: 0ms;
+    --atraso-cortina: 0ms;
   }
 }
 
@@ -679,6 +683,53 @@ body {
     transition:
       opacity var(--dur-entrada) var(--curva-saida),
       translate var(--dur-entrada) var(--curva-saida);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   A cortina das capas.
+
+   A capa do card abre da esquerda para a direita, por `clip-path`. O card já está no lugar
+   e nada muda de tamanho: o que anima é o recorte.
+
+   DA ESQUERDA PARA A DIREITA, por três motivos. A capa é paisagem, então o eixo longo dá
+   espaço para o movimento existir sem precisar ser lento. A grade é assimétrica, com o card
+   grande à esquerda e três empilhados à direita, e a abertura termina apontando para o
+   resto do conteúdo em vez de terminar num canto. E ela se distingue da varredura do case
+   do Bajaj, que é de cima para baixo e significa código sendo escrito: se a casa inteira
+   usar a mesma cortina, ela para de significar alguma coisa.
+
+   A REGRA VIVE NA CAPA E O ESCOPO É A SEÇÃO. Assim ela pega qualquer capa que passe a
+   existir na seção de trabalhos, sem ninguém precisar lembrar de marcar o card novo, e não
+   pega as oito capas da listagem.
+
+   ATRASO DEPOIS DA ENTRADA DA SEÇÃO. A seção tem `data-revelar` e entra com opacidade e
+   deslocamento. As duas ao mesmo tempo seriam duas entradas no mesmo lugar, que é o que fez
+   a skills perder o `data-revelar`. Aqui a seção fica, porque a cortina é detalhe de um
+   elemento dentro de uma seção que tem rótulo, botão e quatro cards: sem o fade, todo o
+   resto entraria seco. A saída foi sequenciar.
+
+   Sem `fill-mode: forwards`, então o recorte volta a `none` no fim e não sobra ancestral
+   recortado por cima de nada.
+   --------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-cortina][data-revelar="pendente"] .capa-projeto {
+    clip-path: inset(0 100% 0 0);
+  }
+
+  [data-cortina][data-revelar="visivel"] .capa-projeto {
+    animation: capa-cortina var(--dur-cortina) var(--curva-saida) var(--atraso-cortina)
+      backwards;
+  }
+}
+
+@keyframes capa-cortina {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
   }
 }
 

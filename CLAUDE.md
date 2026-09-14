@@ -1216,6 +1216,24 @@ recorte parar na fronteira de cada glifo, e isso só funciona porque a fonte é 
 recorte revelaria as duas ao mesmo tempo. O cursor pisca e para quando o bloco sai da tela,
 pelo mesmo `PausaForaDaTela` das luzes do hero, que por isso subiu do hero para o layout.
 
+**A capa do card de destaque da home abre por cortina**, da esquerda para a direita, por
+`clip-path`. A direção é decisão: a capa é paisagem, então o eixo longo dá espaço ao
+movimento; a grade é assimétrica e a abertura termina apontando para os três cards da
+direita; e ela se distingue da varredura do Bajaj, que é vertical e significa código sendo
+escrito. **Se a casa inteira usar a mesma cortina, ela para de significar alguma coisa.**
+
+**A regra vive na capa e o escopo é a seção.** Ela pega qualquer capa que passe a existir na
+seção de trabalhos, sem ninguém lembrar de marcar card novo, e não pega as oito da listagem.
+**Hoje existe uma capa na home:** o card compacto é só texto, então só o destaque tem
+imagem. Recortar os compactos foi descartado porque recorte sobre texto corta glifo pela
+metade, e glifo cortado lê como defeito; no bloco de código do Bajaj funciona porque código
+aparecendo linha a linha é o que se espera de código.
+
+**A seção mantém o `data-revelar` e a cortina é sequenciada depois dele**, com atraso. Aqui
+o fade fica, ao contrário da skills, e a diferença é essa: na skills o deslize **era** a
+entrada da seção inteira, e aqui a cortina é detalhe de um elemento dentro de uma seção que
+tem rótulo, botão e quatro cards. Sem o fade, todo o resto entraria seco.
+
 **Um bloco por case é a prova visual**, marcado no conteúdo com `prova="true"`. **Uma por
 case: se houver duas marcadas, vale a primeira.** Hoje são o código do Bajaj, a paleta do
 Tech Girls e os números do VOGE. Funciona em `codigo`, `paleta` e `numeros`, **só no

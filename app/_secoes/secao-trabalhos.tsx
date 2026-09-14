@@ -9,6 +9,12 @@ import { lerProjetosDaHome } from "@/lib/conteudo";
  * Grade assimétrica: o projeto em destaque ocupa metade, os outros três empilham na outra
  * metade. Quem aparece aqui é decidido pelo campo ordemHome do frontmatter, e não pelos
  * primeiros da listagem, porque no Figma a seleção da home é outra.
+ *
+ * O `data-cortina` liga a revelação das capas por recorte, e o escopo é a seção de
+ * propósito: a regra vive na capa, então ela pega qualquer capa que exista aqui dentro, e
+ * só aqui. Solta no `PreviewProjeto`, as oito capas da listagem abririam junto, que é
+ * exatamente o escalonamento que o projeto evita. Hoje existe uma capa nesta seção, a do
+ * card de destaque, porque o card compacto é só texto.
  */
 export default function SecaoTrabalhos() {
   const projetos = lerProjetosDaHome();
@@ -22,7 +28,11 @@ export default function SecaoTrabalhos() {
     // Grade de uma coluna no mobile e de duas linhas no desktop. É ela que permite o
     // link "Todos os projetos" ficar ao lado do rótulo no desktop e depois dos cards no
     // mobile, como está no Figma, sem repetir o link no HTML.
-    <section data-revelar className="grid grid-cols-1 gap-y-[44px] faixa py-[96px] lg:grid-cols-[1fr_auto] lg:items-center">
+    <section
+      data-revelar
+      data-cortina
+      className="grid grid-cols-1 gap-y-[44px] faixa py-[96px] lg:grid-cols-[1fr_auto] lg:items-center"
+    >
       <h2 className="font-mono text-rotulo-secao font-medium text-accent-rosa lg:col-start-1 lg:row-start-1">
         MEUS PROJETOS
       </h2>
