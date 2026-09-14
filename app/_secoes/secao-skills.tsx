@@ -44,64 +44,70 @@ const codigo = [
 
 export default function SecaoSkills() {
   return (
-    <section className="hero-folha flex flex-col gap-[40px] faixa py-[104px]">
-      <h2 className="font-mono text-rotulo-secao font-medium text-accent-rosa">
-        O QUE EU FAÇO
-      </h2>
+    // A seção ocupa a largura inteira da viewport e uma tela de altura, e é isso que faz
+    // dela uma folha. Com a `faixa` na própria seção, o fundo parava nos 1200 e as luzes
+    // do hero apareciam nas bordas. A `faixa` desceu para o conteúdo: o fundo vai de borda
+    // a borda, o texto continua na medida de sempre.
+    <section className="hero-folha flex min-h-[calc(100svh-var(--altura-nav))] flex-col justify-center py-[104px]">
+      <div className="flex flex-col gap-[40px] faixa">
+        <h2 className="font-mono text-rotulo-secao font-medium text-accent-rosa">
+          O QUE EU FAÇO
+        </h2>
 
-      <div className="flex flex-col items-start lg:flex-row">
-        <div className="flex w-full flex-col items-start lg:flex-1 lg:gap-[16px] lg:pr-[56px]">
-          <AcordeaoMobile
-            padraoAberto
-            tag="h3"
-            titulo="Design"
-            classeTag="text-titulo-secao font-bold text-text"
-            classeLinha="min-h-[var(--alvo-toque)] py-[14px] lg:min-h-0 lg:py-0"
-            classePainel="pb-[10px] lg:pb-0"
-          >
-            <ul className="flex flex-col items-start gap-[10px]">
-              {design.map((item) => (
-                <li key={item} className="flex items-start gap-[12px]">
-                  <span
-                    aria-hidden="true"
-                    className="font-mono text-cta text-accent-rosa"
-                  >
-                    -
-                  </span>
-                  <span className="text-corpo text-text">{item}</span>
-                </li>
-              ))}
-            </ul>
-          </AcordeaoMobile>
-        </div>
+        <div className="flex flex-col items-start lg:flex-row">
+          <div className="flex w-full flex-col items-start lg:flex-1 lg:gap-[16px] lg:pr-[56px]">
+            <AcordeaoMobile
+              padraoAberto
+              tag="h3"
+              titulo="Design"
+              classeTag="text-titulo-secao font-bold text-text"
+              classeLinha="min-h-[var(--alvo-toque)] py-[14px] lg:min-h-0 lg:py-0"
+              classePainel="pb-[10px] lg:pb-0"
+            >
+              <ul className="flex flex-col items-start gap-[10px]">
+                {design.map((item) => (
+                  <li key={item} className="flex items-start gap-[12px]">
+                    <span
+                      aria-hidden="true"
+                      className="font-mono text-cta text-accent-rosa"
+                    >
+                      -
+                    </span>
+                    <span className="text-corpo text-text">{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </AcordeaoMobile>
+          </div>
 
-        <div
-          aria-hidden="true"
-          className="my-[10px] h-px w-full bg-accent-rosa lg:my-0 lg:h-auto lg:w-px lg:self-stretch"
-        />
+          <div
+            aria-hidden="true"
+            className="my-[10px] h-px w-full bg-accent-rosa lg:my-0 lg:h-auto lg:w-px lg:self-stretch"
+          />
 
-        <div className="flex w-full flex-col items-start lg:flex-1 lg:gap-[16px] lg:pl-[56px]">
-          <AcordeaoMobile
-            tag="h3"
-            titulo="Código"
-            classeTag="font-mono text-titulo-secao-mono font-medium text-accent-rosa"
-            classeLinha="min-h-[var(--alvo-toque)] py-[14px] lg:min-h-0 lg:py-0"
-            classePainel="pb-[10px] lg:pb-0"
-          >
-            <ul className="flex flex-col items-start gap-[10px]">
-              {codigo.map((item) => (
-                <li key={item} className="flex items-start gap-[12px]">
-                  <span
-                    aria-hidden="true"
-                    className="font-mono text-cta text-accent-rosa"
-                  >
-                    &gt;
-                  </span>
-                  <span className="font-mono text-cta text-text">{item}</span>
-                </li>
-              ))}
-            </ul>
-          </AcordeaoMobile>
+          <div className="flex w-full flex-col items-start lg:flex-1 lg:gap-[16px] lg:pl-[56px]">
+            <AcordeaoMobile
+              tag="h3"
+              titulo="Código"
+              classeTag="font-mono text-titulo-secao-mono font-medium text-accent-rosa"
+              classeLinha="min-h-[var(--alvo-toque)] py-[14px] lg:min-h-0 lg:py-0"
+              classePainel="pb-[10px] lg:pb-0"
+            >
+              <ul className="flex flex-col items-start gap-[10px]">
+                {codigo.map((item) => (
+                  <li key={item} className="flex items-start gap-[12px]">
+                    <span
+                      aria-hidden="true"
+                      className="font-mono text-cta text-accent-rosa"
+                    >
+                      &gt;
+                    </span>
+                    <span className="font-mono text-cta text-text">{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </AcordeaoMobile>
+          </div>
         </div>
       </div>
     </section>

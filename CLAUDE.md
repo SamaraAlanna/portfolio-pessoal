@@ -1101,8 +1101,20 @@ que ele existe.
 
 **Cinco coisas andam juntas, e tirar qualquer uma quebra o conjunto:**
 
-1. **A folha de cima precisa de fundo opaco e `z-index`.** A skills era transparente e o
-   fundo vinha do `body`. Sem fundo próprio o hero aparece através dela.
+1. **A folha de cima precisa de fundo opaco, `z-index`, largura de borda a borda e uma tela
+   de altura.** A skills era transparente e o fundo vinha do `body`. E ela tinha a `faixa`
+   na própria seção, então o fundo parava nos 1200 e as luzes do hero apareciam nas bordas
+   esquerda e direita. **A `faixa` desceu para um div interno:** o fundo vai de borda a
+   borda e o conteúdo continua na medida de sempre. A altura mínima é a mesma do hero,
+   `100svh - altura-nav`, senão a folha cobre só uma faixa no meio da tela e o resto do hero
+   continua aparecendo em cima e embaixo dela.
+
+   **Foi assim que o seletor PT/EN pareceu vazar por cima da folha.** Não era empilhamento:
+   o hero é contexto isolado pelo `isolate`, nenhum filho dele tem `z-index` positivo, e
+   nada ali pode pintar acima de um irmão posterior com `z-index: 1`. O seletor fica no alto
+   do conteúdo do hero, e a folha curta simplesmente ainda não tinha chegado nele. Sintoma,
+   não causa: se a folha não cobre a tela inteira, **todo** elemento do hero fora da faixa
+   dela fica à mostra.
 2. **A skills perdeu o `data-revelar`.** Seriam duas entradas no mesmo elemento, e durante o
    fade ela ficaria semitransparente justo quando deveria cobrir o hero. O deslize é a
    entrada dela.
