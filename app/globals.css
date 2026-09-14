@@ -1649,40 +1649,37 @@ body {
 
   /* Cada mancha anda e respira no seu próprio tempo. É o descompasso entre as três que
      muda a silhueta da união. */
+  /* Só deslize. A respiração por `scale` foi removida em 2026-09-14: ela era o gatilho de
+     re-rasterização, e o que ela acrescentava era pequeno demais para pagar. Em cinco
+     segundos o deslize move cerca de 25px numa mancha de 620, e a escala mudava a borda em
+     uns 4px. O deslize faz seis vezes mais trabalho visível, e as três manchas deslizando
+     uma sobre a outra continuam mudando a silhueta da união, que é o ponto. */
   .mancha {
-    animation:
-      mancha-desliza var(--tempo-mancha) ease-in-out infinite alternate,
-      mancha-respira var(--tempo-mancha-escala) ease-in-out infinite alternate;
+    animation: mancha-desliza var(--tempo-mancha) ease-in-out infinite alternate;
   }
 
   .mancha:nth-child(1) {
     --tempo-mancha: 13s;
-    --tempo-mancha-escala: 29s;
     --desliza-x: 9%;
     --desliza-y: -7%;
-    --escala-fim: 1.06;
   }
 
   .mancha:nth-child(2) {
     --tempo-mancha: 19s;
-    --tempo-mancha-escala: 23s;
     --desliza-x: -11%;
     --desliza-y: 8%;
-    --escala-fim: 0.94;
   }
 
   .mancha:nth-child(3) {
     --tempo-mancha: 11s;
-    --tempo-mancha-escala: 37s;
     --desliza-x: 7%;
     --desliza-y: 10%;
-    --escala-fim: 1.05;
   }
 
   /* As manchas da luz 4 começam fora de fase. Sem isso as quatro luzes respirariam no
      mesmo compasso, porque todas as animações partem do carregamento da página. */
   .luz-4 .mancha {
-    animation-delay: -7s, -11s;
+    animation-delay: -7s;
   }
 
   /* Fora da tela tudo para, e o play-state alcança as animações de cada elemento. */
@@ -1720,12 +1717,6 @@ body {
 @keyframes mancha-desliza {
   to {
     translate: var(--desliza-x) var(--desliza-y);
-  }
-}
-
-@keyframes mancha-respira {
-  to {
-    scale: var(--escala-fim);
   }
 }
 
