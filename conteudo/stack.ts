@@ -20,17 +20,23 @@ export type GrupoDaStack = {
 };
 
 /**
- * A ORDEM É POR CAMADA, DUAS POR LINHA DA GRADE, e ela segue o parágrafo de abertura da
- * página: rosa é produto e design, lavanda é front-end, ciano é back-end e dados, âmbar é
- * entrega e operação. Cada par de mesma cor ocupa uma linha inteira.
+ * A ORDEM É POR CAMADA, DUAS POR LINHA DA GRADE: rosa, lavanda, ciano, âmbar. Cada par de
+ * mesma cor ocupa uma linha inteira, e dentro do par o grupo maior fica à esquerda.
+ *
+ * A ÂNCORA É O SISTEMA DE COR, E NÃO MAIS O TEXTO DA PÁGINA. Quando esta ordem foi
+ * decidida, em 2026-09-23, o argumento era que a grade contradizia o parágrafo de abertura,
+ * que explicava a lógica de cor nessa sequência. **Esse parágrafo saiu no mesmo dia**, por
+ * decisão da Samara, e com ele a página deixou de explicar o que as cores significam.
+ *
+ * A ordem continua valendo, agora apoiada onde ela sempre esteve de verdade: a sequência
+ * rosa, lavanda, ciano, âmbar é a do sistema de cor do projeto, registrada no CLAUDE.md,
+ * e vale em todo o site. **Não reordene por outro critério só porque a página não explica
+ * mais a lógica**: sem o texto, a sequência é o que sobrou dela na tela.
  *
  * A GRADE TEM DUAS COLUNAS, ENTÃO A POSIÇÃO NO ARRAY DECIDE QUEM DIVIDE LINHA COM QUEM.
  * Mover um grupo daqui não é reordenar uma lista, é remontar as duplas. Até 2026-09-23 a
  * sequência era rosa, lavanda, lavanda, ciano, ciano, âmbar, âmbar, rosa, com os dois
- * rosas nas pontas: **a grade contradizia o texto de abertura da própria página**, e a
- * primeira camada citada terminava no canto inferior direito.
- *
- * Dentro de cada par o grupo maior fica à esquerda.
+ * rosas nas pontas.
  */
 export const grupos: GrupoDaStack[] = [
   {
@@ -173,17 +179,4 @@ export const grupos: GrupoDaStack[] = [
       "Google Ads",
     ],
   },
-];
-
-export type LinhaDoSetup = { item: string; valor: string; leve?: boolean };
-
-/** A última linha sai mais discreta de propósito: é piada, não especificação. */
-export const setup: LinhaDoSetup[] = [
-  { item: "Monitor", valor: 'Alienware 320hz 25" IPS' },
-  { item: "Teclado", valor: "AULA HERO 84 HE" },
-  { item: "Mouse", valor: "Razer Deathadder V3 Pro" },
-  { item: "Headset", valor: "MCHOSE PRO" },
-  { item: "Microfone", valor: "FIFINE AM8" },
-  { item: "PC", valor: "RYZEN 5600, RTX 4060, 16GB RAM, 1TB E 500GB SSD" },
-  { item: "Supervisor", valor: "Dio, gato", leve: true },
 ];

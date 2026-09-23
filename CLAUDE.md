@@ -108,13 +108,37 @@ sugerida, para a próxima sessão saber de onde continuar sem reabrir tudo.
   nessa conta. Sobrou uma consequência medida: a coluna da esquerda encurtou uns 33px e a
   folga que sustenta a centragem da foto caiu de uns 70px para uns 36px.
 - **A grade da Stack foi reordenada por camada em 2026-09-23**, duas colunas, um par de
-  mesma cor por linha, na ordem do parágrafo de abertura da página: rosa, lavanda, ciano,
-  âmbar. Antes era rosa, lavanda, lavanda, ciano, ciano, âmbar, âmbar, rosa, com os dois
-  rosas nas pontas. **O argumento que decidiu não foi estético: a grade contradizia o texto
-  de abertura da própria página**, que promete essa sequência, e a primeira camada citada
-  terminava no canto inferior direito. **O Figma foi reordenado junto, nas quatro versões**,
-  então os dois lados batem. A ordem vive em `conteudo/stack.ts`, com o critério comentado
-  lá: mover um grupo não reordena uma lista, remonta as duplas.
+  mesma cor por linha: rosa, lavanda, ciano, âmbar. Antes era rosa, lavanda, lavanda, ciano,
+  ciano, âmbar, âmbar, rosa, com os dois rosas nas pontas. **O Figma foi reordenado junto,
+  nas quatro versões**, então os dois lados batem. A ordem vive em `conteudo/stack.ts`, com
+  o critério comentado lá: mover um grupo não reordena uma lista, remonta as duplas.
+- **A Stack perdeu o rótulo e a explicação da lógica de cor em 2026-09-23.** O texto de
+  apoio virou "Todas as tecnologias e ferramentas que eu consigo aplicar com autonomia", e
+  o parágrafo que explicava o significado das camadas saiu. **Foi decisão consciente, com a
+  consequência declarada:** sem esse texto, os filetes dos cards e o realce dos chips
+  deixam de comunicar camada para quem não conhece o sistema, e passam a ler como
+  decoração. Não é regressão nem descuido.
+- **Isso tirou a âncora do argumento que decidira a ordem da grade**, poucas horas antes, e
+  a âncora foi trocada em vez de o critério ser abandonado: a sequência rosa, lavanda,
+  ciano, âmbar é a do sistema de cor do projeto e vale em todo o site, com ou sem o
+  parágrafo. **Fica como exemplo de um risco de manutenção real:** regra justificada por um
+  texto morre quando o texto sai, e quem encontrar a ordem sem entender de onde ela vem
+  reordena por outro critério.
+- **O vão entre os chips da Stack é 5px, e não os 7 do Figma**, desde 2026-09-23. Vão menor
+  faz caber mais chip por linha e encolhe a sobra no fim das linhas, que é o que incomodava.
+  **Não elimina a sobra, e não era para eliminar.**
+- **Justificar os chips foi considerado e recusado**, e o motivo fica registrado para não
+  ser retentado no escuro. Numa linha de chips **só a largura dos chips ou a largura dos
+  vãos pode absorver o buraco, não existe terceira**. Esticar chip quebra a gramática de
+  pílula e deixa uma linha de um chip só virar uma pílula da largura do card. Esticar vão
+  por `text-align: justify` preserva a largura e é a única técnica que trata a última linha
+  certo, mas faz o vão variar de linha para linha dentro do mesmo card, o que **troca um
+  buraco no fim por vãos desiguais no meio**, e custa sair do `flex gap` para `inline-block`
+  com espaço injetado no JSX e vão vertical amarrado a `line-height`. **`space-between` é a
+  armadilha óbvia e é pior que as duas**, porque estica a última linha também.
+- **A seção "Setup de trabalho" saiu em 2026-09-23**, com as sete linhas de equipamento, e
+  o `setup` mais o tipo `LinhaDoSetup` saíram do `conteudo/stack.ts` junto. A Stack ficou
+  com cabeçalho e a grade de grupos, e só.
 - **A seção COMUNIDADE do Sobre saiu em 2026-09-23**, e a Tech Girls virou a terceira
   entrada de EXPERIÊNCIA. Ela era um card com fundo tingido e link "Ver o case", e **o link
   saiu junto de propósito**: a experiência é linha do tempo, não card com chamada, e um

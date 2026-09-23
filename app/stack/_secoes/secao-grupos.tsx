@@ -57,7 +57,25 @@ export default function SecaoGrupos() {
               </span>
             </div>
 
-            <ul className="mt-[20px] flex flex-wrap gap-[7px]">
+            {/* O VÃO É 5px, E NÃO OS 7 DO FIGMA, e o motivo é a sobra no fim das linhas.
+                Chip de largura variável quebrando em linha deixa buraco quando o próximo
+                não cabe, e vão menor faz caber mais chip por linha, o que encolhe a sobra.
+                Não a elimina, e não era para eliminar.
+
+                JUSTIFICAR FOI CONSIDERADO E RECUSADO em 2026-09-23, com o motivo escrito
+                para não ser retentado no escuro: numa linha de chips só a largura dos chips
+                ou a largura dos vãos pode absorver o buraco, não existe terceira. Esticar
+                chip quebra a gramática de pílula do site e deixa uma linha de um chip só
+                virar uma pílula da largura do card. Esticar vão por `text-align: justify`
+                preserva a largura e trata a última linha certo, mas faz o vão variar de
+                linha para linha dentro do mesmo card, o que **troca um buraco no fim por
+                vãos desiguais no meio**, e custa sair do `flex gap` para `inline-block`
+                com espaço injetado no JSX e vão vertical amarrado a `line-height`.
+
+                `justify-content: space-between` é a armadilha óbvia e é pior que as duas:
+                ele estica a última linha também, então um grupo que termina com dois chips
+                fica com um grudado em cada borda. */}
+            <ul className="mt-[20px] flex flex-wrap gap-[5px]">
               {grupo.chips.map((chip) => (
                 <li
                   key={chip}

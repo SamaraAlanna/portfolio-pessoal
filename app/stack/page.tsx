@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { metadataDaPagina } from "@/lib/site";
 import CabecalhoPagina from "@/components/ui/cabecalho-pagina";
 import SecaoGrupos from "@/app/stack/_secoes/secao-grupos";
-import SecaoSetup from "@/app/stack/_secoes/secao-setup";
 
 export const metadata: Metadata = metadataDaPagina({
   titulo: "Stack",
@@ -14,15 +13,13 @@ export const metadata: Metadata = metadataDaPagina({
 export default function PaginaStack() {
   return (
     <>
-      <CabecalhoPagina rotulo="STACK" titulo="Ferramentas e tecnologias">
+      {/* Sem rótulo acima do título, como no Contato e no Sobre. */}
+      <CabecalhoPagina titulo="Ferramentas e tecnologias">
         <p>
-          Tudo que eu uso, agrupado pela camada onde atua. A cor de cada grupo segue a
-          mesma lógica do resto do site: rosa é produto e design, lavanda é front-end,
-          ciano é back-end e dados, âmbar é entrega e operação.
+          Todas as tecnologias e ferramentas que eu consigo aplicar com autonomia.
         </p>
       </CabecalhoPagina>
       <SecaoGrupos />
-      <SecaoSetup />
     </>
   );
 }
