@@ -109,16 +109,29 @@ sugerida, para a próxima sessão saber de onde continuar sem reabrir tudo.
   são trabalho da TecSinapse e o site do estúdio é do BORDA. Para o case ficar alcançável do
   Sobre, o certo é tratamento igual nas três, e isso passa pelo Figma. **Com isso a cota de
   uma caixa tingida por página está livre no Sobre.**
-- **O formulário de contato foi removido em 2026-09-13** e volta na fase dois. O que ele
-  era está registrado na seção do painel, mais abaixo. A página foi rearranjada: os canais
-  viraram três cartões em vez da lista de linhas do Figma, porque sem o formulário sobrou
-  uma coluna num espaço de duas. Entrou a seção "QUANDO ME CHAMAR", com quatro motivos em
-  `conteudo/contato.ts`, que qualifica o contato antes de a pessoa escrever. A ponte para o
-  BORDA desceu para o fim, logo depois do motivo que fala do estúdio, para o link ser a
-  porta do que acabou de ser explicado em vez de repetir a marca em dois blocos.
+- **O formulário de contato voltou em 2026-09-23, só o front.** Ele tinha saído em
+  2026-09-13 e foi recuperado do primeiro commit por `git show`, como estava previsto. O
+  envio continua desligado e **o destino é decisão de outro momento**: não existe rota de
+  API, e formulário que aceita envio e joga fora é pior que um desligado, porque a pessoa
+  acredita que mandou. Botão desabilitado, com aviso visível.
+- **A página voltou ao arranjo do Figma, duas colunas de 568 com 64 de intervalo:** canais
+  e ponte do BORDA à esquerda, formulário à direita. Com isso **os canais voltaram a ser
+  linhas com separador, e deixaram de ser três cartões**. O cartão era remendo do período
+  sem formulário, quando sobrava uma coluna num espaço de duas, e a objeção antiga às
+  linhas era a largura: na faixa de 1200 o rótulo e o endereço ficavam a novecentos pixels
+  um do outro, e na coluna de 568 eles se leem juntos.
+- **A seção "QUANDO ME CHAMAR" saiu em 2026-09-23**, com os quatro motivos, e o tipo
+  `MotivoDeContato` saiu junto do `conteudo/contato.ts`. Ela existia para qualificar o
+  contato enquanto não havia formulário; com o campo de assunto de volta, o select faz esse
+  trabalho dentro do próprio fluxo.
+- **O Contato é a única página interna sem rótulo acima do `h1`.** O `CabecalhoPagina`
+  passou a aceitar `rotulo` opcional em 2026-09-23. Projetos e Stack continuam com o deles.
+  Isso não mexe na estrutura de cabeçalhos, porque o rótulo sempre foi `p`, e não `h2`.
 - **A linha de disponibilidade não é seção.** Ela é o texto de apoio do cabeçalho da
-  página, onde o Figma a coloca: "Respondo em até 2 dias úteis. Prefiro conversar por
-  escrito".
+  página, onde o Figma a coloca, e hoje é só "Respondo em até 2 dias úteis". O "Prefiro
+  conversar por escrito" saiu em 2026-09-23, **e saiu da descrição do metadata junto**:
+  deixar a frase lá manteria ela viva no cartão de compartilhamento e na busca, num texto
+  que ninguém reabre para conferir.
 - **Passo 8, feito.** Os comportamentos de mobile. Duas peças novas em `components/ui/`:
   `acordeao-mobile`, que é o `details` nativo com o desktop sempre aberto, e `trilho-rolavel`,
   que é a moldura dos carrosséis. Elas são usadas pela seção de skills da home, pelo
@@ -838,37 +851,74 @@ entra depois e vira case próprio.
 push dispara build na Vercel, o site atualiza em um ou dois minutos. Mostre esse estado
 na interface ("publicando" que vira "publicado"), senão a pessoa acha que não salvou.
 
-### O formulário de contato volta aqui
+### O envio do formulário é o que falta
 
-Ele existiu e foi removido em 2026-09-13, porque dependia de serviço externo para enviar, e
-formulário que despacha para terceiro não demonstra nada tecnicamente. Volta quando o
-projeto tiver rota de API própria, com validação escrita à mão, e aí vira caso de uso de
-verdade em vez de enfeite.
+**O formulário está no ar desde 2026-09-23, e só o front.** A marcação, o visual e a
+acessibilidade estão prontos em `app/contato/_secoes/secao-formulario.tsx`. O que não
+existe é destino, e **essa decisão é dela, não foi tomada**.
 
-**Não recomece do zero.** O componente era `app/contato/_secoes/secao-formulario.tsx` e está
-no primeiro commit do repositório, então dá para recuperar por `git show`. O que ele tinha:
+Ele saiu em 2026-09-13 porque dependia de serviço externo, e formulário que despacha para
+terceiro não demonstra nada tecnicamente. O que fecha o ciclo é rota de API própria, com
+validação escrita à mão, e aí vira caso de uso de verdade em vez de enfeite.
 
-- **Quatro campos**, cada um com rótulo associado por `htmlFor` e `id`: NOME (`text`,
-  placeholder "Como devo te chamar"), EMAIL (`email`, "seu@email.com"), ASSUNTO (`select`
-  com um `option` vazio e desabilitado de placeholder, "Selecione um assunto") e MENSAGEM
-  (`textarea` de 5 linhas, "Conta o contexto e o que você precisa").
-- **Os cinco assuntos do select continuam em `conteudo/contato.ts`**, anotados como
-  pendentes. Eles são a única parte do formulário que é conteúdo e não código: Projeto de
-  site, Identidade visual, Vaga ou processo seletivo, Parceria, Outro assunto. A ordem
-  importa, o primeiro é o pedido mais comum e o último cobre o resto.
-- **Rótulo** em mono, `text-titlebar` com `tracking-titlebar`, em `text-text-muted`.
-- **Campo**: `rounded-[8px]`, `border-[0.5px] border-border-forte`, `bg-surface`,
-  `px-[18px] py-[16px]`, `text-corpo`, placeholder em `text-text-dim`.
-- **Acessibilidade**: `h2` só para leitor de tela ligado ao `form` por `aria-labelledby`, e
-  o botão desabilitado ligado ao aviso por `aria-describedby`, senão a pessoa encontra um
-  botão morto sem saber por quê.
+**Para ligar o envio:** por o `action`, tirar o `disabled` do botão e remover o aviso. Os
+cinco campos já têm `name`, tipo e `autoComplete` certos.
 
-**O campo usa `--border-forte`**, que é o token de borda que precisa ser vista, e hoje o
-formulário é o único uso previsto dele. Ele já passou pelo filete da folha do hero e pelo
-botão neutro, e saiu dos dois: do filete porque lia como régua preta no tema claro, do botão
-porque os links de seção viraram contorno rosa. **Ele está sem uso nenhum agora**, e é o
-retorno do formulário que justifica mantê-lo. O critério de quando usar está na seção de
-acessibilidade.
+**Cinco campos**, cada um com rótulo associado por `htmlFor` e `id`: NOME, EMAIL, TELEFONE,
+ASSUNTO e MENSAGEM. **O telefone é o único opcional**, e o rótulo diz isso em texto, e não
+por asterisco, que precisa de legenda para significar alguma coisa. Os outros quatro têm
+`required`, que hoje não é exercido porque o envio não acontece, e passa a valer no dia em
+que acontecer.
+
+**Os cinco assuntos do select vivem em `conteudo/contato.ts`**, e é por isso que não
+precisaram ser reescritos: eles ficaram lá parados os dez dias em que o formulário esteve
+fora. São a única parte do formulário que é conteúdo, e não código.
+
+**O `--border-forte` voltou a ter uso, e é este.** Ele foi criado para borda de campo, ficou
+parado quando o formulário saiu, passou pelo filete da folha do hero e pelo botão neutro e
+saiu dos dois. **Manter o token parado foi a decisão certa**, porque apagar teria custado
+refazer a medição de 3:1 agora. Campo é componente interativo e o limite dele precisa de
+3:1; a `--border` comum fica em 1,2 e deixaria os campos quase invisíveis. Isso os deixa
+mais visíveis que no Figma, e é intencional.
+
+**Três decisões de acessibilidade que não são óbvias e não devem ser desfeitas:**
+
+- **O `h2` do formulário é só para leitor de tela**, ligado ao `form` por `aria-labelledby`.
+  O Figma não põe título ali, e a coluna ao lado já se chama CANAIS DIRETOS.
+- **O aviso vem antes do botão no HTML.** Botão desabilitado não recebe foco, então quem
+  navega por teclado nunca chega nele e o `aria-describedby` sozinho não seria lido. Na
+  ordem de leitura o aviso explica o botão morto antes de a pessoa esbarrar nele.
+- **Enter não envia, e isso vem de graça do botão desabilitado.** O envio implícito do HTML
+  aciona o botão padrão, e botão desabilitado não tem comportamento de ativação. Sem isso o
+  formulário faria GET na própria rota e **a mensagem inteira apareceria na barra de
+  endereço**. Ao ligar o envio, isso deixa de ser automático e precisa ser tratado.
+
+### A máscara de telefone
+
+**Escrita à mão, sem biblioteca**, em `components/ui/campo-telefone.tsx`. **Só este campo é
+client component**, e não o formulário: máscara precisa reagir a cada tecla, o resto não tem
+estado nem handler e continua no servidor.
+
+**Ela formata pelos dígitos, e não pelo que está escrito**, então colar em qualquer formato
+dá o mesmo resultado. O corte muda com o tamanho: até dez dígitos sai 4 mais 4, que é fixo,
+e no décimo primeiro vira 5 mais 4, que é celular.
+
+**Três armadilhas que já custaram correção, e que a próxima reescrita vai reencontrar:**
+
+1. **O cursor volta para onde estava, ancorado na contagem de dígitos.** Campo controlado
+   joga o cursor para o fim a cada reescrita, e sem isso quem corrigisse o DDD de um número
+   já digitado seria cuspido no fim da linha a cada tecla. A âncora é dígito, e não posição
+   em caracteres, porque os separadores entram e saem sozinhos. Em `useLayoutEffect`, senão
+   o cursor pisca no fim por um quadro.
+2. **O 55 da frente cai quando passa de 11 dígitos.** Quem copia do WhatsApp cola com código
+   do país, e sem a regra "+55 41 99999-8888" virava "(55) 41999-9988", **um número errado
+   com cara de certo**, que é o pior defeito possível num campo de contato. A condição é o
+   comprimento, e não o 55 sozinho: 55 também é DDD do Rio Grande do Sul, e um (55) legítimo
+   tem 11 dígitos e não é tocado.
+3. **Não existe `maxLength`, e isso é deliberado.** Ele parece o reforço óbvio e sabota a
+   regra acima: "+55 41 99999-8888" tem 17 caracteres, o navegador corta em 15 antes de o
+   `onChange` disparar, e a máscara recebe o texto já mutilado. **O limite real é de dígitos,
+   não de caracteres**, e mora na própria função de formatar.
 
 **Currículo:** PDF vai para o repositório, também via API do GitHub, em base64.
 **Limite de 5 MB no upload**, porque arquivo grande entra no histórico do Git e não sai.
@@ -1160,22 +1210,22 @@ se voltar, só afia a borda, de `--border-forte` para `--text`: fundo neutro no 
 não serviria, porque `--surface` e `--surface-2` ficam a menos de 1,2 do `--bg` e o estado
 seria invisível.
 
-**`.botao-neutro` e o `--border-forte` ficaram os dois sem nenhum uso**, já que o filete da
-folha do hero voltou para a `--border` comum e o formulário saiu na fase um. Estão parados
-de propósito: apagar custa refazer a medição de 3:1 quando o formulário voltar no painel.
-Se a decisão for apagar, os dois saem juntos, mais as três declarações do token nos dois
-temas e a ponte do `@theme`.
+**`.botao-neutro` ficou sem nenhum uso**, e está parado de propósito. **O `--border-forte`
+não: ele voltou a ter uso em 2026-09-23**, na borda dos campos do formulário de contato, que
+é para o que ele nasceu. Manter o token parado por dez dias foi o que evitou refazer a
+medição de 3:1 agora, e vale lembrar disso antes de apagar a classe do botão neutro: se um
+dia ela sair, o token fica, porque os dois deixaram de andar juntos.
 
 **Cada variante é selecionada pela própria classe**, e não por exclusão das outras nem por
 ordem no arquivo. Exclusão obrigaria toda variante nova a lembrar de entrar numa lista de
 `:not`, e ordem quebra quando alguém reordena o CSS.
 
-**O `--border-forte` teve um uso e perdeu de novo.** Ele foi criado para borda de campo de
-formulário, ficou parado quando o formulário saiu, serviu no botão neutro pelo mesmo motivo
-(borda é o que identifica componente sem preenchimento, e limite de componente interativo
-precisa de 3:1) e voltou a ficar parado quando o botão neutro saiu de uso. Os números
-continuam válidos para quando ele voltar: 3,28 no escuro e 3,38 no claro sobre o `--bg`,
-contra 1,2 da `--border` comum, que é decoração de card e faria um botão invisível.
+**O `--border-forte` está de volta no lugar de origem.** Ele foi criado para borda de campo
+de formulário, ficou parado quando o formulário saiu, serviu no botão neutro pelo mesmo
+motivo (borda é o que identifica componente sem preenchimento, e limite de componente
+interativo precisa de 3:1), ficou parado de novo quando o botão neutro saiu, e **voltou aos
+campos em 2026-09-23**. Os números: 3,28 no escuro e 3,38 no claro sobre o `--bg`, contra
+1,2 da `--border` comum, que é decoração de card e faria um campo quase invisível.
 
 **Os três links de seção da home são botões, e não texto com seta.** "Ver stack completa",
 "Todos os projetos" e "Minha trajetória completa", todos de contorno rosa, todos na mesma
