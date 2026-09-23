@@ -20,7 +20,24 @@ export type Cargo = {
   itens: string[];
 };
 
+/**
+ * A ORDEM É POR DATA DE INÍCIO, DECRESCENTE, e é critério, não gosto. Foi decidida assim
+ * em 2026-09-23, quando a Tech Girls entrou com 05/2026 e passou à frente do estágio na
+ * TecSinapse. Abrir exceção para um caso deixaria a lista sem regra nenhuma, e a próxima
+ * entrada não teria onde se apoiar.
+ */
 export const experiencia: Cargo[] = [
+  {
+    periodo: "05/2026 - atual",
+    vinculo: "Remoto",
+    cargo: "Administradora de comunidade (Voluntária)",
+    empresa: "Tech Girls",
+    itens: [
+      "Desenvolvi a identidade visual da comunidade, com paleta, tipografia, mascote e aplicações, produzo as peças de Instagram, Discord e WhatsApp, além de guias de projeto e planilhas de apoio, e redijo os avisos e comunicados.",
+      "Administro o servidor no Discord, principal canal de uma comunidade de mais de mil mulheres, com estrutura de canais, cargos e moderação, e faço a triagem de entrada que mantém o espaço exclusivo para mulheres.",
+      "Dou suporte técnico às palestrantes durante as transmissões e resolvo problemas de áudio, vídeo e acesso em tempo real.",
+    ],
+  },
   {
     periodo: "02/2026 - atual",
     vinculo: "Remoto",
@@ -67,7 +84,24 @@ export const formacao: Curso[] = [
   },
 ];
 
-export const idiomas = "Português nativo  -  Inglês intermediário  -  Espanhol básico";
+/**
+ * Idiomas.
+ *
+ * ERA UMA STRING SÓ, com os três níveis separados por hífen, e virou lista em 2026-09-23.
+ * O motivo é que cada idioma é um par de campos, nome e nível, igual ao par que
+ * certificações e formação já usam, e escrever par de campos como frase corrida obriga a
+ * tela a exibir o que o dado não separa.
+ *
+ * A tradução futura também depende disso: "nativo", "intermediário" e "básico" precisam
+ * ser traduzidos, e numa string única não dá para trocar só eles sem reescrever a frase.
+ */
+export type Idioma = { idioma: string; nivel: string };
+
+export const idiomas: Idioma[] = [
+  { idioma: "Português", nivel: "nativo" },
+  { idioma: "Inglês", nivel: "intermediário" },
+  { idioma: "Espanhol", nivel: "básico" },
+];
 
 export type GrupoDeCertificacoes = {
   titulo: string;
@@ -110,11 +144,3 @@ export const certificacoes: GrupoDeCertificacoes[] = [
     ],
   },
 ];
-
-export const comunidade = {
-  titulo: "Tech Girls",
-  texto:
-    "Sou uma das administradoras da Tech Girls, comunidade de mulheres na tecnologia. Construí a identidade visual e o manual de marca, para que qualquer admin aplique a marca sem depender de mim.",
-  linkRotulo: "Ver o case",
-  destino: "/projetos/tech-girls",
-};

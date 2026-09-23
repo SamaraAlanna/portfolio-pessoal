@@ -94,6 +94,13 @@ sugerida, para a próxima sessão saber de onde continuar sem reabrir tudo.
   `conteudo/contato.ts`. O cabeçalho de página interna virou
   `components/ui/cabecalho-pagina` e é usado por Projetos, Stack e Contato. O Sobre tem
   cabeçalho próprio, com foto.
+- **A seção COMUNIDADE do Sobre saiu em 2026-09-23**, e a Tech Girls virou a terceira
+  entrada de EXPERIÊNCIA. Ela era um card com fundo tingido e link "Ver o case", e **o link
+  saiu junto de propósito**: a experiência é linha do tempo, não card com chamada, e um
+  link em uma das três entradas diria que as outras duas não têm caso, quando Bajaj e VOGE
+  são trabalho da TecSinapse e o site do estúdio é do BORDA. Para o case ficar alcançável do
+  Sobre, o certo é tratamento igual nas três, e isso passa pelo Figma. **Com isso a cota de
+  uma caixa tingida por página está livre no Sobre.**
 - **O formulário de contato foi removido em 2026-09-13** e volta na fase dois. O que ele
   era está registrado na seção do painel, mais abaixo. A página foi rearranjada: os canais
   viraram três cartões em vez da lista de linhas do Figma, porque sem o formulário sobrou
@@ -563,9 +570,23 @@ dois nunca alcança e trocar uma linha de texto vira alteração de código.
 conteudo/
   projetos/       os cases, em MDX
   stack.ts        grupos de habilidade e setup de trabalho
-  sobre.ts        experiência, formação, certificações
+  sobre.ts        experiência, formação, certificações, idiomas
   contato.ts      canais diretos e assuntos do formulário
 ```
+
+**Par de campos é lista, e não frase.** Os idiomas eram uma string só, `"Português nativo -
+Inglês intermediário - Espanhol básico"`, e viraram lista de `{ idioma, nivel }` em
+2026-09-23. Cada idioma é um par de campos, igual ao par que certificações (`nome` e
+`origem`) e formação (`periodo` e `modalidade`) já usam, e **escrever par de campos como
+frase corrida obriga a tela a exibir junto o que o dado não separa**. A tradução futura
+depende disso também: "nativo", "intermediário" e "básico" precisam ser traduzidos, e numa
+string única não dá para trocar só eles sem reescrever a frase.
+
+**Na tela eles usam a construção dos itens de certificação**, valor em texto normal e dado
+técnico em mono embaixo, e **não ganham caixa de propósito**: com borda e fundo o bloco
+competiria com os dois cards de formação logo acima, e ele é apoio deles, não uma terceira
+formação. O rótulo IDIOMAS virou `h3`, porque abre um bloco com conteúdo embaixo, e não é o
+selo acima do `h1` que a regra de cabeçalhos mantém como `p`.
 
 Sim, a home é a exceção, e é deliberada: lá o conteúdo é texto corrido, não lista.
 
@@ -594,6 +615,32 @@ var(--largura-maxima)` e `margin-inline: auto`, igual ao `.faixa`, e não solta 
 
 Isso já aconteceu uma vez, quando o `max-width` entrou. O `max-width` não criou o
 problema, só tornou visível uma dependência que já existia.
+
+### Altura de linha de grade é a do item mais alto, e isso já custou um vão
+
+Vale para qualquer grade de duas colunas onde os lados têm alturas muito diferentes.
+
+**O cabeçalho do Sobre teve um vão enorme entre o título e a apresentação até 2026-09-23.**
+As quatro partes eram filhas diretas da grade: título e foto na linha 1, apresentação e
+botão na linha 2. Como altura de linha é a do item mais alto, a linha 1 media os 296px da
+foto, e a apresentação, presa à linha 2, só podia começar depois disso. **Não era altura
+fixa, margem nem resto de uma versão antiga: era a grade fazendo exatamente o que ela faz.**
+
+A saída foi tirar a foto de uma linha sozinha. Foto e botão viraram um invólucro só, que
+atravessa as duas linhas, e o texto voltou a fluir. **No mobile o invólucro some por
+`display: contents`**, que tira a caixa do fluxo e devolve os filhos como itens diretos da
+grade, e é o que permite intercalar as duas ordens sem repetir marcação.
+
+**As linhas são `auto 1fr`, e o `1fr` não é enfeite.** Quando um item que atravessa linhas é
+mais alto que elas, a sobra é repartida entre as linhas que ele cruza. Com duas linhas
+`auto` a sobra se divide igualmente e **metade dela volta para o vão que acabou de ser
+corrigido**. Com uma linha flexível, toda a sobra vai para ela.
+
+**O mesmo grupo de regras resolveu os cards de formação.** Eles tinham `items-start`, que
+encolhe cada card até o próprio conteúdo, e com um título de duas linhas ao lado de um de
+uma os dois terminavam em alturas diferentes. Sem o `items-start` volta o `stretch` e os
+dois medem a linha inteira; o `mt-auto` na linha de metadados empurra ela para o rodapé,
+senão a altura fica igual mas a sobra aparece embaixo do card mais curto.
 
 ### Nome de seção é curto, pelo assunto
 
@@ -736,8 +783,11 @@ Leia do arquivo, mas o resumo do comportamento:
   grade de duas linhas por causa disso, para o link não precisar existir duas vezes no
   HTML.
 - **No Sobre a foto entra entre o título e a apresentação**, com a largura toda, e o
-  "Baixar CV" vai para o fim. No desktop os dois são a coluna da direita. Por isso as
-  quatro partes são filhas diretas da grade e não dois blocos de dois.
+  "Baixar CV" vai para o fim. No desktop os dois são a coluna da direita. **Quem faz as duas
+  ordens conviverem é `display: contents`** no invólucro da coluna da direita: no mobile a
+  caixa some do fluxo e foto e botão voltam a ser itens diretos da grade, onde um `order`
+  joga o botão para depois da apresentação. Esse invólucro já foi quatro partes soltas na
+  grade e **isso criava um vão** (ver a seção de animação e layout, no cabeçalho do Sobre).
 - **O bloco `whoami` da home empilha abaixo da bio.** No Figma ele não aparece no mobile,
   mas isso foi consequência da adaptação de layout, não decisão de conteúdo. Ele é a
   metade "código" da alternância que é o conceito do site, e some-lo deixaria o celular
@@ -1014,6 +1064,12 @@ refinamento sobre eles, não o portador do significado.
 
 Ele se chamava `--border-campo` e foi renomeado em 2026-09-14, quando ganhou o segundo uso e
 ficou claro que o nome descrevia um caso e não o critério.
+
+**QUANDO A LINHA SAI, O ESPAÇO PRECISA CRESCER, E MAIS DO QUE PARECE.** O filete entre as
+experiências do Sobre saiu em 2026-09-23, e a separação subiu de 64px para 72px. O critério
+não é o valor, é a razão contra o maior vão **de dentro** do item: ali ele é 16px, então 72
+dá 4,5 vezes e as duas escalas não se confundem. Manter os 64 teria deixado o grupo ambíguo,
+porque quem estava separando de verdade era a linha, e não o espaço que já existia.
 
 **CONTRASTE DECIDE SE A LINHA EXISTE, ESPESSURA DECIDE O PESO DELA.** As duas coisas são
 independentes, e trocar uma pela outra é o erro comum: engrossar uma linha fraca deixa um

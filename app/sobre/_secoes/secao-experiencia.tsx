@@ -5,6 +5,12 @@ import { experiencia } from "@/conteudo/sobre";
  *
  * No mobile o período sobe para cima do cargo, seguindo a regra de duas colunas virarem
  * uma só.
+ *
+ * QUEM SEPARA UMA EXPERIÊNCIA DA OUTRA É O ESPAÇO, E NÃO UMA LINHA. O filete entre elas
+ * saiu em 2026-09-23. Sem ele o espaço precisa ser inequívoco, e por isso são 72px: o
+ * maior vão dentro de uma experiência é 16px, então a separação é 4,5 vezes o interno e
+ * não dá para confundir as duas escalas. Com os 64px de antes, que vinham de 32 de padding
+ * de cada lado, o filete é que estava fazendo o trabalho.
  */
 export default function SecaoExperiencia() {
   return (
@@ -13,13 +19,11 @@ export default function SecaoExperiencia() {
         EXPERIÊNCIA
       </h2>
 
-      <div className="mt-[36px] flex w-full flex-col">
-        {experiencia.map((cargo, indice) => (
+      <div className="mt-[36px] flex w-full flex-col gap-[72px]">
+        {experiencia.map((cargo) => (
           <article
             key={cargo.empresa}
-            className={`flex flex-col gap-[16px] py-[32px] lg:flex-row lg:gap-[64px] ${
-              indice > 0 ? "border-t-[0.5px] border-border" : ""
-            }`}
+            className="flex flex-col gap-[16px] lg:flex-row lg:gap-[64px]"
           >
             <div className="flex shrink-0 flex-col gap-[8px] lg:w-[190px]">
               <p className="font-mono text-cta font-medium whitespace-nowrap text-accent-rosa">
