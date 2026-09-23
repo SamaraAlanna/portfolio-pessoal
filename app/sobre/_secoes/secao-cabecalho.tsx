@@ -10,8 +10,8 @@ import { CURRICULO } from "@/lib/site";
  * CabecalhoPagina compartilhado.
  *
  * A ORDEM MUDA ENTRE OS DOIS TAMANHOS. No desktop são duas colunas: texto à esquerda,
- * foto e botão à direita. No mobile o Figma intercala, e a leitura vira rótulo, nome,
- * foto, apresentação e botão. A foto sobe porque no celular ela é o primeiro contato com
+ * foto e botão à direita. No mobile o Figma intercala, e a leitura vira nome, foto,
+ * apresentação e botão. A foto sobe porque no celular ela é o primeiro contato com
  * a pessoa, e enterrá-la depois de três parágrafos desperdiçaria isso.
  *
  * A COLUNA DA DIREITA É UM INVÓLUCRO SÓ, E NO MOBILE ELE DESAPARECE por `display: contents`,
@@ -32,7 +32,7 @@ import { CURRICULO } from "@/lib/site";
  * sobra vai para ela, e a linha do título continua do tamanho do título.
  *
  * A COLUNA DA DIREITA É CENTRADA NA ALTURA DESDE 2026-09-23, pelo `self-center`, e ela se
- * centra contra o bloco de texto inteiro: rótulo, título e os três parágrafos. Como ela
+ * centra contra o bloco de texto inteiro: o título e os três parágrafos. Como ela
  * atravessa as duas linhas, a área dela é exatamente a altura da coluna da esquerda.
  *
  * ISSO NÃO REABRE O VÃO, e o motivo é de ordem de cálculo: a grade dimensiona as linhas
@@ -42,10 +42,12 @@ import { CURRICULO } from "@/lib/site";
  * `self-center`: os dois resolvem coisas diferentes, um o tamanho das linhas e o outro a
  * posição dentro delas.
  *
- * A ÚNICA CONDIÇÃO É A ESQUERDA CONTINUAR MAIS ALTA QUE A DIREITA, e hoje ela é, por uns
- * 70px. Se a apresentação encurtar a ponto de a direita passar, o `1fr` engorda a linha 2 e
- * a área de centragem fica maior que o texto visível, então a foto pareceria baixa demais.
- * Nesse dia a saída é encurtar a coluna da direita, e não mexer nas linhas.
+ * A ÚNICA CONDIÇÃO É A ESQUERDA CONTINUAR MAIS ALTA QUE A DIREITA, e a folga encolheu. Com
+ * o rótulo SOBRE ela era de uns 70px; sem ele, a esquerda perdeu o rótulo e o `gap` de 18 e
+ * a folga caiu para uns 36px. Ainda sobra, mas **o próximo corte de texto aqui pode
+ * inverter**. Se a direita passar a esquerda, o `1fr` engorda a linha 2, a área de centragem
+ * fica maior que o texto visível e a foto parece baixa demais. Nesse dia a saída é encurtar
+ * a coluna da direita, e não mexer nas linhas.
  *
  * O caminho do currículo vem do `lib/site.ts`, junto do link do rodapé e do botão do hero,
  * para os quatro não divergirem.
@@ -53,14 +55,15 @@ import { CURRICULO } from "@/lib/site";
 export default function SecaoCabecalho() {
   return (
     <section className="grid grid-cols-1 gap-[28px] faixa pt-[var(--espaco-topo-pagina)] pb-[56px] lg:grid-cols-[minmax(0,1fr)_auto] lg:grid-rows-[auto_1fr] lg:gap-x-[64px] lg:gap-y-[24px]">
+      {/* Sem rótulo acima do título desde 2026-09-23, igual ao Contato. O `gap` fica: ele
+          não custa nada com um filho só e volta a valer se algo entrar aqui. */}
       <div className="flex max-w-[720px] flex-col items-start gap-[18px] lg:col-start-1 lg:row-start-1 lg:self-start">
-        <p className="font-mono text-rotulo-secao font-medium text-accent-rosa">SOBRE</p>
         <h1 className="text-titulo-pagina font-extrabold text-text">Samara Alanna</h1>
       </div>
 
       {/* No mobile este invólucro não existe, e foto e botão voltam a ser itens da grade.
           O `order` do botão é o que o joga para depois da apresentação, que é a ordem do
-          Figma: rótulo, nome, foto, apresentação, botão. No desktop ele é o segundo item
+          Figma: nome, foto, apresentação, botão. No desktop ele é o segundo item
           desta coluna, que é onde ele já estaria. */}
       <div className="contents lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:flex lg:flex-col lg:items-center lg:gap-[24px] lg:self-center">
         <Image

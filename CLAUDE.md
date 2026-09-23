@@ -94,6 +94,19 @@ sugerida, para a próxima sessão saber de onde continuar sem reabrir tudo.
   `conteudo/contato.ts`. O cabeçalho de página interna virou
   `components/ui/cabecalho-pagina` e é usado por Projetos, Stack e Contato. O Sobre tem
   cabeçalho próprio, com foto.
+- **A ordem de `experiencia` é por relevância, e não por data, desde 2026-09-23.** O peso é
+  o do papel na identidade profissional: estúdio próprio, depois vínculo empregatício,
+  depois voluntariado. **A ordem por data durou poucas horas** e foi desfeita no mesmo dia,
+  porque data decrescente punha um trabalho voluntário acima do estágio e do estúdio, e a
+  seção anunciava pelo topo a coisa menos central da trajetória. **Não reordene por data, em
+  nenhum dos dois sentidos**, e cuidado com a coincidência que a lista atual cria: hoje ela
+  é exatamente crescente por data de início, o que é acaso e não regra. O critério e a
+  armadilha estão comentados em `conteudo/sobre.ts`, junto do array.
+- **O Sobre perdeu o rótulo acima do `h1` em 2026-09-23**, como o Contato. **Ele não usa o
+  `CabecalhoPagina`**, porque tem foto e botão ao lado do texto, então a mudança foi no
+  próprio `secao-cabecalho.tsx` e o `rotulo` opcional do componente compartilhado não entra
+  nessa conta. Sobrou uma consequência medida: a coluna da esquerda encurtou uns 33px e a
+  folga que sustenta a centragem da foto caiu de uns 70px para uns 36px.
 - **A grade da Stack foi reordenada por camada em 2026-09-23**, duas colunas, um par de
   mesma cor por linha, na ordem do parágrafo de abertura da página: rosa, lavanda, ciano,
   âmbar. Antes era rosa, lavanda, lavanda, ciano, ciano, âmbar, âmbar, rosa, com os dois
@@ -604,10 +617,20 @@ depende disso também: "nativo", "intermediário" e "básico" precisam ser tradu
 string única não dá para trocar só eles sem reescrever a frase.
 
 **Na tela eles usam a construção dos itens de certificação**, valor em texto normal e dado
-técnico em mono embaixo, e **não ganham caixa de propósito**: com borda e fundo o bloco
-competiria com os dois cards de formação logo acima, e ele é apoio deles, não uma terceira
-formação. O rótulo IDIOMAS virou `h3`, porque abre um bloco com conteúdo embaixo, e não é o
-selo acima do `h1` que a regra de cabeçalhos mantém como `p`.
+técnico em mono embaixo, e **não ganham caixa de propósito**: eles vêm depois das
+certificações, que também não têm caixa, e é a ausência dela que alinha os dois últimos
+blocos da página.
+
+**IDIOMAS virou seção própria, com `h2`, em 2026-09-23**, quando desceu para depois das
+certificações. **A mudança de lugar forçou a mudança de nível, e essa é a regra a levar
+adiante:** um `h3` pertence ao `h2` que vem antes dele, então bloco que muda de vizinho
+muda de dono. Continuar `h3` ali faria a estrutura dizer que idioma é uma certificação.
+
+**O rótulo subiu de peso junto**, do `text-ficha-rotulo` de sub-rótulo para o
+`text-rotulo-secao` das outras seções. A regra de que rótulo de seção é cabeçalho vale no
+inverso também: um `h2` com cara de sub-rótulo é a mesma incoerência ao contrário. **O custo
+está anotado no componente:** três itens de duas palavras passam a pesar como as catorze
+certificações, e isso é o preço de ser assunto próprio.
 
 Sim, a home é a exceção, e é deliberada: lá o conteúdo é texto corrido, não lista.
 

@@ -4,6 +4,7 @@ import SecaoCabecalho from "@/app/sobre/_secoes/secao-cabecalho";
 import SecaoExperiencia from "@/app/sobre/_secoes/secao-experiencia";
 import SecaoFormacao from "@/app/sobre/_secoes/secao-formacao";
 import SecaoCertificacoes from "@/app/sobre/_secoes/secao-certificacoes";
+import SecaoIdiomas from "@/app/sobre/_secoes/secao-idiomas";
 import SecaoCta from "@/app/sobre/_secoes/secao-cta";
 
 export const metadata: Metadata = metadataDaPagina({
@@ -20,6 +21,7 @@ export default function PaginaSobre() {
       <SecaoExperiencia />
       <SecaoFormacao />
       <SecaoCertificacoes />
+      <SecaoIdiomas />
       <SecaoCta />
     </>
   );

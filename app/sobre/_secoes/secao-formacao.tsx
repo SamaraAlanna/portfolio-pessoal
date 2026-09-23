@@ -1,4 +1,4 @@
-import { formacao, idiomas } from "@/conteudo/sobre";
+import { formacao } from "@/conteudo/sobre";
 
 /**
  * OS DOIS CARDS TÊM A MESMA ALTURA, e isso é a grade fazendo o padrão dela. A lista tinha
@@ -32,32 +32,6 @@ export default function SecaoFormacao() {
           </li>
         ))}
       </ul>
-
-      {/* Cada idioma é um par de campos, nome e nível, e aqui ele usa a mesma construção
-          dos itens de certificação: o valor em texto normal e o dado técnico em mono
-          embaixo. Antes era uma frase corrida separada por hífen, que escondia o par.
-
-          NÃO GANHA CAIXA DE PROPÓSITO. Com borda e fundo este bloco competiria com os dois
-          cards de formação logo acima, e ele é apoio deles, não uma terceira formação. Quem
-          separa é o espaço de 52px e o rótulo em mono.
-
-          Três colunas no desktop e uma no mobile, pela regra de coluna única. Não vira
-          carrossel: são três itens de duas palavras, e a regra de carrossel vale para grade
-          que não cabe. */}
-      <div className="mt-[52px] flex flex-col gap-[20px]">
-        <h3 className="font-mono text-ficha-rotulo font-medium tracking-[0.08em] text-accent-rosa">
-          IDIOMAS
-        </h3>
-
-        <ul className="grid grid-cols-1 gap-[20px] sm:grid-cols-3 sm:gap-[40px] lg:max-w-[720px]">
-          {idiomas.map(({ idioma, nivel }) => (
-            <li key={idioma} className="flex flex-col gap-[3px]">
-              <span className="text-corpo text-text">{idioma}</span>
-              <span className="font-mono text-tag text-text-muted">{nivel}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
     </section>
   );
 }

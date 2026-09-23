@@ -21,21 +21,29 @@ export type Cargo = {
 };
 
 /**
- * A ORDEM É POR DATA DE INÍCIO, DECRESCENTE, e é critério, não gosto. Foi decidida assim
- * em 2026-09-23, quando a Tech Girls entrou com 05/2026 e passou à frente do estágio na
- * TecSinapse. Abrir exceção para um caso deixaria a lista sem regra nenhuma, e a próxima
- * entrada não teria onde se apoiar.
+ * A ORDEM É POR RELEVÂNCIA, E NÃO POR DATA. O critério mudou em 2026-09-23, poucas horas
+ * depois de a ordem por data ter sido registrada: data decrescente colocava um trabalho
+ * voluntário acima do estágio e do estúdio próprio, e a seção passava a anunciar pelo topo
+ * a coisa menos central da trajetória.
+ *
+ * O PESO É O DO PAPEL NA IDENTIDADE PROFISSIONAL: estúdio próprio primeiro, depois vínculo
+ * empregatício, depois voluntariado. Entrada nova se encaixa por esse peso, e não por data.
+ *
+ * CUIDADO COM A COINCIDÊNCIA: hoje esta ordem é exatamente crescente por data de início,
+ * 10/2025, 02/2026 e 05/2026. **Isso é acaso, e não a regra.** Quem inferir "crescente por
+ * data" daqui vai acertar por sorte nesta lista e errar na próxima entrada. Quem achar que
+ * é descrescente vai "corrigir" e desfazer a decisão.
  */
 export const experiencia: Cargo[] = [
   {
-    periodo: "05/2026 - atual",
-    vinculo: "Remoto",
-    cargo: "Administradora de comunidade (Voluntária)",
-    empresa: "Tech Girls",
+    periodo: "10/2025 - atual",
+    vinculo: "Estúdio próprio",
+    cargo: "Fundadora, UX/UI Designer e Desenvolvedora Web",
+    empresa: "BORDA Design",
     itens: [
-      "Desenvolvi a identidade visual da comunidade, com paleta, tipografia, mascote e aplicações, produzo as peças de Instagram, Discord e WhatsApp, além de guias de projeto e planilhas de apoio, e redijo os avisos e comunicados.",
-      "Administro o servidor no Discord, principal canal de uma comunidade de mais de mil mulheres, com estrutura de canais, cargos e moderação, e faço a triagem de entrada que mantém o espaço exclusivo para mulheres.",
-      "Dou suporte técnico às palestrantes durante as transmissões e resolvo problemas de áudio, vídeo e acesso em tempo real.",
+      "Conduzo projetos completos de identidade visual, UX/UI e desenvolvimento web, da pesquisa estratégica à entrega.",
+      "Desenvolvi o site do estúdio com arquitetura modular em PHP, design tokens em CSS Variables, tema dark e light com persistência, PT e EN sem reload e deploy automatizado via GitHub Actions.",
+      "Estruturei a presença digital com SEO técnico, Open Graph, Schema JSON-LD, Search Console e Google Ads.",
     ],
   },
   {
@@ -50,14 +58,14 @@ export const experiencia: Cargo[] = [
     ],
   },
   {
-    periodo: "10/2025 - atual",
-    vinculo: "Estúdio próprio",
-    cargo: "Fundadora, UX/UI Designer e Desenvolvedora Web",
-    empresa: "BORDA Design",
+    periodo: "05/2026 - atual",
+    vinculo: "Remoto",
+    cargo: "Administradora de comunidade (Voluntária)",
+    empresa: "Tech Girls",
     itens: [
-      "Conduzo projetos completos de identidade visual, UX/UI e desenvolvimento web, da pesquisa estratégica à entrega.",
-      "Desenvolvi o site do estúdio com arquitetura modular em PHP, design tokens em CSS Variables, tema dark e light com persistência, PT e EN sem reload e deploy automatizado via GitHub Actions.",
-      "Estruturei a presença digital com SEO técnico, Open Graph, Schema JSON-LD, Search Console e Google Ads.",
+      "Desenvolvi a identidade visual da comunidade, com paleta, tipografia, mascote e aplicações, produzo as peças de Instagram, Discord e WhatsApp, além de guias de projeto e planilhas de apoio, e redijo os avisos e comunicados.",
+      "Administro o servidor no Discord, principal canal de uma comunidade de mais de mil mulheres, com estrutura de canais, cargos e moderação, e faço a triagem de entrada que mantém o espaço exclusivo para mulheres.",
+      "Dou suporte técnico às palestrantes durante as transmissões e resolvo problemas de áudio, vídeo e acesso em tempo real.",
     ],
   },
 ];
