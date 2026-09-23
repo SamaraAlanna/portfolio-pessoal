@@ -94,6 +94,14 @@ sugerida, para a próxima sessão saber de onde continuar sem reabrir tudo.
   `conteudo/contato.ts`. O cabeçalho de página interna virou
   `components/ui/cabecalho-pagina` e é usado por Projetos, Stack e Contato. O Sobre tem
   cabeçalho próprio, com foto.
+- **A grade da Stack foi reordenada por camada em 2026-09-23**, duas colunas, um par de
+  mesma cor por linha, na ordem do parágrafo de abertura da página: rosa, lavanda, ciano,
+  âmbar. Antes era rosa, lavanda, lavanda, ciano, ciano, âmbar, âmbar, rosa, com os dois
+  rosas nas pontas. **O argumento que decidiu não foi estético: a grade contradizia o texto
+  de abertura da própria página**, que promete essa sequência, e a primeira camada citada
+  terminava no canto inferior direito. **O Figma foi reordenado junto, nas quatro versões**,
+  então os dois lados batem. A ordem vive em `conteudo/stack.ts`, com o critério comentado
+  lá: mover um grupo não reordena uma lista, remonta as duplas.
 - **A seção COMUNIDADE do Sobre saiu em 2026-09-23**, e a Tech Girls virou a terceira
   entrada de EXPERIÊNCIA. Ela era um card com fundo tingido e link "Ver o case", e **o link
   saiu junto de propósito**: a experiência é linha do tempo, não card com chamada, e um
@@ -636,6 +644,14 @@ mais alto que elas, a sobra é repartida entre as linhas que ele cruza. Com duas
 `auto` a sobra se divide igualmente e **metade dela volta para o vão que acabou de ser
 corrigido**. Com uma linha flexível, toda a sobra vai para ela.
 
+**A mesma troca resolveu os cards da Stack**, onde a contagem de chips varia por grupo. Ali
+ela tem um preço que foi aceito de olho aberto: com altura igual, diferença de conteúdo vira
+espaço vazio, e o agrupamento por camada põe o Processo, de 5 chips, ao lado do Interface e
+design, de 13, deixando uns 72px vazios embaixo do menor. **O vazio é inerente ao
+agrupamento e não se resolve no layout:** as duplas passam a ser definidas pela cor, e
+inverter dentro do par ou trocar a ordem das linhas não muda nada. A decisão foi preferir o
+vazio à contradição com o texto de abertura.
+
 **O mesmo grupo de regras resolveu os cards de formação.** Eles tinham `items-start`, que
 encolhe cada card até o próprio conteúdo, e com um título de duas linhas ao lado de um de
 uma os dois terminavam em alturas diferentes. Sem o `items-start` volta o `stretch` e os
@@ -699,6 +715,12 @@ mudaram juntos. **O componente continua em uso e não deve ser removido:** o que
 `span` do sufixo, e com ele a alternância tipográfica dentro da marca, que agora carrega só
 o lado "código", a fonte mono. A alternância continua no whoami da home, nos rótulos de
 seção e nos blocos de código.
+
+**Chip é pílula no site inteiro, e a Stack não abre exceção.** Tag de card, pílula de filtro
+e chip da Stack usam o mesmo raio completo. O Figma teve os chips da Stack em raio de 8px
+até 2026-09-23, e **o código é que está certo**: duas gramáticas de chip fariam o mesmo
+elemento significar coisas diferentes por página, e quem lê não tem como saber qual é a
+regra. O Figma foi corrigido para a pílula.
 
 **O badge "Em construção" segue a tipografia das tags, e não a de rótulo em mono.** DM Sans
 regular 12, sem tracking, mesmo padding e mesmo raio, resultando na mesma altura. Do lado
@@ -1183,6 +1205,27 @@ que é onde a pessoa passa mais tempo lendo.
 se mexendo enquanto a pessoa lê, e isso continua valendo, nav e footer não têm entrada nem
 movimento próprio. Hover só existe depois que a pessoa já apontou para o link, então não
 compete com nada: é o retorno que confirma o alvo.
+
+**Os chips da Stack acendem na cor da camada do card**, pela classe `.chip-stack`, com o
+mesmo tratamento das tags de projeto: texto e borda passando para a cor, em `--dur-rapida`
+`linear`. **A cor desce do card por herança**, numa `--cor-camada` que cada card declara, e
+por isso a regra no CSS é uma só: escrever um par de regras por camada daria o mesmo
+resultado e quebraria na primeira camada nova.
+
+**Quem dispara é o chip, e não o card, e isso é o contrário do card de projeto.** Lá quem
+manda é o card, porque ele é um link e as tags descrevem o que ele contém. O card da Stack
+não é link nenhum, e acender dezessete chips de uma vez por causa do ponteiro sobre o card
+seria um lampejo de cor sem alvo. Chip a chip, o realce segue o ponteiro e a camada de cada
+item fica legível durante a varredura.
+
+**HOVER EM COISA NÃO CLICÁVEL FOI DECISÃO CONSCIENTE, E NÃO DESCUIDO.** O chip da Stack não
+é link nem botão, e resposta de ponteiro normalmente sugere que dá para clicar. Foi aceito
+em 2026-09-23 porque aqui o realce lê como "este item é desta camada" e não como botão, e
+porque a alternativa, deixar a página inteira sem resposta de ponteiro, custava mais. **Não
+existe par no teclado, e isso está certo:** o chip não é focável porque não há o que ativar,
+então não há `:focus-visible` a espelhar. No card de projeto existe, porque lá o alvo é um
+link de verdade. **Isso não abre precedente para hover decorativo em qualquer lugar:** o que
+justifica aqui é o chip carregar informação, a camada, que o realce revela.
 
 **Os links de navegação acendem em rosa no hover**, pela classe `.link-realce`, usada pela
 nav, pelo menu mobile e pelas colunas do footer. Antes eles não tinham resposta de cor

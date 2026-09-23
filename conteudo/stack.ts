@@ -19,6 +19,19 @@ export type GrupoDaStack = {
   chips: string[];
 };
 
+/**
+ * A ORDEM É POR CAMADA, DUAS POR LINHA DA GRADE, e ela segue o parágrafo de abertura da
+ * página: rosa é produto e design, lavanda é front-end, ciano é back-end e dados, âmbar é
+ * entrega e operação. Cada par de mesma cor ocupa uma linha inteira.
+ *
+ * A GRADE TEM DUAS COLUNAS, ENTÃO A POSIÇÃO NO ARRAY DECIDE QUEM DIVIDE LINHA COM QUEM.
+ * Mover um grupo daqui não é reordenar uma lista, é remontar as duplas. Até 2026-09-23 a
+ * sequência era rosa, lavanda, lavanda, ciano, ciano, âmbar, âmbar, rosa, com os dois
+ * rosas nas pontas: **a grade contradizia o texto de abertura da própria página**, e a
+ * primeira camada citada terminava no canto inferior direito.
+ *
+ * Dentro de cada par o grupo maior fica à esquerda.
+ */
 export const grupos: GrupoDaStack[] = [
   {
     titulo: "Interface e design",
@@ -38,6 +51,18 @@ export const grupos: GrupoDaStack[] = [
       "Identidade visual",
       "Adobe Illustrator",
       "Adobe Photoshop",
+    ],
+  },
+  {
+    titulo: "Processo",
+    camada: "rosa",
+    glifo: "::",
+    chips: [
+      "Scrum",
+      "Kanban",
+      "Code review",
+      "Documentação técnica",
+      "Gestão de múltiplos projetos",
     ],
   },
   {
@@ -146,18 +171,6 @@ export const grupos: GrupoDaStack[] = [
       "Search Console",
       "Google Business Profile",
       "Google Ads",
-    ],
-  },
-  {
-    titulo: "Processo",
-    camada: "rosa",
-    glifo: "::",
-    chips: [
-      "Scrum",
-      "Kanban",
-      "Code review",
-      "Documentação técnica",
-      "Gestão de múltiplos projetos",
     ],
   },
 ];

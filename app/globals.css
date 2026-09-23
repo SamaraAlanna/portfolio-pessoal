@@ -1179,6 +1179,44 @@ body {
 }
 
 /* ---------------------------------------------------------------------------
+   Realce dos chips da Stack.
+
+   Mesmo tratamento das tags do card de projeto, texto e borda passando para a cor, com a
+   mesma `--dur-rapida` em `linear`. O que muda é de onde a cor vem e quem dispara.
+
+   A COR VEM DO CARD, POR HERANÇA, E POR ISSO ESTA REGRA É UMA SÓ. Cada card declara
+   `--cor-camada` conforme o grupo, e o chip lê a variável do ancestral. Escrever quatro
+   pares de regra, um por camada, daria o mesmo resultado e quebraria na primeira camada
+   nova: aqui a camada entra no dado e o CSS não precisa saber quantas existem.
+
+   QUEM DISPARA É O PRÓPRIO CHIP, e não o card. No card de projeto quem manda é o card,
+   porque ele é um link e as tags são descrição do que ele contém. O card da Stack não é
+   link nenhum, e acender dezessete chips de uma vez por causa do ponteiro em cima do card
+   seria um lampejo de cor sem alvo. Chip a chip, o realce seque o ponteiro e a camada de
+   cada item fica legível durante a varredura.
+
+   NÃO EXISTE PAR NO TECLADO, e isso é correto aqui. O chip não é focável porque não há o
+   que ativar, então não há `:focus-visible` a espelhar. No card de projeto existia, porque
+   lá o alvo é um link de verdade.
+
+   Só em ponteiro que faz hover, senão o toque no celular deixa o chip presa na cor depois
+   do toque.
+   --------------------------------------------------------------------------- */
+
+.chip-stack {
+  transition:
+    color var(--dur-rapida) linear,
+    border-color var(--dur-rapida) linear;
+}
+
+@media (hover: hover) {
+  .chip-stack:hover {
+    border-color: var(--cor-camada);
+    color: var(--cor-camada);
+  }
+}
+
+/* ---------------------------------------------------------------------------
    Realce dos links de navegação.
 
    Os links da nav, do menu mobile e das colunas do footer acendem em rosa no hover. Eles

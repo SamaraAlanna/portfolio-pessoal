@@ -14,14 +14,33 @@ const MARCADORES: Record<Camada, string> = {
   ambar: "bg-accent-ambar",
 };
 
+/**
+ * A cor da camada desce para os chips por herança, numa variável declarada no card.
+ *
+ * O chip acende nessa cor no hover, pela `.chip-stack` do `app/globals.css`. Escrever a cor
+ * no próprio chip exigiria quatro pares de regra no CSS, um por camada, e a quinta camada
+ * quebraria os dois lugares. Assim o CSS não precisa saber quantas camadas existem.
+ */
+const CORES_DE_CAMADA: Record<Camada, string> = {
+  rosa: "[--cor-camada:var(--accent-rosa)]",
+  lavanda: "[--cor-camada:var(--accent-lavanda)]",
+  ciano: "[--cor-camada:var(--accent-ciano)]",
+  ambar: "[--cor-camada:var(--accent-ambar)]",
+};
+
 export default function SecaoGrupos() {
   return (
     <section data-revelar className="faixa pb-[72px]">
-      <ul className="grid grid-cols-1 items-start gap-[24px] lg:grid-cols-2">
+      {/* Sem `items-start`, que encolhia cada card até o próprio conteúdo e deixava os dois
+          da mesma linha com alturas diferentes, porque a contagem de chips varia por grupo.
+          O `stretch` padrão faz os dois medirem a linha inteira. É por linha, e não pela
+          grade toda, que é o que a grade faz sozinha e o que se quer aqui: igualar os oito
+          pelo maior deixaria vazio embaixo dos curtos. */}
+      <ul className="grid grid-cols-1 gap-[24px] lg:grid-cols-2">
         {grupos.map((grupo) => (
           <li
             key={grupo.titulo}
-            className="flex flex-col items-start rounded-[12px] border-[0.5px] border-border bg-surface px-[28px] pt-[28px] pb-[32px]"
+            className={`flex flex-col items-start rounded-[12px] border-[0.5px] border-border bg-surface px-[28px] pt-[28px] pb-[32px] ${CORES_DE_CAMADA[grupo.camada]}`}
           >
             <span
               aria-hidden="true"
@@ -42,7 +61,7 @@ export default function SecaoGrupos() {
               {grupo.chips.map((chip) => (
                 <li
                   key={chip}
-                  className="rounded-full border-[0.5px] border-border bg-surface-2 px-[11px] py-[6px] text-cta whitespace-nowrap text-text-muted"
+                  className="chip-stack rounded-full border-[0.5px] border-border bg-surface-2 px-[11px] py-[6px] text-cta whitespace-nowrap text-text-muted"
                 >
                   {chip}
                 </li>
