@@ -657,6 +657,19 @@ mais alto que elas, a sobra é repartida entre as linhas que ele cruza. Com duas
 `auto` a sobra se divide igualmente e **metade dela volta para o vão que acabou de ser
 corrigido**. Com uma linha flexível, toda a sobra vai para ela.
 
+**A coluna da direita ganhou `self-center` em 2026-09-23**, para a foto e o botão ficarem
+centrados contra o bloco de texto inteiro. **Isso não reabriu o vão, e a razão é ordem de
+cálculo:** a grade dimensiona as linhas primeiro e só depois posiciona os itens dentro da
+área deles, então `align-self` nunca realimenta a altura das linhas. Vale como regra geral:
+**alinhamento move a caixa já medida, dimensionamento decide o tamanho da linha**, e trocar
+um pelo outro é a confusão que faz alguém mexer em `align-items` esperando resolver vão.
+
+Os dois não são redundantes, resolvem coisas diferentes e **precisam dos dois**: sem o
+`1fr` o vão volta, sem o `self-center` a foto encosta no topo. A condição para a centragem
+ficar honesta é a coluna da esquerda continuar mais alta que a direita, e hoje ela é por uns
+70px; se a apresentação encurtar a ponto de inverter, a área de centragem passa a ser maior
+que o texto visível e a saída é encurtar a direita, não mexer nas linhas.
+
 **A mesma troca resolveu os cards da Stack**, onde a contagem de chips varia por grupo. Ali
 ela tem um preço que foi aceito de olho aberto: com altura igual, diferença de conteúdo vira
 espaço vazio, e o agrupamento por camada põe o Processo, de 5 chips, ao lado do Interface e

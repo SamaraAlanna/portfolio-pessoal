@@ -31,6 +31,22 @@ import { CURRICULO } from "@/lib/site";
  * dela voltaria para o vão que acabou de ser corrigido**. Com uma linha flexível, toda a
  * sobra vai para ela, e a linha do título continua do tamanho do título.
  *
+ * A COLUNA DA DIREITA É CENTRADA NA ALTURA DESDE 2026-09-23, pelo `self-center`, e ela se
+ * centra contra o bloco de texto inteiro: rótulo, título e os três parágrafos. Como ela
+ * atravessa as duas linhas, a área dela é exatamente a altura da coluna da esquerda.
+ *
+ * ISSO NÃO REABRE O VÃO, e o motivo é de ordem de cálculo: a grade dimensiona as linhas
+ * primeiro e só depois posiciona os itens dentro da área deles. `align-self` nunca
+ * realimenta a altura das linhas, então centrar move a caixa já medida e não mexe em onde a
+ * apresentação começa. **O `1fr` continua sendo o que protege**, e não é redundante com o
+ * `self-center`: os dois resolvem coisas diferentes, um o tamanho das linhas e o outro a
+ * posição dentro delas.
+ *
+ * A ÚNICA CONDIÇÃO É A ESQUERDA CONTINUAR MAIS ALTA QUE A DIREITA, e hoje ela é, por uns
+ * 70px. Se a apresentação encurtar a ponto de a direita passar, o `1fr` engorda a linha 2 e
+ * a área de centragem fica maior que o texto visível, então a foto pareceria baixa demais.
+ * Nesse dia a saída é encurtar a coluna da direita, e não mexer nas linhas.
+ *
  * O caminho do currículo vem do `lib/site.ts`, junto do link do rodapé e do botão do hero,
  * para os quatro não divergirem.
  */
@@ -46,7 +62,7 @@ export default function SecaoCabecalho() {
           O `order` do botão é o que o joga para depois da apresentação, que é a ordem do
           Figma: rótulo, nome, foto, apresentação, botão. No desktop ele é o segundo item
           desta coluna, que é onde ele já estaria. */}
-      <div className="contents lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:flex lg:flex-col lg:items-center lg:gap-[24px] lg:self-start">
+      <div className="contents lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:flex lg:flex-col lg:items-center lg:gap-[24px] lg:self-center">
         <Image
           src="/imagens/sobre/foto.webp"
           alt="Retrato de Samara Alanna"
