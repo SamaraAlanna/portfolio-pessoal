@@ -18,6 +18,13 @@ import TrilhoRolavel from "@/components/ui/trilho-rolavel";
  *
  *   Os dois primeiros formatos ficaram sem uso em 2026-09-23, quando os três cases de
  *   identidade visual saíram. Só o `inline` continua invocado, pelo Assistente.
+ * - formato="painel": o conjunto inteiro dentro de um card, com `--surface`, borda e raio
+ *   12, rótulo dentro. É o desenho das duas paletas do Assistente, quente e frio, postas
+ *   lado a lado por um `duo`.
+ *
+ *   **NÃO CONFUNDIR COM `cartao`, QUE É OUTRA COISA:** lá o card é por cor, com amostra de
+ *   120px em cima e nome e hex embaixo; aqui o card é por paleta, e as amostras seguem as
+ *   do formato padrão.
  * - formato="inline": amostra de 14px ao lado do hex, numa fileira. É a mini-paleta que
  *   o Assistente usa dentro de cada painel da comparação de cor, onde a paleta é legenda
  *   do mockup e não o conteúdo principal da seção.
@@ -50,14 +57,33 @@ export default function BlocoPaleta({
 }) {
   const cores = linhasDeCampos(children);
   const cartao = formato === "cartao";
+  const painel = formato === "painel";
   const enfileirada = formato === "inline";
   const ehProva = prova === "true" && !enfileirada;
+
+  /**
+   * NO PAINEL AS AMOSTRAS DIVIDEM A LARGURA DO CARD E NÃO VIRAM CARROSSEL. Quatro de 90
+   * cabem nos 394 úteis do card do frame, e nos 279 de um celular elas ficam com 62, que
+   * ainda comporta o hex em mono. O `TrilhoRolavel` continua em volta e simplesmente mede
+   * que não há estouro, então ele não cria parada de tabulação nenhuma.
+   */
+  const classeDoItem = painel
+    ? "flex min-w-0 flex-1 flex-col items-start gap-[10px]"
+    : `flex shrink-0 snap-start flex-col items-start sm:w-auto sm:min-w-[140px] sm:shrink sm:flex-1 ${
+        cartao ? "w-[190px]" : "w-[150px]"
+      } ${
+        cartao
+          ? "overflow-hidden rounded-[12px] border-[0.5px] border-border bg-surface"
+          : "gap-[10px]"
+      }`;
 
   return (
     <div
       data-prova={ehProva ? "" : undefined}
       data-revelar={ehProva ? "" : undefined}
-      className="flex w-full flex-col gap-[16px]"
+      className={`flex w-full flex-col gap-[16px] ${
+        painel ? "rounded-[12px] border-[0.5px] border-border bg-surface p-[24px]" : ""
+      }`}
     >
       {titulo ? (
         <p className="font-mono text-rotulo-secao font-medium tracking-[var(--tracking-rotulo-secao)] text-text-muted">
@@ -84,19 +110,17 @@ export default function BlocoPaleta({
           rotulo={titulo ? `Paleta ${titulo}` : "Paleta de cores"}
           className="w-full overflow-x-auto overscroll-x-contain px-[2px] pb-[8px] sm:overflow-x-visible sm:px-0 sm:pb-0"
         >
-          <ul className="flex snap-x snap-mandatory items-start gap-[16px] sm:flex-wrap sm:snap-none">
+          <ul
+            className={
+              painel
+                ? "flex items-start gap-[10px]"
+                : "flex snap-x snap-mandatory items-start gap-[16px] sm:flex-wrap sm:snap-none"
+            }
+          >
             {cores.map(([valor, nome, papel], indice) => (
               <li
                 key={`${valor}-${indice}`}
-                className={`flex shrink-0 snap-start flex-col items-start sm:w-auto sm:min-w-[140px] sm:shrink sm:flex-1 ${
-                  ehProva ? "prova-item" : ""
-                } ${
-                  cartao ? "w-[190px]" : "w-[150px]"
-                } ${
-                  cartao
-                    ? "overflow-hidden rounded-[12px] border-[0.5px] border-border bg-surface"
-                    : "gap-[10px]"
-                }`}
+                className={`${classeDoItem} ${ehProva ? "prova-item" : ""}`}
               >
                 {/* A cor vai numa variável, e não direto no background, para a entrada
                     da prova poder partir de outra cor sem precisar de !important contra o
@@ -124,10 +148,15 @@ export default function BlocoPaleta({
                       <span className="font-mono text-tag text-text-muted">{valor}</span>
                     </>
                   ) : (
+                    // Sem nome, sai só o hex. O `nome ?? valor` do primeiro span com o
+                    // `valor` do segundo imprimia o mesmo texto duas vezes, e isso só não
+                    // aparecia porque nenhuma paleta tinha sido escrita sem nome ainda.
                     <>
-                      <span className="font-mono text-[11.5px] leading-[1.7] text-text-muted">
-                        {nome ?? valor}
-                      </span>
+                      {nome ? (
+                        <span className="font-mono text-[11.5px] leading-[1.7] text-text-muted">
+                          {nome}
+                        </span>
+                      ) : null}
                       <span className="font-mono text-[11.5px] leading-[1.7] text-text-muted">
                         {valor}
                       </span>

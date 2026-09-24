@@ -10,9 +10,14 @@ import type { ReactNode } from "react";
  * depois é o desenvolvimento, no tamanho e no tom do corpo. Isso é feito por seletor de
  * primeiro filho, para o autor não precisar marcar nada no MDX.
  *
- * A COR DO FILETE DIZ A CAMADA, e não é decoração. Rosa é o padrão. Âmbar marca ressalva,
- * como no "Impacto esperado" do CRUD, que avisa que o número não foi medido. Ciano marca
- * back-end e dados, como na integração de leads do VOGE.
+ * A COR DO FILETE DIZ A CAMADA, e não é decoração. Rosa é o padrão, lavanda é front-end,
+ * ciano é back-end e dados, e âmbar é ressalva, para quando a frase avisa de um limite em vez
+ * de afirmar um resultado.
+ *
+ * OS DOIS EXEMPLOS QUE ESTAVAM AQUI SAÍRAM DO SITE EM 2026-09-24, na reescrita dos cases: o
+ * âmbar era o "Impacto esperado" do CRUD e o ciano era a integração de leads do VOGE. **O do
+ * CRUD além de removido estava errado**, porque dizia que a tela não tinha sido implementada,
+ * e ela foi. O bloco ficou sem nenhum uso e a decisão sobre ele é do passo 7.
  */
 const FILETES: Record<string, string> = {
   rosa: "border-accent-rosa",

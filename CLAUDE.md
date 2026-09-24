@@ -638,6 +638,56 @@ da home. Os dois mudam a cara de **todas** as seções dos quatro cases, então 
 6, onde o conteúdo é reescrito e dá para ver os quatro juntos. O 18 que virou 14 entre título e
 corpo foi mexido porque o 40 dos cards depende dele e 4px num parágrafo não é redesenho.
 
+### A abertura do case aceita mais de uma imagem
+
+**O `heroCase` virou lista em 2026-09-24**, porque o frame do Assistente põe **três telas de
+384 lado a lado** entre a ficha e o índice, e a moldura só sabia desenhar uma. A forma antiga,
+`heroCase: /caminho.webp`, continua valendo e vira uma lista de um item: o CRUD e o VOGE não
+foram tocados.
+
+**Cada linha é `caminho | texto alternativo`**, no mesmo formato de campos separados por barra
+que a ficha já usa. **O alt é por imagem e não é gerado**, porque com três telas um texto só
+serviria mal às três: quem não enxerga precisa saber qual é o estado de cada uma, e "Tela
+principal do projeto" repetido três vezes não diz nada.
+
+**O `heroNota` é a linha abaixo das imagens**, e nasceu para o aviso de confidencialidade do
+Assistente, que no frame fica logo embaixo das telas. São 16px de respiro, medidos do arquivo.
+
+**COM MAIS DE UMA IMAGEM O PAR DE CAPA NÃO SE FORMA, E ISSO É DELIBERADO.** O
+`<ViewTransition name="capa-<slug>">` liga a capa do card a esta imagem, e com três telas o
+destino do morph seria a fileira inteira: uma capa se esticando em três. Com mais de uma, só o
+título viaja, que é a mesma degradação já registrada para os cases sem imagem de abertura.
+
+**No mobile vira carrossel**, pelo `TrilhoRolavel`, que é o tratamento que números, paletas e o
+bloco de imagens já recebem. Empilhar três telas de celular inteiras faria a pessoa rolar a
+página toda antes de chegar no índice.
+
+**Só a primeira imagem é `priority`.** No desktop as outras estão na tela e o navegador busca
+elas de qualquer jeito; no mobile elas ficam fora do trilho visível, e `priority` nas três
+baixaria o dobro sem ninguém ver.
+
+**As colunas saem de um mapa, e não de interpolação**, pelo mesmo motivo do `bloco-imagens`: o
+Tailwind gera classe a partir de texto encontrado no código, então classe montada em tempo de
+execução não existe na folha.
+
+### O `formato="painel"` da paleta
+
+**É o conjunto inteiro dentro de um card**, com `--surface`, borda e raio 12, rótulo dentro. É o
+desenho das duas paletas do Assistente, quente e frio, postas lado a lado por um `duo`.
+
+**NÃO CONFUNDIR COM O `cartao`, QUE JÁ EXISTIA E É OUTRA COISA:** lá o card é **por cor**, com
+amostra de 120px em cima e nome e hex embaixo. No painel o card é **por paleta**, e as amostras
+seguem as do formato padrão.
+
+**No painel as amostras dividem a largura e não viram carrossel.** Quatro de 90 cabem nos 394
+úteis do card do frame, e nos 279 de um celular elas ficam com 62, que ainda comporta o hex em
+mono. O `TrilhoRolavel` continua em volta e mede que não há estouro, então não cria parada de
+tabulação.
+
+**Uma paleta sem nome de cor imprimia o hex duas vezes.** O formato padrão renderizava
+`nome ?? valor` e logo depois `valor`. **Só não tinha aparecido porque nenhuma paleta do site
+tinha sido escrita sem nome**, e o frame do Assistente mostra só o hex. Corrigido em 2026-09-24.
+
 ### Metadata e compartilhamento
 
 **O endereço do site vive em `lib/site.ts`**, e não espalhado. Três lugares dependem dele
@@ -660,7 +710,9 @@ sobreviveu a todas as conferências visuais. Ao trocar a imagem, confira a exten
 **Cada case tem cartão próprio**, com o título e a descrição dele. O título usado é o do
 card, e não o `tituloCase`: o segundo existe para encurtar na tela, onde a migalha e a
 ficha já dão contexto, e fora da página esse contexto não existe. Um link compartilhado
-chamado "CRUD" não diz nada.
+chamado só "CRUD" não diria nada, e o exemplo continua valendo mesmo depois de o `tituloCase`
+do CRUD ter crescido para "CRUD de permissões" em 2026-09-24: o card continua dizendo "Remake
+do", que é a palavra que explica que a tela já existia.
 
 **HSTS vive no `next.config.ts`**, porque o plano Hobby da Vercel não expõe cabeçalho de
 resposta no painel. Está em `max-age` de um ano com `includeSubDomains`, **sem `preload`**.
@@ -964,16 +1016,27 @@ colore o rótulo e é opcional. Quando o rótulo é ESCOLHIDA, o card ganha bord
 não fundo tingido, porque a cota de caixa tingida costuma já estar gasta pelo `destaque`.
 
 **O filete da citação diz a camada.** O atributo `camada` aceita rosa, que é o padrão,
-lavanda, ciano e ambar. No CRUD o "Impacto esperado" usa âmbar porque avisa que o número
-não foi medido. No VOGE a integração usa ciano porque é back-end e dados.
+lavanda, ciano e ambar. Âmbar é ressalva, para quando a frase avisa de um limite em vez de
+afirmar um resultado.
+
+**Os dois exemplos que ficavam aqui saíram do site em 2026-09-24**, com a reescrita dos cases:
+o âmbar era o "Impacto esperado" do CRUD e o ciano era a integração de leads do VOGE. **O do
+CRUD, além de removido, estava errado**: ele dizia que a tela não tinha sido implementada, e
+ela foi. Com isso o `bloco-citacao` ficou sem nenhum uso, e entra na conta do passo 7.
 
 **O diagrama é um card só, com uma linha por caminho.** A primeira linha é o caminho
 principal e o último passo dela sai em ciano. As linhas seguintes são desvios e saem em
 âmbar, com o primeiro campo como condição.
 
-**`tituloCase` existe para quando o case tem nome mais curto que o card.** O card se chama
-"Remake do CRUD de permissões" e a página de case se chama só "CRUD". Ausente, cai no
-`titulo`.
+**`tituloCase` existe para quando o case tem nome diferente do card.** O card se chama
+"Remake do CRUD de permissões" e a página de case se chama "CRUD de permissões". Ausente, cai
+no `titulo`.
+
+**A PÁGINA JÁ SE CHAMOU SÓ "CRUD", E ISSO MUDOU EM 2026-09-24**, quando o hero do frame novo
+passou a escrever o nome inteiro. O encurtamento tinha uma razão que continua válida, a migalha
+e a ficha já dão contexto na página, **mas o frame é a fonte no redesenho dos cases** e o nome
+completo custa pouco num título de 58px. O `tituloCase` não virou vestigial com isso: ele segue
+tirando o "Remake do" do card, que é o que não cabe no hero.
 
 **A ficha técnica vem do frontmatter, não do corpo.** Ela é estruturada e sempre tem os
 mesmos lugares, então no painel vira campo a campo em vez de texto livre. Os rótulos mudam

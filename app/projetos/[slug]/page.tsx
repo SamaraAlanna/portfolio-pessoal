@@ -10,11 +10,24 @@ import { directivasParaComponentes } from "@/lib/mdx";
 import { dimensaoDaImagem } from "@/lib/imagens";
 import { blocosComIndice } from "@/components/blocos";
 import IndiceCase from "@/components/ui/indice-case";
+import TrilhoRolavel from "@/components/ui/trilho-rolavel";
 import { lerProjeto, lerProjetos, lerSecoes, proximoProjeto } from "@/lib/conteudo";
 import SecaoCabecalho from "@/app/projetos/[slug]/_secoes/secao-cabecalho";
 import SecaoFicha from "@/app/projetos/[slug]/_secoes/secao-ficha";
 import SecaoEmConstrucao from "@/app/projetos/[slug]/_secoes/secao-em-construcao";
 import SecaoProximo from "@/app/projetos/[slug]/_secoes/secao-proximo";
+
+/**
+ * Colunas da abertura quando há mais de uma tela.
+ *
+ * MAPA E NÃO INTERPOLAÇÃO, pelo mesmo motivo do `bloco-imagens`: o Tailwind gera classe a
+ * partir de texto encontrado no código, então uma classe montada em tempo de execução não
+ * existe na folha. Contagem fora do mapa cai em três, que é o que os frames usam.
+ */
+const COLUNAS_DA_ABERTURA: Record<number, string> = {
+  2: "sm:grid-cols-2",
+  3: "sm:grid-cols-3",
+};
 
 /**
  * Página de case.
@@ -69,13 +82,21 @@ export default async function PaginaCase({ params }: PageProps<"/projetos/[slug]
 
   const proximo = proximoProjeto(projeto.slug);
   const emConstrucao = projeto.estado === "em-construcao";
-  const hero = projeto.heroCase ? dimensaoDaImagem(projeto.heroCase) : null;
+  /**
+   * As imagens da abertura, já com a dimensão lida do arquivo em build. Quem não tem
+   * dimensão legível cai fora aqui em vez de virar um `img` sem largura, que causaria
+   * salto de layout justo no topo da página.
+   */
+  const abertura = (projeto.heroCase ?? [])
+    .map((imagem) => ({ ...imagem, medida: dimensaoDaImagem(imagem.caminho) }))
+    .filter((imagem) => imagem.medida);
   const secoes = lerSecoes(projeto.corpo);
 
   /**
    * O ACCENT DA PÁGINA VEM DO `tipo`, e desce por variável para quem precisar dele.
-   * Ciano em engenharia, rosa no resto. Hoje quem lê é o visualizador de estados; os
-   * rótulos de seção e o índice ainda declaram rosa direto, e migram no passo 7.
+   * Ciano em engenharia, rosa no resto. Leem ele o visualizador de estados, o rótulo de
+   * seção, o item ativo do índice, o rótulo do card de decisão e o valor `case` do bloco
+   * de números.
    */
   const ehEngenharia = projeto.tipo === "engenharia";
 
@@ -97,27 +118,69 @@ export default async function PaginaCase({ params }: PageProps<"/projetos/[slug]
         <>
           <SecaoFicha ficha={projeto.ficha} />
 
-          {/* O nome só existe quando há hero. Nos cases sem imagem o par não se forma e
-              só o título viaja, que já comunica continuidade. Quando o heroCase for
-              preenchido, o morph passa a funcionar sem tocar neste arquivo. */}
-          {projeto.heroCase && hero ? (
-            <ViewTransition
-              name={`capa-${projeto.slug}`}
-              share="morph-projeto"
-              default="none"
-            >
+          {abertura.length > 0 ? (
             <div className="faixa pt-[56px]">
-              <Image
-                src={projeto.heroCase}
-                alt={`Tela principal do projeto ${projeto.titulo}`}
-                width={hero.largura}
-                height={hero.altura}
-                priority
-                sizes="(max-width: 1024px) 100vw, 1200px"
-                className="h-auto w-full rounded-[12px]"
-              />
+              {abertura.length === 1 ? (
+                /* O NOME SÓ EXISTE COM UMA IMAGEM SÓ. O par `capa-<slug>` liga a capa do
+                   card a esta imagem, e com três telas lado a lado o destino do morph
+                   seria a fileira inteira: uma capa se esticando em três. Com mais de uma
+                   o par não se forma e só o título viaja, que é a mesma degradação dos
+                   cases sem imagem de abertura. */
+                <ViewTransition
+                  name={`capa-${projeto.slug}`}
+                  share="morph-projeto"
+                  default="none"
+                >
+                  <Image
+                    src={abertura[0].caminho}
+                    alt={
+                      abertura[0].alt ?? `Tela principal do projeto ${projeto.titulo}`
+                    }
+                    width={abertura[0].medida!.largura}
+                    height={abertura[0].medida!.altura}
+                    priority
+                    sizes="(max-width: 1024px) 100vw, 1200px"
+                    className="h-auto w-full rounded-[12px]"
+                  />
+                </ViewTransition>
+              ) : (
+                /* No desktop as telas ficam lado a lado, como o frame desenha. No mobile
+                   viram carrossel, que é o mesmo tratamento que números, paletas e o bloco
+                   de imagens já recebem: empilhar três telas de celular inteiras faria a
+                   pessoa rolar a página toda antes de chegar no índice. */
+                <TrilhoRolavel
+                  rotulo={`Telas do projeto ${projeto.titulo}`}
+                  className="w-full overflow-x-auto overscroll-x-contain px-[2px] pb-[8px] sm:overflow-x-visible sm:px-0 sm:pb-0"
+                >
+                  <div
+                    className={`flex snap-x snap-mandatory items-start gap-[24px] sm:grid sm:snap-none ${
+                      COLUNAS_DA_ABERTURA[abertura.length] ?? "sm:grid-cols-3"
+                    }`}
+                  >
+                    {abertura.map((imagem, indice) => (
+                      <Image
+                        key={imagem.caminho}
+                        src={imagem.caminho}
+                        alt={imagem.alt ?? `Tela do projeto ${projeto.titulo}`}
+                        width={imagem.medida!.largura}
+                        height={imagem.medida!.altura}
+                        /* Só a primeira é prioritária. No desktop as outras estão na tela
+                           e o navegador busca elas de qualquer jeito; no mobile elas estão
+                           fora do trilho visível, e `priority` nas três baixaria o dobro
+                           sem ninguém ver. */
+                        priority={indice === 0}
+                        sizes="(max-width: 640px) 260px, 400px"
+                        className="w-[260px] shrink-0 snap-start rounded-[12px] sm:w-full"
+                      />
+                    ))}
+                  </div>
+                </TrilhoRolavel>
+              )}
+
+              {projeto.heroNota ? (
+                <p className="mt-[16px] text-legenda text-text-dim">{projeto.heroNota}</p>
+              ) : null}
             </div>
-            </ViewTransition>
           ) : null}
 
           {/* Duas colunas no desktop: o índice fixo de 220 e as frentes de 900, com 80 de

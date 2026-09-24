@@ -42,10 +42,27 @@ export type Projeto = {
   ficha: CampoDaFicha[];
   /** Prévia usada nos cards. */
   imagem?: string;
-  /** Imagem grande no topo do case. Opcional: o Bajaj não tem. */
-  heroCase?: string;
+  /**
+   * Imagens grandes no topo do case, entre a ficha e o corpo. Opcional: o Bajaj não tem.
+   *
+   * ACEITA UMA OU VÁRIAS. O frame do Assistente põe três telas lado a lado, e a forma
+   * antiga, `heroCase: /caminho.webp`, continua valendo e vira uma lista de um item só.
+   */
+  heroCase?: ImagemDeAbertura[];
+  /** Linha de apoio abaixo das imagens de abertura, como o aviso de confidencialidade. */
+  heroNota?: string;
   corpo: string;
 };
+
+/**
+ * Uma imagem da abertura do case.
+ *
+ * No frontmatter cada linha é `caminho | texto alternativo`, no mesmo formato de campos
+ * separados por barra que a ficha já usa. **O alt vem por imagem e não é gerado**, porque
+ * com três telas um texto só serviria mal às três: quem não vê a tela precisa saber qual
+ * é o estado de cada uma, e "Tela principal do projeto" repetido três vezes não diz nada.
+ */
+export type ImagemDeAbertura = { caminho: string; alt?: string };
 
 /** Uma frente do case, como o índice lateral a enxerga. */
 export type SecaoDoCase = {
@@ -153,6 +170,29 @@ function lerTexto(valor: string | undefined): string {
   return (valor ?? "").replace(/^["']|["']$/g, "");
 }
 
+/**
+ * Lê as imagens de abertura das duas formas, a lista em bloco e o valor único antigo.
+ *
+ * A lista ganha da chave solta quando as duas existem, o que não deveria acontecer, mas
+ * escolher em silêncio é melhor que renderizar as duas.
+ */
+function lerAbertura(
+  lista: string[] | undefined,
+  unica: string | undefined,
+): ImagemDeAbertura[] | undefined {
+  const linhas = lista?.length ? lista : unica ? [unica] : [];
+
+  const imagens = linhas
+    .map((linha) => {
+      const [caminho, ...resto] = linha.split("|");
+      const alt = resto.join("|").trim();
+      return { caminho: lerTexto(caminho.trim()), alt: alt || undefined };
+    })
+    .filter((imagem) => imagem.caminho);
+
+  return imagens.length ? imagens : undefined;
+}
+
 function paraProjeto(arquivo: string): Projeto {
   const bruto = readFileSync(join(PASTA, arquivo), "utf8");
   const [campos, listas, corpo] = lerFrontmatter(bruto);
@@ -180,7 +220,8 @@ function paraProjeto(arquivo: string): Projeto {
       return { rotulo: rotulo.trim(), valor: resto.join("|").trim() };
     }),
     imagem: campos.imagem ? lerTexto(campos.imagem) : undefined,
-    heroCase: campos.heroCase ? lerTexto(campos.heroCase) : undefined,
+    heroCase: lerAbertura(listas.heroCase, campos.heroCase),
+    heroNota: campos.heroNota ? lerTexto(campos.heroNota) : undefined,
     corpo,
   };
 }
