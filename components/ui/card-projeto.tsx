@@ -1,6 +1,7 @@
 import { ViewTransition } from "react";
 import Link from "next/link";
 import Tag from "@/components/ui/tag";
+import { chipsDoCard } from "@/lib/filtros";
 import BadgeConstrucao from "@/components/ui/badge-construcao";
 import PreviewProjeto from "@/components/ui/preview-projeto";
 import type { Projeto } from "@/lib/conteudo";
@@ -44,8 +45,8 @@ export default function CardProjeto({
         </div>
 
         <div className="mt-[16px] flex flex-wrap gap-[6px]">
-          {projeto.tags.map((tag) => (
-            <Tag key={tag}>{tag}</Tag>
+          {chipsDoCard(projeto.tags).map((chip) => (
+            <Tag key={chip} valor={chip} />
           ))}
           {projeto.estado === "em-construcao" ? <BadgeConstrucao /> : null}
         </div>

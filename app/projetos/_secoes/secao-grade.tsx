@@ -1,7 +1,7 @@
 "use client";
 
 import { Children, useState, type ReactNode } from "react";
-import { FILTROS } from "@/lib/filtros";
+import { FILTROS, passaNoFiltro } from "@/lib/filtros";
 
 /**
  * Filtros e grade da listagem.
@@ -12,7 +12,11 @@ import { FILTROS } from "@/lib/filtros";
  * Aqui o cliente só decide quais dos elementos já prontos ficam visíveis.
  *
  * O filtro é por TAG e não por tipo, apesar de o frame no Figma se chamar "Filtro - TIPO".
- * As cinco pílulas desenhadas correspondem aos valores de tags.
+ *
+ * QUEM DECIDE SE UM PROJETO ENTRA É O `passaNoFiltro`, E NÃO UM `includes` AQUI. As pílulas
+ * deixaram de ser todas literais em 2026-09-23: Front-End e Back-End incluem quem tem as
+ * duas, e Full Stack mostra só esses. Comparação de texto na grade não dá conta, e pior,
+ * daria a resposta errada em silêncio.
  */
 export default function SecaoGrade({
   tagsPorProjeto,
@@ -24,8 +28,8 @@ export default function SecaoGrade({
   const [filtro, setFiltro] = useState<string>("Todos");
 
   const cards = Children.toArray(children);
-  const visiveis = cards.filter(
-    (_, indice) => filtro === "Todos" || tagsPorProjeto[indice]?.includes(filtro),
+  const visiveis = cards.filter((_, indice) =>
+    passaNoFiltro(tagsPorProjeto[indice] ?? [], filtro),
   );
 
   return (

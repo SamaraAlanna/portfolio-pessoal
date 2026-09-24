@@ -957,19 +957,29 @@ body {
 }
 
 /* Os chips acendem junto com a borda do card, e é o card que manda: eles não são
-   interativos sozinhos, são descrição do que o card contém. As tags vão todas para rosa,
-   porque a distinção entre elas é o texto e não a cor.
+   interativos sozinhos, são descrição do que o card contém.
 
-   O BADGE ACENDE EM ÂMBAR, E NÃO EM ROSA. Em repouso ele tem o mesmo peso das tags e se
-   distingue só pelo matiz do texto. Parado no hover viraria o chip mais apagado da fileira
-   e pareceria desligado; em rosa diria que é do mesmo tipo que as tags, que é o que âmbar
-   existe para negar. Acendendo cada um na sua cor, o hover revela a estrutura em vez de
-   achatá-la. */
+   CADA CHIP ACENDE NA COR DA PRÓPRIA CAMADA desde 2026-09-23, e não mais todos em rosa. A
+   cor vem do próprio chip, numa `--cor-camada` que o `components/ui/tag` declara, então
+   **esta regra é uma só e não sabe quantas camadas existem**. Escrever um par de regras por
+   camada daria o mesmo resultado hoje e quebraria na quarta.
+
+   O PADRÃO É ROSA, E É REDE DE SEGURANÇA. Chip com valor fora do mapa acende como antes,
+   em vez de ficar com `border-color` inválido, que o navegador descarta em silêncio: o
+   chip simplesmente não acenderia e pareceria defeito de hover.
+
+   O BADGE ACENDE EM ÂMBAR, E NÃO ENTRA NESSE MECANISMO. Ele não é tag, é estado, e o âmbar
+   dele é fixo. Em repouso tem o mesmo peso das tags e se distingue só pelo matiz do texto;
+   parado no hover viraria o chip mais apagado da fileira e pareceria desligado. */
 .tag-projeto,
 .badge-construcao {
   transition:
     color var(--dur-rapida) linear,
     border-color var(--dur-rapida) linear;
+}
+
+.tag-projeto {
+  --cor-camada: var(--accent-rosa);
 }
 
 @media (hover: hover) {
@@ -979,8 +989,8 @@ body {
   }
 
   .cartao-interativo:hover .tag-projeto {
-    border-color: var(--accent-rosa);
-    color: var(--accent-rosa);
+    border-color: var(--cor-camada);
+    color: var(--cor-camada);
   }
 
   .cartao-interativo:hover .badge-construcao {
@@ -993,8 +1003,8 @@ body {
 }
 
 .cartao-interativo:focus-visible .tag-projeto {
-  border-color: var(--accent-rosa);
-  color: var(--accent-rosa);
+  border-color: var(--cor-camada);
+  color: var(--cor-camada);
 }
 
 .cartao-interativo:focus-visible .badge-construcao {

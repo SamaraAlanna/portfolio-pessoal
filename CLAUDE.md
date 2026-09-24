@@ -218,7 +218,7 @@ sugerida, para a próxima sessão saber de onde continuar sem reabrir tudo.
 cada um deixando o site buildando.
 
 1. **Feito.** Remoção dos três cases de identidade visual, redirects e limpeza das menções.
-2. Tags e filtro novos: UX/UI Design, Front-End, Back-End e Full Stack.
+2. **Feito.** Tags e filtro novos, chip Full Stack derivado e cor por camada no hover.
 3. Moldura nova do case: hero sem imagem, ficha em linha de cinco colunas, imagem de
    abertura opcional.
 4. Índice lateral derivado do MDX, com âncoras, numeração e scroll-spy.
@@ -264,10 +264,32 @@ as três capas e **21 imagens** de `public/imagens/cases/`. As três URLs redire
 `/projetos` com **308 permanente**, declarado em `next.config.ts`: elas estiveram no ar e
 podem ter sido compartilhadas ou indexadas, e 404 joga fora quem chega por link antigo.
 
-**A home ficou com três cards e o desenho pede quatro.** O Míriam tinha `ordemHome: 3`. A
-grade é um destaque ao lado de três empilhados, e o destaque não tem altura própria: ele
-acompanha a coluna do lado. **Promover um projeto a `ordemHome: 3` devolve a composição, e
-qual promover é curadoria.** Está pendente.
+**A home passou a ser os quatro cases concluídos:** VOGE em destaque, Bajaj, Assistente e
+CRUD. O Míriam tinha `ordemHome: 3` e saiu com os outros dois; **o Spirito saiu junto, e
+não por falta de espaço**: ele é o único `em-construcao`, e um card que leva a uma página
+sem corpo é o pior lugar para gastar um dos quatro. Ele continua na listagem.
+
+**O passo 2 mudou as tags, e elas não são mais o que o card mostra.** O frontmatter declara
+`UX/UI Design`, `Front-End` e `Back-End`, e `lib/filtros.ts` deriva o resto:
+
+- **`ehFullStack` é condição, não declaração.** Uma quarta tag no frontmatter teria de ser
+  mantida em sincronia à mão, e bastaria acrescentar Back-End e esquecer Full Stack para o
+  mesmo case responder "sim" a um filtro e "não" a outro, sem erro nenhum aparecer.
+- **`passaNoFiltro` existe porque as pílulas não são todas literais.** Front-End e Back-End
+  incluem quem tem as duas; Full Stack mostra só esses. Um `includes` na grade daria a
+  resposta errada em silêncio.
+- **`chipsDoCard` preserva a posição.** Front-End mais Back-End viram um chip na posição do
+  primeiro dos dois, senão o Spirito, que tem as três tags, teria o Full Stack jogado para
+  depois do UX/UI sem motivo.
+
+**Front-End, Back-End e Full Stack devolvem os mesmos três projetos hoje**, porque nenhum
+case declara só uma das duas. Não é defeito: a distinção aparece no primeiro case que for
+só front ou só back. **Se isso incomodar antes disso, o que sobra é juntar as pílulas, e
+não mudar a regra.**
+
+**As pílulas do filtro não ganharam cor por camada.** A ativa continua rosa. A decisão de
+cor por camada foi respondida para o chip do card, e pintar a pílula ativa de lavanda ou
+ciano é outra mudança, que não foi pedida.
 
 **A menção a identidade visual saiu de uns lugares e ficou em outros, por critério.** Saiu
 de onde era promessa que a página não cumpre mais: a coluna Design da home, a descrição do

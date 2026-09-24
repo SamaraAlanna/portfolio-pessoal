@@ -158,12 +158,14 @@ export function lerProjeto(slug: string): Projeto | undefined {
  * A seleção é explícita e não "os primeiros da listagem", porque no Figma a home mostra
  * uma escolha própria, que não são os primeiros da grade de projetos.
  *
- * **HOJE SOBRARAM TRÊS, E O DESENHO PEDE QUATRO.** O Míriam Araújo tinha `ordemHome: 3` e
- * saiu em 2026-09-23 com os cases de identidade visual. A grade da home é um card de
- * destaque ao lado de três empilhados, e o destaque não tem altura própria: ele acompanha
- * a coluna do lado. Com dois empilhados ele encolhe junto e a composição do Figma se
- * perde. Promover um projeto a `ordemHome: 3` devolve a grade, e qual promover é escolha
- * de curadoria.
+ * **SÃO OS QUATRO CASES CONCLUÍDOS, E ISSO VIROU O CRITÉRIO em 2026-09-23:** VOGE em
+ * destaque, Bajaj, Assistente e CRUD. A grade é um card de destaque ao lado de três
+ * empilhados, e o destaque não tem altura própria, ele acompanha a coluna do lado, então
+ * a home precisa de quatro para a composição do Figma existir.
+ *
+ * **O Spirito saiu da home na mesma data**, e não por falta de espaço: ele é o único
+ * `em-construcao`, e um card que leva a uma página sem corpo é o pior lugar para gastar um
+ * dos quatro. Ele continua na listagem, que é onde ver tudo é o ponto.
  */
 export function lerProjetosDaHome(): Projeto[] {
   return lerProjetos()
