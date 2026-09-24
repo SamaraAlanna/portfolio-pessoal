@@ -494,6 +494,39 @@ cobra uma correção em outro lugar: o `foco-no-hero` rolava com `behavior: "aut
 **herda do CSS**, e a volta ao topo viraria uma animação no meio de um Shift+Tab. Passou a
 `"instant"`.
 
+**ELA COBRA UMA SEGUNDA COISA, E ESSA CUSTOU UM BUG DE UM DIA: o `data-scroll-behavior="smooth"`
+no `<html>` do `app/layout.tsx`.** Os dois andam juntos, e tirar um sem tirar o outro faz a
+navegação entre páginas **parar no meio da página**. Registrado dos dois lados, no atributo e
+na regra de CSS, porque o defeito aparece longe de quem o causa.
+
+**Até o Next 15 o router neutralizava a rolagem suave sozinho** durante a troca de rota:
+punha `scroll-behavior: auto`, navegava e restaurava. **O Next 16 deixou de fazer isso por
+padrão**, e só volta a fazer com aquele atributo. Está na seção *Scroll Behavior Override* do
+guia de atualização, em `node_modules/next/dist/docs/01-app/02-guides/upgrading/version-16.md`.
+
+**O estrago não é cosmético, e o motivo está no `layout-router`.** Ele faz
+`htmlElement.scrollTop = 0` e, **na linha seguinte**, mede se o segmento está na tela para
+decidir se ainda precisa de um `scrollIntoView()`. Com `auto` a atribuição move a página na
+hora e a medição acerta. Com `smooth` ela só inicia uma animação, a medição lê a posição
+antiga, conclui que o segmento está fora da tela e chama `scrollIntoView()`, que **redireciona
+a animação em curso** para o topo do segmento em vez do topo do documento. O Next chega a
+passar `dontForceLayout: true` ali, porque assume que a rolagem já aconteceu.
+
+**O alcance, lido do caminho de código:** vale para **todas** as rotas, porque a neutralização
+que sumiu era global, e **só na navegação dentro do site**. Abrir uma URL direto não é afetado,
+porque o estado inicial do router nasce com `scrollRef: null` e a rotina de rolagem sai cedo.
+**Cuidado ao diagnosticar isso de novo:** o navegador restaura posição ao recarregar uma URL já
+rolada, e isso imita o sintoma sem ser ele.
+
+**O atributo não custa a rolagem suave do índice**, que é a razão de a regra de CSS existir: o
+`disableSmoothScrollDuringRouteTransition` sai cedo quando a navegação é só de hash. E não
+briga com movimento reduzido: sob ele não existe rolagem suave, e o Next grava e restaura um
+estilo inline vazio.
+
+**Em desenvolvimento o Next avisa**, com um `warnOnce` que nomeia o problema quando encontra
+`scroll-behavior: smooth` sem o atributo. O aviso existia desde 2026-09-23 e ninguém leu, o que
+vale como lembrete: console de desenvolvimento é lugar de conferir, não só de aparecer.
+
 **O foco vai para a seção, e a rolagem continua sendo a nativa.** O item é uma âncora de
 verdade, sem `preventDefault`, então funciona sem JavaScript. O `focus()` usa
 `preventScroll`, senão ele rolaria por conta própria e brigaria com a rolagem suave que o

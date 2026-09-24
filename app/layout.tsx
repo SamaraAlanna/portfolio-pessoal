@@ -62,6 +62,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="pt-BR"
+      // ANDA JUNTO DO `scroll-behavior: smooth` DO `app/globals.css`. Sem este atributo, o
+      // Next 16 não neutraliza a rolagem suave durante a troca de rota e a navegação entre
+      // páginas para no meio. Quem tirar um dos dois precisa tirar o outro.
+      data-scroll-behavior="smooth"
       className={`${dmSans.variable} ${jetBrainsMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >

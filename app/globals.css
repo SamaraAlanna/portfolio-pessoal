@@ -1231,6 +1231,27 @@ body {
   outline-offset: var(--foco-folga);
 }
 
+/* Rolagem suave, para as âncoras do índice do case.
+
+   ESTA REGRA NÃO VIVE SOZINHA: ela exige o `data-scroll-behavior="smooth"` no `<html>` do
+   `app/layout.tsx`. Até o Next 15 o router punha `scroll-behavior: auto` sozinho durante a
+   troca de rota, navegava e restaurava; **o Next 16 deixou de fazer isso por padrão** e só
+   volta a fazer com aquele atributo.
+
+   Sem ele o estrago não é cosmético. O `layout-router` faz `htmlElement.scrollTop = 0` e,
+   na linha seguinte, mede se o segmento está na tela para decidir se precisa de um
+   `scrollIntoView()`. Com `auto` a atribuição move a página na hora e a medição acerta; com
+   `smooth` ela só inicia uma animação, a medição lê a posição antiga e o `scrollIntoView()`
+   redireciona a animação em curso para o topo do segmento em vez do topo do documento. **A
+   página abre no meio**, e qualquer toque de scroll durante a animação deixa a pessoa onde
+   parou.
+
+   Foi exatamente isso entre 2026-09-23, quando esta regra entrou com o índice, e
+   2026-09-24, quando o atributo entrou. **Quem tirar um dos dois precisa tirar o outro.**
+
+   O atributo não custa a rolagem suave do índice: o `disableSmoothScrollDuringRouteTransition`
+   sai cedo quando a navegação é só de hash. E não briga com o movimento reduzido: sob ele não
+   existe rolagem suave, e o Next grava e restaura um estilo inline vazio. */
 @media (prefers-reduced-motion: no-preference) {
   html {
     scroll-behavior: smooth;
