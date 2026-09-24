@@ -10,6 +10,7 @@ import BlocoOpcoes from "@/components/blocos/bloco-opcoes";
 import BlocoDestaque from "@/components/blocos/bloco-destaque";
 import BlocoDuo from "@/components/blocos/bloco-duo";
 import BlocoFrase from "@/components/blocos/bloco-frase";
+import BlocoEstados from "@/components/blocos/bloco-estados";
 import ImagemMdx from "@/components/ui/imagem-mdx";
 import type { SecaoDoCase } from "@/lib/conteudo";
 
@@ -29,6 +30,9 @@ export const blocos = {
   diagrama: BlocoDiagrama,
   paleta: BlocoPaleta,
   opcoes: BlocoOpcoes,
+
+  // Visualizador de estados de tela, em abas. Entrou com o redesenho dos cases.
+  estados: BlocoEstados,
 
   // Dois blocos que os cases exigiram e que não estavam na lista original dos nove.
   destaque: BlocoDestaque,

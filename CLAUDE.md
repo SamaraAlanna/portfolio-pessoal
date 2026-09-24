@@ -222,8 +222,8 @@ cada um deixando o site buildando.
 3. **Feito.** Moldura nova do case: hero sem imagem nem abertura, ficha em faixa de cinco
    colunas, e o espaçamento vertical do Figma como padding.
 4. **Feito.** Índice lateral derivado do MDX, com âncoras, numeração, scroll-spy e foco.
-5. **Em andamento.** Blocos novos, um por vez. **Feito: código com abas.** Faltam o
-   visualizador de estados, o fluxo horizontal e o `opcoes` como cards de decisão.
+5. **Em andamento.** Blocos novos, um por vez. **Feitos: código com abas e visualizador de
+   estados.** Faltam o fluxo horizontal e o `opcoes` como cards de decisão.
 6. Reescrita do conteúdo dos quatro MDX, incluindo a ficha encurtada e o campo STACK.
 7. Limpeza: blocos órfãos, `docs/modelos-de-case.md`, este documento.
 
@@ -409,6 +409,72 @@ duas vezes, uma para o desktop e outra dentro do `summary`. Pôr as abas ali dup
 
 **A aba ativa é lida do `aria-selected`, e não de uma classe**, pelo mesmo motivo do item do
 índice.
+
+**O `AcordeaoMobile` fica, mesmo custando a linha extra.** A alternativa era o bloco com abas
+montar o próprio `details` para pôr as abas na mesma linha do nome do arquivo, como o Figma
+desenha. **Um jeito só de fazer accordion vale mais que a linha única:** hoje o `details`
+com desktop sempre aberto vive num componente, com a mecânica do `::details-content`
+comentada num lugar, e uma segunda implementação teria que reproduzir isso e envelhecer
+junto.
+
+### O visualizador de estados
+
+**É o bloco `estados`**, uma linha por estado com três campos, `rótulo | caminho | legenda`,
+mais um `total` opcional que alimenta o contador "4 DE 7 NO CASE". O contador existe para
+**não prometer que a página mostra tudo**: o CRUD documentou sete estados e publica quatro.
+
+**A ATIVAÇÃO É MANUAL AQUI, E AUTOMÁTICA NO BLOCO DE CÓDIGO.** A seta move o foco e Enter ou
+Espaço troca o painel. **Não é incoerência entre dois widgets parecidos: é o critério que o
+próprio WAI-ARIA usa, que é latência.** No código os painéis já estão renderizados e a seta
+não custa nada; aqui cada ativação dispara o carregamento de uma captura, e percorrer quatro
+abas com a seta baixaria quatro imagens que ninguém pediu ver.
+
+**O custo dessa escolha é real e fica anotado:** quem aprendeu no bloco de código que a seta
+troca o painel vai arrastar o foco aqui e não ver nada mudar. O que segura isso é o anel de
+foco, que mostra onde a pessoa está. Se um dia incomodar, o certo é deixar os dois manuais,
+e não os dois automáticos.
+
+**Enter e Espaço não têm tratamento próprio**, porque as abas são `button` e o navegador já
+dispara `click` nos dois. O teclado só cuida de mover o foco.
+
+**A moldura reserva a altura pela proporção, antes de a imagem chegar**, e a proporção é
+**uma só para todas as abas**. Reservar por imagem não bastaria: duas capturas de proporções
+diferentes fariam a moldura mudar de altura a cada troca e a página saltar. É
+`object-contain` e não `object-cover`: idênticos enquanto as capturas tiverem a mesma
+proporção, e no dia em que uma tiver outra, `contain` encaixa em vez de cortar.
+
+**O carregamento sob demanda vem por omissão, e não por código.** Sem `priority`, o
+`next/image` nasce `loading="lazy"`, e imagem dentro de painel com `hidden` não é buscada até
+o painel aparecer. **Não precisa de código para adiar, precisa de cuidado para não estragar**,
+e o jeito de estragar é pôr `priority` achando que ajuda.
+
+### Duas armadilhas que o passo 5 encontrou na prática
+
+**LINHA EM BRANCO SEPARA ITEM EM UNS BLOCOS E QUEBRA OUTROS, E A DIFERENÇA É O EXTRATOR.**
+A regra registrada diz que `imagens`, `diagrama` e `antes-depois` precisam de linha em
+branco entre itens. **Nos blocos de campos separados por barra vertical, `numeros`,
+`paleta`, `opcoes` e agora `estados`, ela faz o contrário: quebra o bloco em silêncio.**
+
+O motivo é o `linhasDeCampos`: ele separa por quebra simples **dentro de um parágrafo só**.
+Com linha em branco o Markdown cria parágrafos separados, o `textoDeChildren` concatena sem
+separador, e duas linhas viram uma: o bloco renderiza um item com dois textos grudados. Isso
+aconteceu de verdade ao escrever o `estados`, e **o build não reclama**.
+
+**FALLBACK DE `color-mix` PODE SER PIOR QUE NÃO TER O EFEITO.** O compilador de CSS gera, para
+quem não suporta a função, um fallback usando a cor **cheia**. Na aba ativa do visualizador
+isso daria fundo accent sólido atrás de texto accent, ou seja rótulo invisível. A correção é
+pôr a base segura fora e o `color-mix` dentro de `@supports`, e vale para qualquer uso futuro
+da função neste projeto.
+
+### O accent do case
+
+**A página de case declara `--accent-case` no `article`**, a partir do `tipo` do frontmatter:
+ciano em engenharia, rosa no resto. Isso realiza a decisão já registrada de o `tipo` não ser
+vestigial.
+
+**Hoje quem lê é só o visualizador de estados.** Os rótulos de seção e o índice ainda
+declaram rosa direto, e migram no passo 7. O token do Tailwind é `accent-case`, com fallback
+para rosa, então qualquer lugar fora de um case herda algo válido em vez de nada.
 
 **`scroll-margin-top` NÃO foi acrescentado, e isso responde ao pedido em vez de contrariá-lo.**
 O `html` já tem `scroll-padding-top` de `--altura-nav` mais 12, e ele vale para qualquer

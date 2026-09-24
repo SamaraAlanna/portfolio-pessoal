@@ -411,6 +411,10 @@
   --color-text-muted: var(--text-muted);
   --color-text-dim: var(--text-dim);
 
+  /* O accent da página de case, decidido pelo `tipo` do frontmatter e escrito no
+     `article` pela página: ciano em engenharia, rosa em ux-produto. O padrão aqui é rosa
+     para qualquer lugar fora de um case herdar algo válido em vez de nada. */
+  --color-accent-case: var(--accent-case, var(--accent-rosa));
   --color-accent-rosa: var(--accent-rosa);
   --color-accent-rosa-hover: var(--accent-rosa-hover);
   --color-accent-lavanda: var(--accent-lavanda);
@@ -1009,6 +1013,53 @@ body {
 
 .cartao-interativo:focus-visible .badge-construcao {
   border-color: var(--accent-ambar);
+}
+
+/* ---------------------------------------------------------------------------
+   Abas do visualizador de estados.
+
+   A ATIVA GANHA FUNDO TINGIDO E TEXTO EM ACCENT, e não só uma das duas. Aqui a aba compete
+   com uma captura de tela grande logo abaixo, e um sinal fraco sozinho se perde; no bloco
+   de código, onde a vizinhança é texto mono apagado, o peso do texto basta.
+
+   A COR SAI DO ACCENT DO CASE, e não de rosa fixo: ciano em engenharia e rosa em
+   ux-produto. O tingido acompanha pelo `color-mix`, que deriva do mesmo valor em vez de
+   pedir um segundo token por camada.
+
+   Só em ponteiro que faz hover, senão o toque no celular deixa a aba presa no estado.
+   --------------------------------------------------------------------------- */
+
+.aba-estado {
+  color: var(--text-muted);
+  transition:
+    color var(--dur-rapida) linear,
+    background-color var(--dur-rapida) linear;
+}
+
+.aba-estado[aria-selected="true"] {
+  background-color: var(--surface);
+  color: var(--accent-case, var(--accent-rosa));
+  font-weight: 500;
+}
+
+/* O TINGIDO FICA ATRÁS DE `@supports`, E NÃO SOLTO, por causa do fallback. Sem a guarda, o
+   compilador de CSS gera um fallback para quem não tem `color-mix` usando a cor **cheia**,
+   e aí a aba ativa fica com fundo accent sólido atrás de texto accent: rótulo invisível. A
+   base é `--surface`, a mesma das abas de código, que é segura sozinha. */
+@supports (background-color: color-mix(in srgb, red 10%, transparent)) {
+  .aba-estado[aria-selected="true"] {
+    background-color: color-mix(
+      in srgb,
+      var(--accent-case, var(--accent-rosa)) 10%,
+      transparent
+    );
+  }
+}
+
+@media (hover: hover) {
+  .aba-estado:hover {
+    color: var(--text);
+  }
 }
 
 /* ---------------------------------------------------------------------------

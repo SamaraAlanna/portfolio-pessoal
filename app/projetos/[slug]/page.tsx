@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { metadataDaPagina } from "@/lib/site";
 import { notFound } from "next/navigation";
 import Image from "next/image";
+import type { CSSProperties } from "react";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import remarkDirective from "remark-directive";
 import { directivasParaComponentes } from "@/lib/mdx";
@@ -71,8 +72,16 @@ export default async function PaginaCase({ params }: PageProps<"/projetos/[slug]
   const hero = projeto.heroCase ? dimensaoDaImagem(projeto.heroCase) : null;
   const secoes = lerSecoes(projeto.corpo);
 
+  /**
+   * O ACCENT DA PÁGINA VEM DO `tipo`, e desce por variável para quem precisar dele.
+   * Ciano em engenharia, rosa no resto. Hoje quem lê é o visualizador de estados; os
+   * rótulos de seção e o índice ainda declaram rosa direto, e migram no passo 7.
+   */
+  const accentDoCase =
+    projeto.tipo === "engenharia" ? "var(--accent-ciano)" : "var(--accent-rosa)";
+
   return (
-    <article>
+    <article style={{ "--accent-case": accentDoCase } as CSSProperties}>
       <SecaoCabecalho projeto={projeto} />
 
       {emConstrucao ? (
