@@ -36,8 +36,6 @@ export type Projeto = {
   descricao: string;
   /** Texto do card na home. É mais curto e diferente do da listagem, por decisão de design. */
   resumo: string;
-  /** Parágrafo de abertura da página de case, logo abaixo do título. */
-  abertura: string;
   /** Ficha técnica: pares de rótulo e valor, na ordem em que aparecem. */
   ficha: CampoDaFicha[];
   /** Prévia usada nos cards. */
@@ -214,7 +212,6 @@ function paraProjeto(arquivo: string): Projeto {
     publicado: lerTexto(campos.publicado) !== "false",
     descricao: lerTexto(campos.descricao),
     resumo: lerTexto(campos.resumo) || lerTexto(campos.descricao),
-    abertura: lerTexto(campos.abertura),
     ficha: (listas.ficha ?? []).map((linha) => {
       const [rotulo, ...resto] = linha.split("|");
       return { rotulo: rotulo.trim(), valor: resto.join("|").trim() };

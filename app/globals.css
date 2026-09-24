@@ -146,7 +146,6 @@
   --tipo-card-compacto-titulo: 18px; /* cards menores da home */
 
   /* Página de case */
-  --tipo-abertura-case: 19px; /* parágrafo logo abaixo do título do case */
 
   /* Título de seção do case, o `h2` do `bloco-secao`.
 
@@ -203,7 +202,6 @@
   --lh-card-descricao: 1.52;
   --lh-bio: 1.65;
   --lh-titulo-case: 1.12;
-  --lh-abertura-case: 1.58;
 
   /* Em px, e não em proporção, de propósito. A tag e o badge "em construção" precisam ter
      a mesma altura, e os 26 do Figma saem de 15 de entrelinha, 5 de padding de cada lado e
@@ -537,9 +535,6 @@
   --text-titulo-case--letter-spacing: var(--tracking-titulo-case);
 
   --text-proximo: var(--tipo-proximo);
-
-  --text-abertura-case: var(--tipo-abertura-case);
-  --text-abertura-case--line-height: var(--lh-abertura-case);
 
   --text-corpo-case: var(--tipo-corpo-case);
   --text-corpo-case--line-height: var(--lh-corpo-case);

@@ -14,10 +14,19 @@ import type { ReactNode } from "react";
  * ciano é back-end e dados, e âmbar é ressalva, para quando a frase avisa de um limite em vez
  * de afirmar um resultado.
  *
- * OS DOIS EXEMPLOS QUE ESTAVAM AQUI SAÍRAM DO SITE EM 2026-09-24, na reescrita dos cases: o
- * âmbar era o "Impacto esperado" do CRUD e o ciano era a integração de leads do VOGE. **O do
- * CRUD além de removido estava errado**, porque dizia que a tela não tinha sido implementada,
- * e ela foi. O bloco ficou sem nenhum uso e a decisão sobre ele é do passo 7.
+ * SEM USO DESDE 2026-09-24, E RESERVADO. Os dois exemplos que ficavam aqui saíram na reescrita
+ * dos cases: o âmbar era o "Impacto esperado" do CRUD e o ciano era a integração de leads do
+ * VOGE. **O do CRUD, além de removido, estava errado**, porque dizia que a tela não tinha sido
+ * implementada, e ela foi.
+ *
+ * **NÃO É CANDIDATO A REMOÇÃO.** Ele é o jeito do sistema sinalizar ressalva, e o próximo case
+ * com algo não implementado ou não medido vai precisar do filete âmbar. O `bloco-destaque`, o
+ * `bloco-antes-depois` e o `bloco-frase` foram apagados no mesmo dia justamente porque não
+ * tinham esse papel de reserva.
+ *
+ * O precedente é o `bloco-opcoes`: ele passou um dia com zero uso e voltou como os cards de
+ * decisão do CRUD, que é o bloco central daquela página. **Foi a marca de reservado que o
+ * salvou.**
  */
 const FILETES: Record<string, string> = {
   rosa: "border-accent-rosa",

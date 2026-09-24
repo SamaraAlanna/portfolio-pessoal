@@ -20,11 +20,10 @@ import type { Projeto } from "@/lib/conteudo";
  * caixa alta de 11px, igual aos rótulos de seção, e usar o par inteiro deixa os dois
  * andarem juntos se o sistema mudar. A diferença para o arquivo é de 0,22px.
  *
- * A ABERTURA SAIU DAQUI, E A DECISÃO DE ONDE ELA VAI É DE CONTEÚDO. O Figma novo não tem
- * parágrafo nenhum no hero: quem abre o assunto passou a ser o texto da primeira frente. O
- * campo `abertura` continua no frontmatter dos cinco cases, intacto, e a reescrita decide
- * se ele vira a primeira frente ou some. **Enquanto isso não acontece, o texto existe no
- * dado e não aparece na tela**, que é o estado esperado entre os dois passos.
+ * A ABERTURA SAIU DAQUI E DEIXOU DE EXISTIR. O Figma novo não tem parágrafo nenhum no hero:
+ * quem abre o assunto é o texto da primeira frente. O campo `abertura` sobreviveu inerte no
+ * frontmatter entre 2026-09-23 e 2026-09-24, enquanto a reescrita decidia se ele viraria a
+ * primeira frente, e saiu do tipo, do parser e dos quatro cases quando nenhum frame usou.
  *
  * O RESPIRO DO TOPO VEM DO `--espaco-topo-pagina`, e não dos 56 escritos aqui, desde
  * 2026-09-24. O token vale para o site inteiro, então o vão abaixo da nav passou a ser o

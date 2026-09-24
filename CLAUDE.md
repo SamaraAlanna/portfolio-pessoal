@@ -87,7 +87,7 @@ sugerida, para a próxima sessão saber de onde continuar sem reabrir tudo.
   cabeçalho, ficha, hero opcional, corpo, próximo projeto e footer, e o que varia entre
   identidade visual, ux-produto e engenharia vive no MDX. O estado em construção troca o
   corpo pela frase e mantém o resto.
-- **Conteúdo completo.** Os oito cases estão escritos, com ficha, abertura e corpo. O
+- **Conteúdo completo.** Os cinco cases estão escritos, com ficha e corpo. O
   Spirito não tem corpo porque está em construção, e isso é o comportamento correto.
 - **Passo 7, feito.** Sobre, Stack e Contato em `app/sobre/`, `app/stack/` e
   `app/contato/`, com o conteúdo estruturado em `conteudo/sobre.ts`, `conteudo/stack.ts` e
@@ -212,10 +212,10 @@ sugerida, para a próxima sessão saber de onde continuar sem reabrir tudo.
   e subir na Vercel.
 - Próximo passo é o 10, deploy na Vercel e domínio.
 
-### Redesenho dos cases, em andamento desde 2026-09-23
+### Redesenho dos cases, feito entre 2026-09-23 e 2026-09-24
 
-**Está no passo 1 de 7.** O plano inteiro foi aprovado e os passos são revisáveis um a um,
-cada um deixando o site buildando.
+**Os sete passos estão feitos.** O plano inteiro foi aprovado e os passos foram revisáveis um
+a um, cada um deixando o site buildando.
 
 1. **Feito.** Remoção dos três cases de identidade visual, redirects e limpeza das menções.
 2. **Feito.** Tags e filtro novos, chip Full Stack derivado e cor por camada no hover.
@@ -224,8 +224,10 @@ cada um deixando o site buildando.
 4. **Feito.** Índice lateral derivado do MDX, com âncoras, numeração, scroll-spy e foco.
 5. **Feito.** Blocos novos, um por vez: código com abas, visualizador de estados, fluxo
    horizontal e o `opcoes` como cards de decisão.
-6. Reescrita do conteúdo dos quatro MDX, incluindo a ficha encurtada e o campo STACK.
-7. Limpeza: blocos órfãos, `docs/modelos-de-case.md`, este documento.
+6. **Feito.** Reescrita dos quatro MDX a partir dos frames, com a ficha do arquivo e o campo
+   STACK onde ele existe.
+7. **Feito.** Limpeza: três blocos órfãos apagados, o `abertura` removido do dado, o
+   `docs/modelos-de-case.md` reescrito com um modelo só, e este documento atualizado.
 
 **Os frames do Figma** são `434:797` Bajaj, `443:797` VOGE, `445:1002` CRUD e `450:797`
 Assistente. Só existe desktop escuro: o tema claro sai pelas variáveis e o mobile segue as
@@ -336,11 +338,12 @@ abertura e 104 antes do corpo.
    sobre 11px e os tokens vizinhos são 0,06 e 0,1. Criar um token para 0,22px de diferença
    custaria mais do que resolve, então o tamanho sai do sistema e o tracking fica no lugar.
 
-**A ABERTURA FICOU SEM LUGAR NA TELA, E ISSO É ESPERADO ATÉ O PASSO 6.** O Figma novo não
-tem parágrafo nenhum no hero: quem abre o assunto é o texto da primeira frente. O campo
-`abertura` continua no frontmatter dos cinco cases, intacto, e a reescrita decide se ele
-vira a primeira frente ou some. **O texto existe no dado e não aparece na tela**, que é o
-estado correto entre os dois passos, e não um defeito a corrigir.
+**A ABERTURA SAIU DA TELA NO PASSO 3 E DO DADO NO PASSO 7.** O Figma novo não tem parágrafo
+nenhum no hero: quem abre o assunto é o texto da primeira frente. O campo `abertura` ficou
+inerte no frontmatter entre 2026-09-23 e 2026-09-24, enquanto a reescrita decidia se ele
+viraria a primeira frente, e saiu do tipo, do parser, dos quatro cases e dos tokens de
+tipografia quando nenhum frame usou. **Os `--tipo-abertura-case` e `--lh-abertura-case`
+saíram junto**, porque não sobrou consumidor.
 
 **A hierarquia de títulos já está certa e continua:** o título do case é o `h1` e cada seção
 é `h2`, pelo `bloco-secao`. A numeração entrou no rótulo e não mudou nível nenhum.
@@ -375,10 +378,9 @@ Ganho que não era o objetivo e vale mais que ele: **leitor de tela deixa de rec
 maiúsculas**, que parte deles soletra letra a letra. Em CSS isso é aparência, e o texto
 anunciado continua sendo a palavra.
 
-**Os rótulos nos MDX ainda estão em caixa alta**, e são reescritos no passo 6. Até lá o
-índice mostra "CONTEXTO" em vez de "Contexto", e isso é o estado esperado entre os passos,
-não um defeito. As âncoras não quebram na transição, porque `ancoraDeRotulo` minúsculiza
-dos dois jeitos.
+**Os rótulos dos quatro MDX foram reescritos em caixa normal no passo 6**, então o índice
+mostra "Contexto" e o leitor de tela recebe a palavra. As âncoras não quebraram na transição,
+porque `ancoraDeRotulo` minúsculiza dos dois jeitos.
 
 ### O bloco de código com abas
 
@@ -455,8 +457,7 @@ e o jeito de estragar é pôr `priority` achando que ajuda.
 ### Duas armadilhas que o passo 5 encontrou na prática
 
 **LINHA EM BRANCO SEPARA ITEM EM UNS BLOCOS E QUEBRA OUTROS, E A DIFERENÇA É O EXTRATOR.**
-A regra registrada diz que `imagens`, `diagrama` e `antes-depois` precisam de linha em
-branco entre itens. **Nos blocos de campos separados por barra vertical, `numeros`,
+A regra registrada diz que `imagens` e `diagrama` precisam de linha em branco entre itens. **Nos blocos de campos separados por barra vertical, `numeros`,
 `paleta`, `opcoes` e agora `estados`, ela faz o contrário: quebra o bloco em silêncio.**
 
 O motivo é o `linhasDeCampos`: ele separa por quebra simples **dentro de um parágrafo só**.
@@ -547,13 +548,28 @@ registro histórico:** o marcador do BORDA e o da Tech Girls, no Sobre. Apagar d
 falsificaria a experiência dela, que aconteceu. O critério vem do próprio
 `docs/modelos-de-case.md`: nunca prometer o que a página não mostra.
 
-**Blocos que ficaram órfãos, e o que fazer com cada um** (decisão no passo 7):
-`bloco-frase` sem uso e sem uso previsto; **o `bloco-opcoes` saiu dessa lista em 2026-09-24**,
-quando virou os cards de decisão do CRUD, que era o uso reservado para ele; `bloco-paleta`
-perdeu os formatos padrão e `cartao`, e só
-o `inline` continua invocado; `bloco-imagens` perdeu o `formato="linha"`. O
-`bloco-antes-depois` **perdeu o `formato="codigo"` em 2026-09-24**, quando o Bajaj passou a
-usar o código com abas, e continua vivo pelo `formato="numero"`, que o mesmo case usa.
+**Três blocos foram apagados em 2026-09-24**, depois de auditoria que confirmou zero uso no
+conteúdo e nenhuma importação fora do mapa de directives: `bloco-destaque`,
+`bloco-antes-depois` e `bloco-frase`. Nenhum tinha CSS próprio no `app/globals.css`, então não
+sobrou regra órfã.
+
+**O `bloco-citacao` ficou, marcado como reservado.** Ele também está com zero uso, e **não é
+candidato a remoção**: é o jeito do sistema sinalizar ressalva, pelo filete âmbar, e o próximo
+case com algo não implementado ou não medido vai precisar dele.
+
+**O `bloco-opcoes` saiu dessa lista em 2026-09-24**, quando virou os cards de decisão do CRUD,
+que era o uso reservado para ele. **Fica como aviso contra apagar órfão por impulso:** ele
+esteve sem uso por um dia e voltou a ser o bloco central de um case.
+
+**Variantes sem uso dentro de blocos vivos, e todas ficaram:** o `formato="linha"` do
+`imagens`, o `cartao` e o `inline` do `paleta`, o `tom="neutro"` e o `camada` do `citacao`, e o
+`divisor` do `duo`.
+
+**DOIS CAMINHOS INTEIROS FICARAM MORTOS SEM O BLOCO MORRER, E OS DOIS SÃO O CARROSSEL DO
+MOBILE:** a grade de cards do `numeros`, porque o Bajaj usa `formato="linha"`, e a grade de duas
+ou três colunas do `imagens`, porque o VOGE usa `colunas="1"`. **Ficaram de propósito**: eles
+voltam no primeiro case com mais de um número por linha ou mais de uma imagem por grade, e
+custam zero em runtime, porque nada os invoca.
 
 ### O bloco de fluxo
 
@@ -563,7 +579,7 @@ como o Figma novo mostra no fluxo do lead do VOGE e no de deploy do Bajaj.
 **O segundo campo da linha mudou de significado:** era a explicação da etapa, que o desenho
 novo não tem, e passou a ser a camada. **Valor fora das quatro camadas é ignorado**, então
 conteúdo escrito no formato antigo degrada para chip sem destaque em vez de quebrar. O
-Assistente ainda está no formato velho e é reescrito no passo 6.
+Assistente não tem mais fluxo nenhum: o frame dele tem só duas frentes, Briefing e Cor.
 
 **A CAMADA É DA ETAPA, E NÃO DO CASE.** O CRM do VOGE é ciano porque é back-end e dados, no
 significado que a cor tem no sistema inteiro, e não porque o case é de engenharia. Os dois
@@ -687,6 +703,52 @@ tabulação.
 **Uma paleta sem nome de cor imprimia o hex duas vezes.** O formato padrão renderizava
 `nome ?? valor` e logo depois `valor`. **Só não tinha aparecido porque nenhuma paleta do site
 tinha sido escrita sem nome**, e o frame do Assistente mostra só o hex. Corrigido em 2026-09-24.
+
+### O que o redesenho deixou decidido
+
+Fecha a seção. O que está aqui não deve ser reaberto sem motivo novo.
+
+**O frame é a fonte no conteúdo do case, e não só no layout.** Seção que existe no MDX e não
+existe no frame sai, porque quem tirou foi a Samara, no Figma. Isso custou texto bom: o corte
+levou a auditoria de segurança do Bajaj, a limpeza de 2,68 GB para 3,4 MB, a divisão de
+trabalho com o Paulo Azevedo no VOGE, a construção do arquivo por script na Plugin API do
+Figma no CRUD, e a seção inteira de arquitetura do Assistente, que era o argumento central
+dele. **Foi decisão consciente, com a consequência na mão.**
+
+**A `descricao` e o `resumo` sobrevivem a um corte de seção sem ninguém perceber**, porque não
+aparecem na página que mudou. Os três que quebraram foram reescritos; **o `resumo` do Bajaj
+ficou como estava de propósito**, porque ele já só prometia o que a página mostra, e trocar
+texto certo é mexer por mexer.
+
+**Uma promessa sobreviveu a um corte e precisou de conserto separado:** o `resumo` do VOGE
+dizia "busca de concessionárias" e o `destaque` que avisava que o filtro está desligado tinha
+saído. O texto virou "a rede de concessionárias" e a frase da frente foi completada.
+
+**Uma frase saiu por estar errada, e não por estar fora do frame:** o "Impacto esperado" do
+CRUD dizia que a tela não tinha sido implementada, e ela foi. As duas menções que restavam no
+código e neste documento foram corrigidas.
+
+**Cinco peças novas nasceram da reescrita**, todas por medida do frame e nenhuma por gosto: o
+`formato="linha"` do `numeros`, o chip `apagado` do `diagrama`, o valor `case` que lê o
+`--accent-case`, o `formato="painel"` do `paleta` e a abertura com mais de uma imagem.
+
+**Dois defeitos silenciosos apareceram porque o frame pediu algo que o código nunca tinha
+feito:** a paleta imprimia o hex duas vezes quando a cor não tinha nome, e a seção sem
+parágrafo recebia o respiro curto em vez dos 40 do arquivo. **Os dois só existiam porque
+nenhum conteúdo tinha exercitado aquele caminho**, que é o tipo de erro que não aparece em
+revisão visual do que já está no ar.
+
+**O `tipo` fica e não decide mais seção nenhuma.** Ele decide o accent, e índice, rótulo de
+seção, chip do fluxo, rótulo do card de decisão e o valor `case` dos números dependem dele.
+
+**Três blocos foram apagados e um ficou reservado.** Saíram `destaque`, `antes-depois` e
+`frase`. Ficou o `citacao`, porque é o jeito do sistema sinalizar ressalva com o âmbar, e o
+próximo case com algo não implementado ou não medido vai precisar dele. **O precedente que
+sustenta a reserva é o `bloco-opcoes`**, que passou um dia com zero uso e voltou como os cards
+de decisão do CRUD: foi a marca de reservado que o salvou.
+
+**O redesenho está fechado. O que falta no projeto é o passo 10 da ordem original**, que é
+registrar o domínio, conectar o repositório e subir na Vercel.
 
 ### Metadata e compartilhamento
 
@@ -940,12 +1002,13 @@ dois e perder o outro.
 "Filtro - TIPO", mas as cinco pílulas são valores de tags. O nome da camada é que está
 errado.
 
-**Blocos a implementar como componentes:** secao, citacao, codigo, imagens, numeros,
-antes-depois, diagrama, paleta, opcoes. Todos implementados.
+**Dez blocos hoje:** secao, citacao, codigo, imagens, numeros, diagrama, paleta, opcoes, duo
+e estados. **A tabela de quem usa o quê vive no `docs/modelos-de-case.md`**, e não aqui, porque
+ela muda a cada reescrita de conteúdo.
 
 ### Duas regras de escrita que os blocos impõem
 
-**Linha em branco separa item.** Em `imagens`, `diagrama` e `antes-depois`, cada item vai
+**Linha em branco separa item.** Em `imagens` e `diagrama`, cada item vai
 num parágrafo próprio, separado por linha em branco. Sem ela o Markdown junta tudo num
 parágrafo só e o bloco passa a ver um item onde deveria ver vários.
 
@@ -962,21 +1025,17 @@ para quem lê.
 ::::
 ```
 
-**A cor do número diz a camada.** O terceiro campo do bloco `numeros` aceita rosa,
-lavanda, ciano ou ambar, seguindo o significado de camada do sistema de cor. Sem ele, o
-número sai em rosa.
+**A cor do número diz a camada, ou o case.** O terceiro campo do bloco `numeros` aceita rosa,
+lavanda, ciano e ambar, seguindo o significado de camada do sistema de cor, mais `case`, que lê
+o `--accent-case`. Sem ele, o número sai em rosa. **O `case` existe para a cor não precisar ser
+escrita linha a linha**, que quebraria em silêncio no dia em que o `tipo` mudasse: o índice e os
+rótulos trocariam e os números ficariam na cor antiga.
 
-**O bloco `antes-depois` tem dois formatos.** Com `formato="numero"` ele recebe duas
-linhas de `valor | legenda` e monta a comparação, com o antes apagado e o depois em ciano.
-Com `formato="codigo"` ele recebe dois blocos de código e não repete rótulo, porque cada
-bloco já tem o seu na barra de título. Sem atributo, coloca dois filhos lado a lado com os
-rótulos por cima.
-
-**Doze blocos, e não nove.** Além dos nove previstos, os cases exigiram mais três:
-`destaque`, a caixa com fundo tingido, limitada a uma por página; `duo`, que põe dois
-conteúdos lado a lado, usado na seção de formulários do VOGE, onde o texto fica de um lado
-e o código do outro; e `frase`, uma frase grande com legenda explicativa acima, usada no
-posicionamento do Tech Girls.
+**Dez blocos, depois de o passo 7 apagar três.** Os nove previstos viraram treze durante a
+construção dos cases, com `destaque`, `duo`, `frase` e `estados`, e voltaram a dez quando
+`destaque`, `antes-depois` e `frase` perderam o último uso na reescrita. **O `duo` e o
+`estados` ficaram:** o primeiro põe as duas paletas do Assistente lado a lado, o segundo é o
+visualizador em abas do CRUD.
 
 **As três avaliações do Bilheteria não entram no site.** Elas são capturas reais de loja
 de aplicativo e de site de reclamação, com nome de pessoas que reclamaram de verdade, e
@@ -985,11 +1044,12 @@ padrão das reclamações sem citar ninguém. As telas de perfil e de evento da 
 do case são fictícias, com dados inventados e foto de banco de imagens, e essas podem ser
 publicadas.
 
-**O bloco `paleta` tem três formatos.** O padrão é a amostra nua, arredondada, com nome e
-hex embaixo, que é o do Tech Girls. Com `formato="cartao"` vira card com borda, amostra de
-120px no topo e bloco de informação embaixo, que é o do Míriam e do StivalDay. Com
-`formato="inline"` vira amostra de 14px ao lado do hex, numa fileira, que é a mini-paleta
-dos painéis de comparação do Assistente. O atributo `titulo` põe um rótulo acima, para
+**O bloco `paleta` tem quatro formatos.** O padrão é a amostra de 64px, arredondada, com nome
+e hex embaixo. Com `formato="painel"` o conjunto inteiro entra num card com `--surface`, borda
+e raio 12, que é o desenho das duas paletas do Assistente. Com `formato="cartao"` o card é
+**por cor**, com amostra de 120px no topo, e com `formato="inline"` vira amostra de 14px ao
+lado do hex, numa fileira. **Os dois últimos estão sem uso desde 2026-09-24**, e `cartao` e
+`painel` são fáceis de confundir pelo nome: um é card por cor, o outro é card por paleta. O atributo `titulo` põe um rótulo acima, para
 quando duas paletas aparecem lado a lado. A linha divide a largura igualmente entre
 quantas cores existirem.
 
@@ -1013,7 +1073,9 @@ converter para WebP.
 
 **O bloco `opcoes` tem quatro campos:** `rótulo | título | descrição | camada`. A camada
 colore o rótulo e é opcional. Quando o rótulo é ESCOLHIDA, o card ganha borda em accent, e
-não fundo tingido, porque a cota de caixa tingida costuma já estar gasta pelo `destaque`.
+não fundo tingido. **O motivo original era a cota de uma caixa tingida por página, que o
+`destaque` costumava gastar**, e o `destaque` foi apagado em 2026-09-24. A borda fica: ela
+distingue a opção escolhida sem competir com o tingido do chip do fluxo e da aba ativa.
 
 **O filete da citação diz a camada.** O atributo `camada` aceita rosa, que é o padrão,
 lavanda, ciano e ambar. Âmbar é ressalva, para quando a frase avisa de um limite em vez de
@@ -1327,19 +1389,22 @@ sustentam isso estão comentadas em `app/globals.css`, junto do próprio código
 
 ## Regras de conteúdo por tipo de case
 
-Três modelos. O `tipo` do frontmatter decide as seções.
+**UM MODELO, COM DUAS ÊNFASES, DESDE 2026-09-24.** Eram três modelos; os de identidade visual
+saíram com os três cases que os usavam, e o que sobrou não eram dois modelos, era um modelo com
+duas ênfases. **A moldura da página é a mesma nos dois** e o `tipo` do frontmatter não decide
+mais seção nenhuma: ele decide o accent, e só.
 
-**identidade-visual** (Tech Girls, Míriam, StivalDay): a imagem carrega, texto entre 180 e
-250 palavras. Hero com a marca, contexto, estratégia, sistema (cor e tipografia), logo,
-aplicações.
+**engenharia** (Bajaj, VOGE): o código e o número carregam, accent ciano. Prova típica em
+código com abas, fluxo e lista de números.
 
-**ux-produto** (CRUD, Assistente, Bilheteria): o raciocínio carrega, 300 a 400 palavras.
-Hero com a tela, contexto, decisão, sistema, trade-off, status.
+**ux-produto** (CRUD, Assistente): o raciocínio e a tela carregam, accent rosa. Prova típica em
+visualizador de estados, cards de decisão e paleta.
 
-**engenharia** (Bajaj, VOGE): código e número carregam, 300 a 400 palavras. Hero, contexto,
-três frentes, em números.
+**Os quatro cases reescritos têm entre 100 e 210 palavras de corpo**, bem abaixo das 300 a 400
+que o plano antigo previa, porque os frames novos encurtaram o texto de cada frente.
 
-**Projeto de dois tipos** (Spirito): layout do primário, com uma seção extra do secundário.
+**O detalhe vive no `docs/modelos-de-case.md`**, que foi reescrito no passo 7 e é a referência
+para montar case novo. Aqui fica só o critério.
 
 **Estado em construção:** o case não renderiza o corpo. Só nav, título com badge âmbar,
 frase centralizada "Este projeto ainda está em construção", uma linha de apoio, próximo
@@ -1362,9 +1427,8 @@ Leia do arquivo, mas o resumo do comportamento:
 - Padding lateral de 120 vira 24.
 - Todo grid de duas ou três colunas vira coluna única, **com duas exceções, e as duas são
   conteúdo comparativo curto**: a ficha técnica do case, que fica em duas colunas de 123,
-  e o `antes-depois` com `formato="numero"`, que mantém os dois cards lado a lado.
-  Empilhar destrói a comparação, que é a razão de o bloco existir. As duas estão assim no
-  Figma.
+  e os cards de decisão do `opcoes`, que empilham. **A segunda exceção era o `antes-depois`
+  com `formato="numero"`, e ela saiu com o bloco em 2026-09-24.**
 - "O que eu faço" vira accordion, chevron para baixo. **O lado Design abre por padrão e o
   lado Código fica fechado**, como está no Figma. Decisão tomada durante o design.
 - Blocos de código viram accordion fechado, com o nome do arquivo no cabeçalho.
@@ -1552,7 +1616,8 @@ O que precisa ser varrido, além do óbvio:
 
 - `links-nav.ts`, `nav.tsx`, `menu-mobile.tsx`, `footer.tsx` e o CTA.
 - Toda seção em `app/_secoes/` e nas `_secoes/` das páginas internas.
-- **Os rótulos padrão dos blocos**, como o "ANTES" e o "DEPOIS" do `bloco-antes-depois`.
+- **Os rótulos padrão dos blocos**, como o "NESTA PÁGINA" do índice e os nomes de aba que
+  não vêm do conteúdo.
 - **Os nomes acessíveis, que são os mais fáceis de esquecer porque não aparecem na tela:**
   `sr-only`, `aria-label`, `alt` de imagem, "Pular para o conteúdo", "Abrir menu", "Fechar
   menu", "Código de ...", a contagem anunciada do filtro e os textos da página de 404.
@@ -2109,9 +2174,10 @@ importado de `react`. **Funciona no App Router sem configuração nenhuma**: nã
 `react@canary` nem ative flag experimental. O par se forma pelo `name` igual dos dois lados,
 `capa-<slug>` e `titulo-<slug>`.
 
-**Cinco dos oito cases não têm `heroCase`**, e neles só o título viaja. O par de capa não se
-forma e degrada bem. Quando o campo for preenchido, o morph passa a funcionar sem tocar em
-código.
+**O Bajaj e o Spirito não têm `heroCase`**, e neles só o título viaja. O par de capa não se
+forma e degrada bem. **O Assistente também não forma o par, por outro motivo:** ele tem três
+telas na abertura, e com mais de uma imagem o par é desligado de propósito, porque o destino
+do morph seria a fileira inteira.
 
 **Duas condições da documentação do Next**, que fica em `node_modules/next/dist/docs/`: o
 morph só acontece quando o destino renderiza no mesmo commit da navegação, o que exige rota

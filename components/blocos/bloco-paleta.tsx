@@ -131,7 +131,7 @@ export default function BlocoPaleta({
                   className={`${ehProva ? "prova-amostra" : ""} bg-[var(--cor-amostra)] ${
                     cartao
                       ? "h-[120px] w-full"
-                      : "h-[60px] w-full rounded-[8px] border-[0.5px] border-border"
+                      : "h-[64px] w-full rounded-[8px] border-[0.5px] border-border"
                   }`}
                 />
 
