@@ -42,10 +42,38 @@ export const FILTROS = ["Todos", ...TAGS, FULL_STACK] as const;
  * componente de servidor e por um de cliente, e valor não depende do scanner de classes
  * ver a string escrita num arquivo de dados.
  */
+export type Cor = "rosa" | "lavanda" | "ciano" | "ambar";
+
+/**
+ * A base: cada cor do sistema e a variável que a carrega.
+ *
+ * ELE EXISTE PARA NÃO HAVER DOIS MAPAS DE COR NO PROJETO. O `COR_DA_CAMADA` abaixo traduz de
+ * tag do filtro para cor, e os cards da Stack traduzem de camada do grupo para cor: são
+ * chaves diferentes apontando para o mesmo lugar, e escrever `var(--accent-rosa)` nos dois
+ * faria uma mudança de token precisar ser lembrada em dois arquivos.
+ *
+ * **O âmbar só existe aqui e no `TINT_DA_COR`.** Ele não tem tag correspondente, porque
+ * ressalva não é camada de trabalho e não filtra projeto nenhum.
+ */
+export const VAR_DA_COR: Record<Cor, string> = {
+  rosa: "var(--accent-rosa)",
+  lavanda: "var(--accent-lavanda)",
+  ciano: "var(--accent-ciano)",
+  ambar: "var(--accent-ambar)",
+};
+
+/** O par tingido de cada cor, para quem precisa de fundo e não de traço. */
+export const TINT_DA_COR: Record<Cor, string> = {
+  rosa: "var(--tint-rosa)",
+  lavanda: "var(--tint-lavanda)",
+  ciano: "var(--tint-ciano)",
+  ambar: "var(--tint-ambar)",
+};
+
 export const COR_DA_CAMADA: Record<string, string> = {
-  "UX/UI Design": "var(--accent-rosa)",
-  "Front-End": "var(--accent-lavanda)",
-  "Back-End": "var(--accent-ciano)",
+  "UX/UI Design": VAR_DA_COR.rosa,
+  "Front-End": VAR_DA_COR.lavanda,
+  "Back-End": VAR_DA_COR.ciano,
   [FULL_STACK]: "var(--text)",
   Todos: "var(--text)",
 };

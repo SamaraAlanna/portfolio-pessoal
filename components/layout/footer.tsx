@@ -47,7 +47,7 @@ const colunas = [
     ],
   },
   {
-    rotulo: "RECURSOS",
+    rotulo: "CURRÍCULOS",
     itens: [
       { rotulo: "Currículo PT", destino: CURRICULO.pt, externo: true },
       { rotulo: "Currículo EN", destino: CURRICULO.en, externo: true },

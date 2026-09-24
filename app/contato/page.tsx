@@ -7,7 +7,7 @@ import SecaoBorda from "@/app/contato/_secoes/secao-borda";
 
 export const metadata: Metadata = metadataDaPagina({
   titulo: "Contato",
-  descricao: "Canais diretos e formulário. Respondo em até 2 dias úteis.",
+  descricao: "Canais diretos e formulário.",
   caminho: "/contato",
 });
 
@@ -15,9 +15,7 @@ export default function PaginaContato() {
   return (
     <>
       {/* Sem rótulo acima do título, diferente de Projetos e Stack. */}
-      <CabecalhoPagina titulo="Vamos construir alguma coisa">
-        <p>Respondo em até 2 dias úteis.</p>
-      </CabecalhoPagina>
+      <CabecalhoPagina titulo="Vamos construir alguma coisa" />
 
       {/* DUAS COLUNAS, COMO NO FIGMA: os canais e a ponte para o BORDA de um lado, o
           formulário do outro. São 568 e 568 com 64 de intervalo, que somam os 1200 da

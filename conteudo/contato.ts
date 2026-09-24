@@ -14,6 +14,13 @@ export const canais: Canal[] = [
     destino: "mailto:sami_andrade@outlook.com.br",
   },
   {
+    // O destino é o wa.me com DDI e DDD, e o valor na tela é o número formatado como o
+    // Brasil escreve. Os dois precisam concordar: o link leva o país junto, a tela não.
+    rotulo: "whatsapp",
+    valor: "(41) 92005-8670",
+    destino: "https://wa.me/5541920058670",
+  },
+  {
     rotulo: "linkedin",
     valor: "/in/samaraalanna",
     destino: "https://www.linkedin.com/in/samaraalanna/",

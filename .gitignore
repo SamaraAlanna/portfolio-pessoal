@@ -44,6 +44,13 @@ yarn-error.log*
 .env*
 !.env.example
 
+# certificados originais
+# OS PDFs DE CERTIFICADO PODEM TRAZER CPF, RG, DATA DE NASCIMENTO E ENDERECO, E ESTE
+# REPOSITORIO E PUBLICO. Nada desta pasta vai para o GitHub. Os arquivos daqui tambem nunca
+# sao copiados para public/ nem para qualquer outro lugar versionado sem aprovacao da Samara:
+# o que for publicado sai de imagem tratada, e nao do original.
+/certificados-originais/
+
 # vercel
 .vercel
 

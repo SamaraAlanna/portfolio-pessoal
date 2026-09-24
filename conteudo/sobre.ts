@@ -121,7 +121,6 @@ export const certificacoes: GrupoDeCertificacoes[] = [
     titulo: "Desenvolvimento",
     itens: [
       { nome: "React Developer", origem: "DIO - 2026" },
-      { nome: "IA Generativa, Dados e Cibersegurança", origem: "DIO - 2026" },
     ],
   },
   {
@@ -143,9 +142,10 @@ export const certificacoes: GrupoDeCertificacoes[] = [
     ],
   },
   {
-    titulo: "Segurança e IA",
+    titulo: "Dados, IA e segurança",
     itens: [
       { nome: "Gerenciamento de Ameaças Cibernéticas", origem: "Cisco - 2025" },
+      { nome: "IA Generativa, Dados e Cibersegurança", origem: "DIO - 2026" },
       { nome: "AI Fluency: Framework and Foundations", origem: "Anthropic - 2026" },
       { nome: "Claude Code in Action", origem: "Anthropic - 2026" },
       { nome: "Claude 101", origem: "Anthropic - 2026" },

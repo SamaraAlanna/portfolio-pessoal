@@ -176,11 +176,23 @@ sugerida, para a próxima sessão saber de onde continuar sem reabrir tudo.
 - **O Contato é a única página interna sem rótulo acima do `h1`.** O `CabecalhoPagina`
   passou a aceitar `rotulo` opcional em 2026-09-23. Projetos e Stack continuam com o deles.
   Isso não mexe na estrutura de cabeçalhos, porque o rótulo sempre foi `p`, e não `h2`.
-- **A linha de disponibilidade não é seção.** Ela é o texto de apoio do cabeçalho da
-  página, onde o Figma a coloca, e hoje é só "Respondo em até 2 dias úteis". O "Prefiro
-  conversar por escrito" saiu em 2026-09-23, **e saiu da descrição do metadata junto**:
-  deixar a frase lá manteria ela viva no cartão de compartilhamento e na busca, num texto
-  que ninguém reabre para conferir.
+- **A linha de disponibilidade saiu inteira em 2026-09-24**, e o cabeçalho do Contato ficou
+  só com o `h1`. Ela era o texto de apoio do cabeçalho, onde o Figma a coloca, e perdeu as
+  duas frases em dias seguidos: o "Prefiro conversar por escrito" em 2026-09-23 e o "Respondo
+  em até 2 dias úteis" agora. **As duas saíram da descrição do metadata junto**, porque deixar
+  a frase lá a manteria viva no cartão de compartilhamento e na busca, num texto que ninguém
+  reabre para conferir. **Prometer prazo de resposta é compromisso que o site cobra sozinho**,
+  e o `CabecalhoPagina` já aceitava filho opcional, então não custou código.
+- **O WhatsApp entrou nos canais em 2026-09-24**, entre o e-mail e o LinkedIn. O destino é o
+  `wa.me` com DDI e DDD e o valor na tela é o número como o Brasil escreve, e **os dois
+  precisam concordar**: o link leva o país junto, a tela não. Ele é externo, então abre em
+  nova aba com `rel="noopener"` e o aviso para leitor de tela, como os outros.
+- **A coluna RECURSOS do rodapé virou CURRÍCULOS em 2026-09-24.** Ela tem só os dois PDFs, e
+  "recursos" prometia uma prateleira que não existe.
+- **O CTA de fechamento do Sobre saiu em 2026-09-24**, com a seção inteira. Ele dizia "Bora
+  conversar?" e repetia o destino do CTA da nav. **A página passou a terminar em IDIOMAS**, que
+  já tinha os mesmos 72px de respiro inferior da última seção da Stack, então o fim não abriu
+  buraco. O arquivo `secao-cta.tsx` foi apagado.
 - **Passo 8, feito.** Os comportamentos de mobile. Duas peças novas em `components/ui/`:
   `acordeao-mobile`, que é o `details` nativo com o desktop sempre aberto, e `trilho-rolavel`,
   que é a moldura dos carrosséis. Elas são usadas pela seção de skills da home, pelo
@@ -1954,6 +1966,25 @@ que é onde a pessoa passa mais tempo lendo.
 se mexendo enquanto a pessoa lê, e isso continua valendo, nav e footer não têm entrada nem
 movimento próprio. Hover só existe depois que a pessoa já apontou para o link, então não
 compete com nada: é o retorno que confirma o alvo.
+
+**O CARD DA STACK INTEIRO CARREGA A CAMADA DESDE 2026-09-24.** Antes só o marcador de 44x3
+pintava, e o fundo e o glifo eram neutros. Agora o fundo é `.tingido` na cor do grupo e o glifo
+de 44px sai em accent, então a varredura da página acontece pela cor antes de acontecer pelo
+texto.
+
+**Quatro mapas de classe viraram duas variáveis, e a cor tem uma fonte só.** O `VAR_DA_COR` e o
+`TINT_DA_COR` moram em `lib/filtros.ts`, que já era de onde a pílula do filtro tirava a dela, e
+descem para o card por `--cor-camada` e `--cor-tint`. **O CSS deixou de precisar saber quantas
+camadas existem:** camada nova entra no mapa e nada no componente muda. O `COR_DA_CAMADA`, que
+traduz tag de filtro para cor, passou a ser derivado do `VAR_DA_COR` em vez de repetir os
+valores. **O âmbar só existe na base**, porque ressalva não é camada de trabalho e não filtra
+projeto nenhum.
+
+**Medido no tema claro, sobre o fundo tingido do card, contra o piso de 4,5:** glifo em rosa
+5,00, lavanda 5,02, ciano 5,04 e âmbar 6,56; título em `--text` entre 15,6 e 15,8. **Os três
+primeiros batem exatamente com os números já registrados da `.tingido`**, o que era esperado:
+é o mesmo par de cor sobre o mesmo fundo. Os chips não mudaram, porque têm fundo próprio
+opaco em `--surface-2`.
 
 **Os chips da Stack acendem na cor da camada do card**, pela classe `.chip-stack`, com o
 mesmo tratamento das tags de projeto: texto e borda passando para a cor, em `--dur-rapida`

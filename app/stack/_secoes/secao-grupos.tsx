@@ -1,32 +1,25 @@
-import { grupos, type Camada } from "@/conteudo/stack";
+import type { CSSProperties } from "react";
+import { grupos } from "@/conteudo/stack";
+import { TINT_DA_COR, VAR_DA_COR } from "@/lib/filtros";
 
 /**
  * Os oito grupos de habilidade, em cards de duas colunas.
  *
- * O marcador de 44x3 no topo de cada card carrega a camada, e é ele que amarra a página
- * ao sistema de cor do resto do site. O glifo grande à direita é decorativo e fica
- * escondido de leitor de tela.
- */
-const MARCADORES: Record<Camada, string> = {
-  rosa: "bg-accent-rosa",
-  lavanda: "bg-accent-lavanda",
-  ciano: "bg-accent-ciano",
-  ambar: "bg-accent-ambar",
-};
-
-/**
- * A cor da camada desce para os chips por herança, numa variável declarada no card.
+ * O CARD INTEIRO CARREGA A CAMADA DESDE 2026-09-24: antes só o marcador de 44x3 pintava, e
+ * o fundo e o glifo eram neutros. Agora o fundo é tingido na cor do grupo e o glifo sai em
+ * accent, o que faz a varredura da página acontecer pela cor antes de acontecer pelo texto.
  *
- * O chip acende nessa cor no hover, pela `.chip-stack` do `app/globals.css`. Escrever a cor
- * no próprio chip exigiria quatro pares de regra no CSS, um por camada, e a quinta camada
- * quebraria os dois lugares. Assim o CSS não precisa saber quantas camadas existem.
+ * QUATRO MAPAS DE CLASSE VIRARAM DUAS VARIÁVEIS. As cores saem do `VAR_DA_COR` e do
+ * `TINT_DA_COR` de `lib/filtros.ts`, que é o mesmo lugar de onde a pílula do filtro tira a
+ * dela, e descem por `--cor-camada` e `--cor-tint`. **O CSS não precisa mais saber quantas
+ * camadas existem**: uma camada nova entra no mapa e nada aqui muda.
+ *
+ * O FUNDO É A `.tingido` E NÃO O TINT SOZINHO. Ela põe `--surface` opaco embaixo do tint,
+ * que é a regra endurecida do projeto para texto em accent sobre tingido: direto sobre o
+ * `--bg` o par passa no piso exato de 4,50 no tema claro, e sobre o `--surface-2` reprova.
+ *
+ * O glifo grande à direita continua decorativo e escondido de leitor de tela.
  */
-const CORES_DE_CAMADA: Record<Camada, string> = {
-  rosa: "[--cor-camada:var(--accent-rosa)]",
-  lavanda: "[--cor-camada:var(--accent-lavanda)]",
-  ciano: "[--cor-camada:var(--accent-ciano)]",
-  ambar: "[--cor-camada:var(--accent-ambar)]",
-};
 
 export default function SecaoGrupos() {
   return (
@@ -40,18 +33,24 @@ export default function SecaoGrupos() {
         {grupos.map((grupo) => (
           <li
             key={grupo.titulo}
-            className={`flex flex-col items-start rounded-[12px] border-[0.5px] border-border bg-surface px-[28px] pt-[28px] pb-[32px] ${CORES_DE_CAMADA[grupo.camada]}`}
+            style={
+              {
+                "--cor-camada": VAR_DA_COR[grupo.camada],
+                "--cor-tint": TINT_DA_COR[grupo.camada],
+              } as CSSProperties
+            }
+            className="tingido flex flex-col items-start rounded-[12px] border-[0.5px] border-border px-[28px] pt-[28px] pb-[32px]"
           >
             <span
               aria-hidden="true"
-              className={`h-[3px] w-[44px] rounded-full ${MARCADORES[grupo.camada]}`}
+              className="h-[3px] w-[44px] rounded-full bg-[var(--cor-camada)]"
             />
 
             <div className="mt-[20px] flex w-full items-center justify-between gap-[16px]">
               <h2 className="text-[19px] font-bold text-text">{grupo.titulo}</h2>
               <span
                 aria-hidden="true"
-                className="font-mono text-[44px] leading-none text-text-dim/40"
+                className="font-mono text-[44px] leading-none text-[var(--cor-camada)]"
               >
                 {grupo.glifo}
               </span>
