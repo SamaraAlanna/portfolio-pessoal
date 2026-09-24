@@ -45,11 +45,15 @@ export default function Nav() {
   const fecharMenu = useCallback(() => setMenuAberto(false), []);
 
   return (
-    <header className="fixed inset-x-0 top-0 z-40 w-full border-b-[0.5px] border-border bg-bg">
+    // A ALTURA FICA NO `header`, E NÃO NOS FILHOS. Com `box-sizing: border-box`, o filete
+    // de baixo passa a caber dentro do `--altura-nav` em vez de somar a ele. Antes o
+    // cabeçalho media `--altura-nav` mais 0,5px, e o `padding-top` do `body` compensa só o
+    // token: o conteúdo começava meio pixel debaixo da borda.
+    <header className="fixed inset-x-0 top-0 z-40 h-[var(--altura-nav)] w-full border-b-[0.5px] border-border bg-bg">
       {/* Desktop */}
       <nav
         aria-label="Principal"
-        className="hidden h-[var(--altura-nav)] items-center justify-between faixa lg:flex"
+        className="hidden h-full items-center justify-between faixa lg:flex"
       >
         <Logo />
 
@@ -84,7 +88,7 @@ export default function Nav() {
       {/* Mobile */}
       {/* A altura vem do token e não do padding, para o hero poder descontá-la com
           exatidão. Os 80px acomodam o alvo de toque de 44px do hambúrguer. */}
-      <div className="flex h-[var(--altura-nav)] items-center justify-between faixa lg:hidden">
+      <div className="flex h-full items-center justify-between faixa lg:hidden">
         <Logo />
 
         <button

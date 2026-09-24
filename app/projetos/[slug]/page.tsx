@@ -77,11 +77,18 @@ export default async function PaginaCase({ params }: PageProps<"/projetos/[slug]
    * Ciano em engenharia, rosa no resto. Hoje quem lê é o visualizador de estados; os
    * rótulos de seção e o índice ainda declaram rosa direto, e migram no passo 7.
    */
-  const accentDoCase =
-    projeto.tipo === "engenharia" ? "var(--accent-ciano)" : "var(--accent-rosa)";
+  const ehEngenharia = projeto.tipo === "engenharia";
 
   return (
-    <article style={{ "--accent-case": accentDoCase } as CSSProperties}>
+    <article
+      style={
+        {
+          "--accent-case": ehEngenharia ? "var(--accent-ciano)" : "var(--accent-rosa)",
+          // O tint anda junto do accent: quem usa os dois precisa deles da mesma camada.
+          "--tint-case": ehEngenharia ? "var(--tint-ciano)" : "var(--tint-rosa)",
+        } as CSSProperties
+      }
+    >
       <SecaoCabecalho projeto={projeto} />
 
       {emConstrucao ? (

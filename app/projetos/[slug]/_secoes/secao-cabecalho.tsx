@@ -26,6 +26,12 @@ import type { Projeto } from "@/lib/conteudo";
  * se ele vira a primeira frente ou some. **Enquanto isso não acontece, o texto existe no
  * dado e não aparece na tela**, que é o estado esperado entre os dois passos.
  *
+ * O RESPIRO DO TOPO VEM DO `--espaco-topo-pagina`, e não dos 56 escritos aqui, desde
+ * 2026-09-24. O token vale para o site inteiro, então o vão abaixo da nav passou a ser o
+ * mesmo em toda página. **O `pb` lê o mesmo token**, então o hero é simétrico nos dois
+ * tamanhos: 56 em cima e embaixo no desktop, 32 e 32 no mobile. A simetria é o que o Figma
+ * mostra, onde o hero de 205 é 56 mais os 93 do bloco mais 56.
+ *
  * A ENTRELINHA DO TÍTULO NÃO SEGUE O FIGMA, e isso é deliberado. Lá ele é uma linha só, com
  * `leading-none` e `whitespace-nowrap`. Aqui o título quebra em tela estreita, e entrelinha
  * 1 faria as duas linhas se encostarem. Vale o `--lh-titulo-case`, de 1,12, que é o token.
@@ -34,7 +40,7 @@ import type { Projeto } from "@/lib/conteudo";
  */
 export default function SecaoCabecalho({ projeto }: { projeto: Projeto }) {
   return (
-    <header className="flex flex-col items-start gap-[20px] faixa pt-[56px] pb-[56px]">
+    <header className="flex flex-col items-start gap-[20px] faixa pt-[var(--espaco-topo-pagina)] pb-[var(--espaco-topo-pagina)]">
       <nav aria-label="Você está aqui">
         <Link
           href="/projetos"

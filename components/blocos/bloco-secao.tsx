@@ -52,7 +52,7 @@ function RotuloDaSecao({
   return (
     <Elemento
       id={id}
-      className="font-mono text-rotulo-secao font-medium whitespace-nowrap text-accent-rosa uppercase"
+      className="font-mono text-rotulo-secao font-medium whitespace-nowrap text-accent-case uppercase"
     >
       {children}
     </Elemento>

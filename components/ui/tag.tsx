@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react";
-import { COR_DA_CAMADA, FULL_STACK } from "@/lib/filtros";
+import { COR_DA_CAMADA } from "@/lib/filtros";
 
 /**
  * Chip do card de projeto.
@@ -16,6 +16,11 @@ import { COR_DA_CAMADA, FULL_STACK } from "@/lib/filtros";
  * O mapa vive em `lib/filtros.ts` e é o mesmo que a pílula do filtro usa. O padrão do
  * `.tag-projeto` é rosa, e isso é rede de segurança: chip com valor fora do mapa acende
  * como antes, em vez de não acender e parecer defeito.
+ *
+ * O CHIP FULL STACK É IGUAL AOS OUTROS, e os dois pontinhos que ele teve por um dia saíram
+ * em 2026-09-24. Eles diziam as duas camadas que o chip resume, lavanda e ciano, e o que
+ * ficou no lugar é o próprio texto: "Full Stack" já nomeia as duas. Ele continua acendendo
+ * em `--text` no hover, que é aceso sem reivindicar uma camada.
  */
 export default function Tag({ valor }: { valor: string }) {
   const cor = COR_DA_CAMADA[valor];
@@ -23,18 +28,8 @@ export default function Tag({ valor }: { valor: string }) {
   return (
     <span
       style={cor ? ({ "--cor-camada": cor } as CSSProperties) : undefined}
-      className="tag-projeto inline-flex items-center gap-[7px] rounded-full border-[0.5px] border-border bg-surface-2 px-[10px] py-[5px] text-tag whitespace-nowrap text-text-muted"
+      className="tag-projeto inline-flex items-center rounded-full border-[0.5px] border-border bg-surface-2 px-[10px] py-[5px] text-tag whitespace-nowrap text-text-muted"
     >
-      {/* Os dois pontinhos seguem o marcador de camada dos cards da Stack, e dizem as duas
-          camadas que o chip resume: lavanda de front-end e ciano de back-end, nessa ordem,
-          que é a da pilha. Decorativos, então escondidos de leitor de tela: o texto do chip
-          já diz "Full Stack". */}
-      {valor === FULL_STACK ? (
-        <span aria-hidden="true" className="flex items-center gap-[3px]">
-          <span className="size-[5px] rounded-full bg-accent-lavanda" />
-          <span className="size-[5px] rounded-full bg-accent-ciano" />
-        </span>
-      ) : null}
       {valor}
     </span>
   );

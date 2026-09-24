@@ -69,10 +69,19 @@
   --accent-ciano: #9fd4d8; /* back-end e dados */
   --accent-ambar: #e8cfa0; /* ressalva, honestidade, em construção */
 
-  /* Tint, fundo tingido a 10%.
-     Só existem rosa e âmbar. Lavanda e ciano não têm tint na coleção e não devem ser
-     derivados por alfa aqui: o valor nasce no Figma e é lido de lá. */
+  /* Tint, fundo tingido a 10%. Os quatro vêm da coleção "Cores" do Figma, lidos de lá, e
+     nenhum é derivado por alfa aqui.
+
+     NO TEMA CLARO OS TRÊS TINTS DE CAMADA SAEM DOS ACCENTS ANTIGOS, E NÃO DOS ATUAIS. O
+     rosa vem de #b64388, o lavanda de #804fd8 e o ciano de #36787d, que são os valores de
+     antes do escurecimento de 2026-09-02. Os accents em uso hoje são #aa3e7f, #7a47d6 e
+     #337075. **Se os accents mudarem de novo, os tints precisam ser recalculados junto**,
+     senão o fundo e o texto que vive em cima dele passam a vir de bases diferentes e a
+     medição de contraste deixa de valer. O âmbar é o único que nunca saiu de accent: ele
+     tem base própria na coleção. */
   --tint-rosa: #e6b7d31a;
+  --tint-lavanda: #c9b8e81a;
+  --tint-ciano: #9fd4d81a;
   --tint-ambar: #e8cfa01a;
 
   /* Seletor de tema */
@@ -204,9 +213,18 @@
      São 80 no mobile, por causa do alvo de toque de 44px do hambúrguer, e 64 no desktop. */
   --altura-nav: 80px;
 
-  /* Topo das páginas internas: 40 no mobile e 96 no desktop, interpolado entre os mesmos
-     dois artboards do resto do sistema. */
-  --espaco-topo-pagina: clamp(40px, 20.28px + 5.258vw, 96px);
+  /* Respiro entre a base da nav e o primeiro elemento de conteúdo. **Vale para todas as
+     páginas, cases incluídos**, e é a única parcela desse vão: o `padding-top` do `body`
+     cancela a nav fixa e não soma nada.
+
+     São 32 no mobile e 56 no desktop, interpolados entre os mesmos dois artboards do resto
+     do sistema, 375 e 1440.
+
+     UNIFICADO EM 2026-09-24. Antes as páginas internas usavam 40 e 96, e o hero do case
+     tinha 56 escritos nele. Os dois batiam com o Figma, mas os 96 foram desenhados com um
+     rótulo em mono ocupando o alto daquele espaço, e **os rótulos saíram das quatro
+     páginas internas**: a distância não mudou, o que preenchia ela é que sumiu. */
+  --espaco-topo-pagina: clamp(32px, 23.549px + 2.2535vw, 56px);
 
   /* Alvo de toque mínimo exigido pelo projeto */
   --alvo-toque: 44px;
@@ -342,6 +360,8 @@
     --accent-ambar: #6b5227;
 
     --tint-rosa: #b6438817;
+    --tint-lavanda: #804fd817;
+    --tint-ciano: #36787d17;
     --tint-ambar: #846a3917;
 
     --tema-icone-sol: #b64388;
@@ -384,6 +404,8 @@
   --accent-ambar: #6b5227; /* 6,58 sobre --bg */
 
   --tint-rosa: #b6438817;
+  --tint-lavanda: #804fd817;
+  --tint-ciano: #36787d17;
   --tint-ambar: #846a3917; /* base própria na coleção, não derivada do --accent-ambar */
 
   --tema-icone-sol: #b64388;
@@ -422,6 +444,8 @@
   --color-accent-ambar: var(--accent-ambar);
 
   --color-tint-rosa: var(--tint-rosa);
+  --color-tint-lavanda: var(--tint-lavanda);
+  --color-tint-ciano: var(--tint-ciano);
   --color-tint-ambar: var(--tint-ambar);
 
   --color-tema-icone-sol: var(--tema-icone-sol);
@@ -1023,8 +1047,9 @@ body {
    de código, onde a vizinhança é texto mono apagado, o peso do texto basta.
 
    A COR SAI DO ACCENT DO CASE, e não de rosa fixo: ciano em engenharia e rosa em
-   ux-produto. O tingido acompanha pelo `color-mix`, que deriva do mesmo valor em vez de
-   pedir um segundo token por camada.
+   ux-produto. O tingido acompanha pelo `--tint-case`, que a página de case declara junto do
+   `--accent-case`, no mesmo `article`. **Os dois precisam vir da mesma camada**, e por isso
+   andam juntos em vez de um ser derivado do outro.
 
    Só em ponteiro que faz hover, senão o toque no celular deixa a aba presa no estado.
    --------------------------------------------------------------------------- */
@@ -1036,24 +1061,26 @@ body {
     background-color var(--dur-rapida) linear;
 }
 
+/* O TINGIDO É DUAS CAMADAS, E NÃO UMA, E ISSO É ACESSIBILIDADE MEDIDA.
+
+   O tint é translúcido, então o contraste do texto em cima dele depende do que estiver
+   atrás. Sobre a barra de abas, que é `--surface-2`, o par dá 4,07 em rosa e 4,10 em ciano
+   no tema claro, **abaixo do mínimo de 4,5**. Com o `--surface` opaco embaixo do tint, sobe
+   para 5,00 e 5,04.
+
+   A primeira versão usava `color-mix` do accent atual a 10% e era pior, 3,99 e 4,02, e
+   ainda gerava um fallback com a cor cheia que deixava o rótulo invisível em navegador sem
+   suporte. Com os tints da coleção, `color-mix` e `@supports` saíram os dois.
+
+   No escuro qualquer uma das formas passa entre 8 e 10. **Quem decide é o claro.** */
 .aba-estado[aria-selected="true"] {
   background-color: var(--surface);
+  background-image: linear-gradient(
+    var(--tint-case, var(--tint-rosa)),
+    var(--tint-case, var(--tint-rosa))
+  );
   color: var(--accent-case, var(--accent-rosa));
   font-weight: 500;
-}
-
-/* O TINGIDO FICA ATRÁS DE `@supports`, E NÃO SOLTO, por causa do fallback. Sem a guarda, o
-   compilador de CSS gera um fallback para quem não tem `color-mix` usando a cor **cheia**,
-   e aí a aba ativa fica com fundo accent sólido atrás de texto accent: rótulo invisível. A
-   base é `--surface`, a mesma das abas de código, que é segura sozinha. */
-@supports (background-color: color-mix(in srgb, red 10%, transparent)) {
-  .aba-estado[aria-selected="true"] {
-    background-color: color-mix(
-      in srgb,
-      var(--accent-case, var(--accent-rosa)) 10%,
-      transparent
-    );
-  }
 }
 
 @media (hover: hover) {
@@ -1123,11 +1150,11 @@ body {
 }
 
 .item-indice[aria-current="location"] {
-  border-color: var(--accent-rosa);
+  border-color: var(--accent-case, var(--accent-rosa));
 }
 
 .item-indice[aria-current="location"] > :first-child {
-  color: var(--accent-rosa);
+  color: var(--accent-case, var(--accent-rosa));
 }
 
 .item-indice[aria-current="location"] > :last-child {

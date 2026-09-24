@@ -239,10 +239,14 @@ regras deste documento.
 - **Full Stack não é tag do frontmatter**, é a condição de o case declarar Front-End e
   Back-End. Os filtros Front-End e Back-End incluem esses cases; o filtro Full Stack mostra
   só eles. No card as duas viram um chip só.
-- **O chip Full Stack é neutro com dois pontinhos antes do texto**, um lavanda e um ciano,
-  no mesmo padrão do marcador de camada dos cards da Stack. No hover o texto acende como os
-  outros. **Nenhum token novo, e nenhum dos quatro accents é reaproveitado:** âmbar
-  significa ressalva e está ao lado do badge "Em construção" no mesmo card.
+- **O chip Full Stack é igual aos outros, só com o texto.** Ele acende em `--text` no
+  hover, que é aceso sem reivindicar camada: Full Stack é a união de duas, e dar um dos
+  quatro accents diria que ele pertence a uma só. **Âmbar em particular está fora**, porque
+  significa ressalva e fica ao lado do badge "Em construção" no mesmo card.
+- **DECISÃO REVERTIDA EM 2026-09-24: os dois pontinhos saíram.** O chip teve por um dia um
+  ponto lavanda e um ciano antes do texto, no padrão do marcador de camada dos cards da
+  Stack, para dizer quais duas camadas ele resume. **O texto já diz isso**, e o enfeite
+  cobrava dois elementos decorativos dentro de um chip de uma palavra e meia. Não voltar.
 - **O índice sempre usa o rótulo da seção, e não existe atributo de override.** O Figma
   chegou a ter "Problema" no índice e "BRIEFING" na seção do Assistente, e foi corrigido
   para "Briefing" nos dois lados.
@@ -472,9 +476,13 @@ da função neste projeto.
 ciano em engenharia, rosa no resto. Isso realiza a decisão já registrada de o `tipo` não ser
 vestigial.
 
-**Hoje quem lê é só o visualizador de estados.** Os rótulos de seção e o índice ainda
-declaram rosa direto, e migram no passo 7. O token do Tailwind é `accent-case`, com fallback
-para rosa, então qualquer lugar fora de um case herda algo válido em vez de nada.
+**Leem essa variável o visualizador de estados, o rótulo de seção e o item ativo do índice**,
+os três desde 2026-09-24. O token do Tailwind é `accent-case`, com fallback para rosa, então
+qualquer lugar fora de um case herda algo válido em vez de nada.
+
+Com isso o Bajaj e o VOGE passaram a mostrar índice e rótulos em ciano, como o Figma, e o
+CRUD e o Assistente continuam em rosa. **O `CabecalhoPagina` das páginas internas não entrou**:
+lá não existe `tipo`, e o fallback já daria rosa de qualquer jeito.
 
 **`scroll-margin-top` NÃO foi acrescentado, e isso responde ao pedido em vez de contrariá-lo.**
 O `html` já tem `scroll-padding-top` de `--altura-nav` mais 12, e ele vale para qualquer
@@ -1443,6 +1451,67 @@ invisível.
 `scroll-padding-top` no `html`, sem o qual o link de pular leva ao conteúdo com a barra por
 cima do começo dele. O `scroll-padding` está no `html`, e não no destino, para valer para
 qualquer âncora futura.
+
+**O `padding-top` do `body` NÃO É UMA SEGUNDA PARCELA DO VÃO DO TOPO.** Ele cancela
+exatamente a nav, que é `fixed` e está fora do fluxo; sem ele o conteúdo começaria em y=0,
+debaixo dela. **O vão visível é só o `padding-top` do cabeçalho da página**, e a conta foi
+refeita elemento por elemento em 2026-09-24, com o link de pular e a nav os dois `fixed`, o
+`main` sem padding e a `.faixa` só com padding horizontal.
+
+**A ALTURA DA NAV FICA NO `header`, E NÃO NOS FILHOS.** Com `box-sizing: border-box` o filete
+de baixo cabe dentro do `--altura-nav` em vez de somar a ele. Antes o cabeçalho media o token
+mais 0,5px, e como o `body` compensa só o token, **o conteúdo começava meio pixel debaixo da
+borda**. Ninguém enxerga, mas a compensação passou a ser exata.
+
+**O RESPIRO DO TOPO É UM TOKEN SÓ PARA O SITE INTEIRO, cases incluídos.** O
+`--espaco-topo-pagina` vale 32 no mobile e 56 no desktop, interpolado entre os artboards de
+375 e 1440. Antes as páginas internas usavam 40 e 96 e o hero do case tinha 56 escritos nele.
+
+**Os dois números batiam com o Figma, e ainda assim estavam errados na tela.** Os 96 foram
+desenhados com um rótulo em mono ocupando o alto daquele espaço, e **os rótulos saíram das
+quatro páginas internas em 2026-09-23**: a distância não mudou, o que preenchia ela é que
+sumiu. Fica como regra: **medida do arquivo descreve o desenho daquele dia, e continua
+batendo depois que o conteúdo que a justificava saiu.**
+
+**O `pb` do hero do case lê o mesmo token**, então ele é simétrico nos dois tamanhos: 56 em
+cima e embaixo no desktop, 32 e 32 no mobile. É o que o Figma mostra, onde o hero de 205 é
+56 mais os 93 do bloco mais 56.
+
+### Os quatro tints, e o que eles têm de armadilha
+
+**Os quatro vêm da coleção "Cores" do Figma**, lidos de lá, e nenhum é derivado por alfa no
+CSS. O lavanda e o ciano entraram em 2026-09-24; antes o comentário dizia que eles não
+existiam na coleção, e estava errado.
+
+**NO TEMA CLARO OS TRÊS TINTS DE CAMADA SAEM DOS ACCENTS ANTIGOS.** O rosa vem de `#b64388`,
+o lavanda de `#804fd8` e o ciano de `#36787d`, que são os valores de antes do escurecimento
+de 2026-09-02. Os accents em uso hoje são `#aa3e7f`, `#7a47d6` e `#337075`. **Se os accents
+mudarem de novo, os tints precisam ser recalculados junto**, senão o fundo e o texto que vive
+em cima dele passam a vir de bases diferentes e a medição de contraste deixa de valer. O
+âmbar é o único que nunca saiu de accent.
+
+**Texto em accent sobre o tint, no tema claro, contra o mínimo de 4,5:**
+
+| tint sobre | rosa | lavanda | ciano |
+| --- | --- | --- | --- |
+| `--bg` | 4,50 | 4,51 | 4,54 |
+| `--surface` | 5,00 | 5,02 | 5,04 |
+| `--surface-2` | **4,07** | **4,08** | **4,10** |
+
+**Tint sobre `--surface-2` reprova nos três, e sobre o `--bg` passa raspando.** No escuro
+tudo fica entre 8 e 10, então **quem decide é o claro**. A regra prática: caixa tingida pode
+ficar sobre o fundo da página ou sobre `--surface`, e **nunca sobre `--surface-2`** se houver
+texto em accent dentro dela.
+
+**Isso pegou a aba ativa do visualizador de estados, que eu tinha escrito no dia anterior.**
+Ela era `color-mix` do accent atual a 10% sobre a barra de abas, que é `--surface-2`, e dava
+3,99 em rosa e 4,02 em ciano. A correção foi pôr `--surface` opaco embaixo do tint, em duas
+camadas de fundo, o que leva o par a 5,00 e 5,04. **Com os tints da coleção, o `color-mix` e
+o `@supports` que o protegia saíram os dois.**
+
+**O `--tint-case` anda junto do `--accent-case`**, declarado no mesmo `article` da página de
+case. Os dois precisam vir da mesma camada, e por isso são irmãos em vez de um ser derivado
+do outro.
 
 **O menu mobile é modal, e isso são três coisas juntas:** `role="dialog"` com `aria-modal`,
 foco preso no Tab e foco devolvido a quem abriu. O `aria-modal` sozinho não prende o foco
