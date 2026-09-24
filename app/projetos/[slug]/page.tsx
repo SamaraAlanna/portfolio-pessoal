@@ -132,7 +132,10 @@ export default async function PaginaCase({ params }: PageProps<"/projetos/[slug]
               <IndiceCase secoes={secoes} />
             </div>
 
-            <div className="flex flex-col gap-[72px]">
+            {/* 128 entre frentes é a medida do container "Frentes" nos quatro frames novos. O
+                mobile fica nos 72 de antes até a Samara decidir: o arquivo só existe em
+                desktop, e 128 numa tela de 375 seria número inventado. */}
+            <div className="flex flex-col gap-[72px] lg:gap-[128px]">
               <MDXRemote
                 source={projeto.corpo}
                 components={blocosComIndice(secoes)}

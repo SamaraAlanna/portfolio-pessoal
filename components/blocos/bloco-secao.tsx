@@ -6,8 +6,10 @@ import type { ReactNode } from "react";
  * Ritmo definido em docs/modelos-de-case.md e confirmado nos cases do Figma: rótulo curto
  * em mono caixa alta, título, um parágrafo, a prova.
  *
- * Os espaçamentos vêm do Figma: 14 entre título e primeiro parágrafo, 14 entre parágrafos,
- * e 40 antes da prova, que é a soma do `gap` de 14 com os 26 de margem.
+ * Os espaçamentos vêm do Figma: 14 entre rótulo e título, 14 entre título e primeiro
+ * parágrafo, 14 entre parágrafos, e 40 antes da prova, que é a soma do `gap` de 14 com os 26
+ * de margem. **O cabeçalho da frente é um bloco apertado, com um respiro só**, e foi medido
+ * assim nos frames do Bajaj e do CRUD: os 28 entre rótulo e título eram do desenho antigo.
  *
  * A REGRA DA PROVA NÃO EXIGE MAIS UM IRMÃO ANTES. Ela era `[&>*+ul]`, e só valia para bloco
  * **depois** de parágrafo. A seção de decisões do CRUD não tem parágrafo nenhum, só o
@@ -102,7 +104,7 @@ export default function BlocoSecao({
       ) : null}
 
       {titulo ? (
-        <h2 className="mt-[28px] max-w-[780px] text-titulo-bloco font-bold text-text">
+        <h2 className="mt-[14px] text-titulo-bloco font-bold text-text">
           {titulo}
         </h2>
       ) : null}

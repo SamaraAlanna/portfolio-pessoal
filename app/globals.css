@@ -147,11 +147,38 @@
 
   /* Página de case */
   --tipo-abertura-case: 19px; /* parágrafo logo abaixo do título do case */
+
+  /* Título de seção do case, o `h2` do `bloco-secao`.
+
+     ELE ERA EMPRESTADO DO LADO DESIGN DA HOME até 2026-09-24: o `--text-titulo-bloco`
+     apontava para o `--tipo-titulo-secao`, de 26px, que a seção de skills usa. Os frames
+     novos dos cases pedem 36, e **empréstimo entre famílias é o tipo de amarra que faz uma
+     mudança na home mexer no corpo do case sem ninguém procurar por isso**. Agora cada lado
+     tem o seu.
+
+     Medido em dois dos quatro frames, o Bajaj e o CRUD: a caixa do título de uma linha tem
+     41px, que é 36 com entrelinha 1,15.
+
+     INTERPOLA DE 24 AOS 375 ATÉ 36 AOS 1440, e o 24 não é medida do arquivo: os frames novos
+     dos cases só existem em desktop. Ele foi escolhido para o título de seção **ficar abaixo
+     do título do case no mobile**, que pousa em 30 pelo `--tipo-titulo-case`. Fixar 36 daria
+     uma seção mais pesada que o nome do próprio case numa tela de 375.
+
+     SEM TRACKING, de propósito. O arquivo põe -0,36px sobre 36, que é -0,01em, e o sistema não
+     tem esse valor: o vizinho mais próximo é o -0,02em do título de página, o dobro. Pela regra
+     do token mais próximo, 0,36px não paga um token novo. */
+  --tipo-titulo-bloco: clamp(24px, 19.775px + 1.127vw, 36px);
   --tipo-corpo-case: 16px; /* parágrafo dentro das seções do case */
   --tipo-ficha-rotulo: 10px;
   --tipo-ficha-valor: 14.5px;
   --tipo-numero: 44px; /* número da grade de resultado */
   --tipo-numero-comparado: 40px; /* número do antes e depois */
+
+  /* Número da lista, no `formato="linha"` do bloco `numeros`. São 20px no frame do Bajaj, e
+     o grupo do case não tinha nada perto: o `--tipo-numero` é 44 e o `--tipo-numero-comparado`
+     é 40, os dois de número grande que carrega a frase sozinho. Aqui o número é rótulo de uma
+     linha de lista, e o peso vem da coluna fixa de 96px, não do tamanho. */
+  --tipo-numero-linha: 20px;
   --tipo-legenda: 14.5px; /* legenda de número e de ficha */
   --tipo-codigo: 12.5px;
   --tipo-titlebar: 11px; /* rótulo da barra do bloco de código */
@@ -184,7 +211,7 @@
      das métricas da fonte: muda entre navegadores e quebra se a família for trocada. */
   --lh-tag: 15px;
   --lh-corpo-case: 1.65;
-  --lh-titulo-bloco: 1.35;
+  --lh-titulo-bloco: 1.15; /* do mesmo nó de texto que deu o 36 */
   --lh-codigo: 1.9;
   --lh-legenda: 1.5;
   --lh-opcao-titulo: 1.25;
@@ -517,7 +544,7 @@
   --text-corpo-case: var(--tipo-corpo-case);
   --text-corpo-case--line-height: var(--lh-corpo-case);
 
-  --text-titulo-bloco: var(--tipo-titulo-secao);
+  --text-titulo-bloco: var(--tipo-titulo-bloco);
   --text-titulo-bloco--line-height: var(--lh-titulo-bloco);
 
   --text-ficha-rotulo: var(--tipo-ficha-rotulo);
@@ -534,6 +561,8 @@
 
   --text-numero-comparado: var(--tipo-numero-comparado);
   --text-numero-comparado--letter-spacing: var(--tracking-numero);
+
+  --text-numero-linha: var(--tipo-numero-linha);
 
   --text-codigo: var(--tipo-codigo);
   --text-codigo--line-height: var(--lh-codigo);

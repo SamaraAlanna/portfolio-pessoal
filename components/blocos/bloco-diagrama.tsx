@@ -17,6 +17,8 @@ import { linhasDeCampos } from "@/lib/texto";
  *   confirmação 2xx
  *   :::
  *
+ * Além das quatro camadas, o segundo campo aceita `apagado`, que é o chip do jeito antigo.
+ *
  * O SEGUNDO CAMPO MUDOU DE SIGNIFICADO. Ele era a explicação da etapa, que o desenho novo
  * não tem mais, e passou a ser a camada. Valor fora das quatro camadas é ignorado, então
  * conteúdo escrito no formato antigo degrada para chip sem destaque em vez de quebrar.
@@ -53,6 +55,14 @@ const CAMADAS: Record<string, string> = {
   ambar: "[--cor-tint:var(--tint-ambar)] border-accent-ambar text-accent-ambar",
 };
 
+/**
+ * O chip do jeito antigo, em `--text-dim`. Ele é um terceiro estado e não uma quinta camada,
+ * por isso mora fora do mapa: camada diz de que parte do sistema a etapa é, e `apagado` diz
+ * que ela **deixou de existir**. O frame do Bajaj usa isso no "FTP manual, sem histórico",
+ * onde o contraste entre o que era e o que passou a ser é o assunto da frente inteira.
+ */
+const APAGADO = "border-border text-text-dim";
+
 const CHIP =
   "inline-flex items-center rounded-full border px-[16px] py-[10px] font-mono text-[12px] font-medium whitespace-nowrap";
 
@@ -81,6 +91,12 @@ export default function BlocoDiagrama({
       <ol className="flex w-full flex-col items-start gap-[12px] lg:flex-row lg:flex-wrap lg:items-center">
         {etapas.map((etapa, indice) => {
           const destaque = CAMADAS[etapa.camada];
+          const classeDoChip =
+            etapa.camada === "apagado"
+              ? `${CHIP} ${APAGADO}`
+              : destaque
+                ? `${CHIP} tingido ${destaque}`
+                : `${CHIP} border-border text-text`;
           return (
             <li
               key={`${etapa.rotulo}-${indice}`}
@@ -91,15 +107,7 @@ export default function BlocoDiagrama({
                   &rarr;
                 </span>
               ) : null}
-              <span
-                className={
-                  destaque
-                    ? `${CHIP} tingido ${destaque}`
-                    : `${CHIP} border-border text-text`
-                }
-              >
-                {etapa.rotulo}
-              </span>
+              <span className={classeDoChip}>{etapa.rotulo}</span>
             </li>
           );
         })}

@@ -13,11 +13,11 @@ descricao: Site institucional da terceira maior montadora de motos do mundo. Nov
 resumo: Site institucional da terceira maior montadora de motos do mundo, com 77 páginas de concessionária. Atuo na manutenção, na correção de bugs e no desenvolvimento de novas funcionalidades.
 abertura: Site institucional da Bajaj, a terceira maior montadora de motos do mundo, com 77 páginas de concessionária e integração com CRM. Entrei para corrigir bugs e acabei reescrevendo a validação de leads, centralizando credenciais e implantando versionamento. Aqui eu conto as três frentes que mudaram a estrutura do projeto.
 ficha:
-  - PAPEL | Desenvolvimento full stack, segurança e infraestrutura
-  - CLIENTE | Bajaj do Brasil, via TecSinapse
+  - PAPEL | Full stack, segurança e infra
+  - CLIENTE | Bajaj, via TecSinapse
+  - STACK | PHP, JS, jQuery, WordPress, Git
+  - TIME | Sozinha, com repasse ao infra
   - PERÍODO | 2026
-  - STACK | PHP, JavaScript, jQuery, WordPress, Git, SSH
-  - TIME | Sozinha, com repasse ao time de infra
 ---
 
 {/* REGRA DE ANINHAMENTO: o bloco de fora precisa de MAIS dois-pontos que o de dentro.
@@ -25,14 +25,12 @@ ficha:
     cinco. Se os dois usarem a mesma quantidade, o de dentro fecha o de fora e sobra um
     ":::" solto na página. */}
 
-:::secao{rotulo="CONTEXTO" titulo="Um site grande, sem versionamento e com credencial em texto puro"}
-WordPress com tema customizado. Páginas de modelo de moto, 77 páginas de concessionária, formulários de interesse e test ride, mapa interativo de concessionárias e integração com CRM corporativo por API e Amazon SES.
+{/* RÓTULOS EM CAIXA NORMAL: a caixa alta vem do `text-transform` do `bloco-secao`. Escrever
+    em maiúscula aqui faria o índice mostrar maiúscula e parte dos leitores de tela soletrar
+    letra a letra. */}
 
-Atuo na manutenção do site: incluo novas concessionárias, analiso e corrijo bugs, aplico melhorias de segurança e desenvolvo novas páginas e funcionalidades. O que começou como uma fila de tickets virou nove frentes de trabalho. Seis foram correções pontuais, como o mapa de concessionárias com busca por estado, a proteção contra duplo clique e a limpeza de arquivos órfãos no servidor. As outras três mudaram a estrutura do projeto.
-:::
-
-:::::secao{rotulo="LEADS" titulo="Um módulo central para os 106 formulários"}
-O time comercial recebia lead com CPF inválido e sem rastreio de origem. A mesma verificação faltava em quatro lugares ao mesmo tempo: o campo HTML só conferia o tamanho, a máscara formatava sem validar, o servidor confiava no que o front mandava, e o endpoint aceitava envio de bot. Escrevi um módulo PHP central e um JavaScript compartilhado. Como as 77 páginas carregavam o mesmo arquivo, um deploy alcançou os 106 formulários.
+::::secao{rotulo="Leads" titulo="Leads chegando sem CPF válido"}
+Recebi uma demanda para investigar o motivo dos leads estarem chegando sem um CPF válido. Após uma análise identifiquei que o HTML só conferia o tamanho, a máscara formatava sem validar, o servidor confiava só no front e o endpoint aceitava envio de bot. Para solucionar escrevi um módulo PHP, um JavaScript compartilhado, e um deploy alcançou as 77 páginas.
 
 :::codigo{arquivo="validacao.php" abas="Antes, Depois" prova="true"}
 ```html
@@ -53,32 +51,27 @@ function cpf_valido(string $cpf): bool {
 }
 ```
 :::
-:::::
+::::
 
-:::secao{rotulo="CREDENCIAIS" titulo="113 arquivos com a mesma senha escrita dentro"}
-As credenciais SMTP do Amazon SES estavam escritas direto no código, repetidas em 113 arquivos PHP do tema. Criei um arquivo único de configuração e refatorei os 113 para apontar para lá. Trocar a senha passou a ser uma alteração em um arquivo só.
-
-Depois fiz uma auditoria de segurança e entreguei um relatório com os achados por severidade, separando o que eu podia corrigir sozinha do que precisava do time de infraestrutura. Corrigi o que estava na minha alçada e repassei o resto.
+:::secao{rotulo="Credenciais" titulo="Credenciais expostas em 113 arquivos"}
+Identifiquei 113 arquivos com credenciais expostas, então centralizei em um arquivo único de configuração e refatorei todos apontando para o arquivo criado.
 :::
 
-::::secao{rotulo="VERSIONAMENTO" titulo="De nenhum controle de versão a deploy automático"}
-O site não tinha controle de versão. Toda publicação era manual por FTP, sem histórico, e um desenvolvedor podia sobrescrever o trabalho do outro.
+::::secao{rotulo="Versionamento" titulo="De FTP ao deploy automático"}
+O método utilizado era o FTP Manual, e ele trazia muitos problemas ao dia a dia da equipe e demandava muita comunicação, pois sem o versionamento git, os arquivos eram sobrescritos todos os dias, então como iniciativa pessoal, decidi adicionar o controle de versão git, com a criação do repositório no GitHub.
 
-Inicializei o repositório no tema e configurei o ignore para deixar de fora credencial, imagem, log e backup. A limpeza do histórico levou o repositório de 2,68 GB para 3,4 MB. Liguei o deploy automático a cada push e escrevi um guia de versionamento para o time.
-
-:::antes-depois{formato="numero"}
-2,68 GB | repositório com histórico sujo
-3,4 MB | depois da limpeza
+:::diagrama
+FTP manual, sem histórico | apagado
+git push | ciano
+Deploy automático | ciano
 :::
 ::::
 
-::::secao{rotulo="RESULTADO" titulo="Em números"}
-:::numeros
-106 | formulários com validação dupla | rosa
-113 | arquivos refatorados para credencial única | rosa
-8 | vetores de segurança auditados | rosa
-83 | formulários protegidos contra duplo clique | lavanda
-11 | páginas corrigidas com uma linha de CSS | lavanda
-700+ | arquivos órfãos removidos do servidor | ciano
+::::secao{rotulo="Correções pontuais"}
+:::numeros{formato="linha"}
+83 | Formulários protegidos contra duplo clique | case
+11 | Páginas corrigidas com uma linha de CSS | case
+700+ | Arquivos órfãos removidos do servidor | case
+UF | Mapa de concessionárias com busca por estado | case
 :::
 ::::
