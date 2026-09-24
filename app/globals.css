@@ -1040,6 +1040,59 @@ body {
 }
 
 /* ---------------------------------------------------------------------------
+   Seta do fluxo.
+
+   Ela aponta para baixo enquanto o fluxo empilha, e para a direita quando ele vira fileira.
+   É rotação e não um segundo caractere, senão o mesmo glifo existiria duas vezes no HTML,
+   com um deles escondido, e leitor de tela contaria os dois.
+
+   Fora de `prefers-reduced-motion` não há o que respeitar aqui: é estado, não transição.
+   --------------------------------------------------------------------------- */
+
+.seta-fluxo {
+  rotate: 90deg;
+}
+
+@media (width >= 64rem) {
+  .seta-fluxo {
+    rotate: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Caixa tingida.
+
+   REGRA DO PROJETO: TEXTO EM ACCENT SOBRE TINT SEMPRE COM `--surface` OPACO EMBAIXO.
+   Nunca direto sobre o `--bg`, nunca sobre o `--surface-2`.
+
+   O tint é translúcido, então o contraste do texto depende do que estiver atrás dele. No
+   tema claro, com os accents em uso hoje:
+
+     sobre --surface      5,00  rosa   5,02  lavanda   5,04  ciano
+     sobre --bg           4,50         4,51            4,54
+     sobre --surface-2    4,07         4,08            4,10   REPROVAM
+
+   O `--bg` passa, e passa **no piso exato**: 4,50 contra o mínimo de 4,50. Qualquer mexida
+   no `--bg` do tema claro derruba os três de uma vez, e derruba em silêncio, porque nada
+   no build mede contraste. Por isso a regra é `--surface` sempre, e não "`--bg` também
+   serve".
+
+   No tema escuro qualquer fundo passa entre 8 e 10. **Quem decide é o claro.**
+
+   É UMA UTILIDADE, E NÃO UMA COMBINAÇÃO REESCRITA POR BLOCO. Cada lugar que precise disso
+   põe a classe e declara `--cor-tint`; sem a variável o gradiente fica transparente e
+   sobra o `--surface`, que é o estado seguro.
+   --------------------------------------------------------------------------- */
+
+.tingido {
+  background-color: var(--surface);
+  background-image: linear-gradient(
+    var(--cor-tint, transparent),
+    var(--cor-tint, transparent)
+  );
+}
+
+/* ---------------------------------------------------------------------------
    Abas do visualizador de estados.
 
    A ATIVA GANHA FUNDO TINGIDO E TEXTO EM ACCENT, e não só uma das duas. Aqui a aba compete
@@ -1061,24 +1114,14 @@ body {
     background-color var(--dur-rapida) linear;
 }
 
-/* O TINGIDO É DUAS CAMADAS, E NÃO UMA, E ISSO É ACESSIBILIDADE MEDIDA.
+/* O fundo vem da `.tingido`, que o componente põe só na aba ativa. Aqui fica o que é
+   específico: qual tint e qual cor de texto.
 
-   O tint é translúcido, então o contraste do texto em cima dele depende do que estiver
-   atrás. Sobre a barra de abas, que é `--surface-2`, o par dá 4,07 em rosa e 4,10 em ciano
-   no tema claro, **abaixo do mínimo de 4,5**. Com o `--surface` opaco embaixo do tint, sobe
-   para 5,00 e 5,04.
-
-   A primeira versão usava `color-mix` do accent atual a 10% e era pior, 3,99 e 4,02, e
-   ainda gerava um fallback com a cor cheia que deixava o rótulo invisível em navegador sem
-   suporte. Com os tints da coleção, `color-mix` e `@supports` saíram os dois.
-
-   No escuro qualquer uma das formas passa entre 8 e 10. **Quem decide é o claro.** */
+   A primeira versão usava `color-mix` do accent atual a 10% direto sobre a barra de abas, e
+   dava 3,99 em rosa e 4,02 em ciano no tema claro, **abaixo do mínimo**. Foi o caso que
+   originou a regra do `--surface` embaixo. */
 .aba-estado[aria-selected="true"] {
-  background-color: var(--surface);
-  background-image: linear-gradient(
-    var(--tint-case, var(--tint-rosa)),
-    var(--tint-case, var(--tint-rosa))
-  );
+  --cor-tint: var(--tint-case, var(--tint-rosa));
   color: var(--accent-case, var(--accent-rosa));
   font-weight: 500;
 }

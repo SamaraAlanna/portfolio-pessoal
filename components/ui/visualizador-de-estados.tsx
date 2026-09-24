@@ -130,7 +130,11 @@ export default function VisualizadorDeEstados({
             tabIndex={indice === ativa ? 0 : -1}
             onClick={() => setAtiva(indice)}
             onKeyDown={aoTeclar}
-            className="aba-estado rounded-full px-[14px] py-[8px] text-legenda whitespace-nowrap"
+            // A `.tingido` entra só na ativa: ela traz o `--surface` opaco junto do tint,
+            // e numa aba inativa isso viraria um fundo que não deveria existir.
+            className={`aba-estado rounded-full px-[14px] py-[8px] text-legenda whitespace-nowrap ${
+              indice === ativa ? "tingido" : ""
+            }`}
           >
             {estado.rotulo}
           </button>

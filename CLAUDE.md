@@ -521,6 +521,27 @@ o `inline` continua invocado; `bloco-imagens` perdeu o `formato="linha"`. O
 `bloco-antes-depois` **perdeu o `formato="codigo"` em 2026-09-24**, quando o Bajaj passou a
 usar o código com abas, e continua vivo pelo `formato="numero"`, que o mesmo case usa.
 
+### O bloco de fluxo
+
+**O `diagrama` deixou de ser um card com etapas dentro e virou pílulas ligadas por seta**,
+como o Figma novo mostra no fluxo do lead do VOGE e no de deploy do Bajaj.
+
+**O segundo campo da linha mudou de significado:** era a explicação da etapa, que o desenho
+novo não tem, e passou a ser a camada. **Valor fora das quatro camadas é ignorado**, então
+conteúdo escrito no formato antigo degrada para chip sem destaque em vez de quebrar. O
+Assistente ainda está no formato velho e é reescrito no passo 6.
+
+**A CAMADA É DA ETAPA, E NÃO DO CASE.** O CRM do VOGE é ciano porque é back-end e dados, no
+significado que a cor tem no sistema inteiro, e não porque o case é de engenharia. Os dois
+coincidem ali, e confundir os dois faria um fluxo de um case de ux-produto perder a etapa de
+back-end.
+
+**A seta viaja junto do chip que ela aponta**, dentro do mesmo `li`. Sem isso uma linha
+poderia terminar numa seta apontando para o vazio quando a fileira quebra, e a leitura
+passaria a depender de adivinhar onde o fluxo continua. No mobile ela gira 90 graus em vez
+de virar um segundo caractere: dois glifos no HTML, com um escondido, fariam leitor de tela
+contar os dois.
+
 ### Metadata e compartilhamento
 
 **O endereço do site vive em `lib/site.ts`**, e não espalhado. Três lugares dependem dele
@@ -1498,10 +1519,22 @@ em cima dele passam a vir de bases diferentes e a medição de contraste deixa d
 | `--surface` | 5,00 | 5,02 | 5,04 |
 | `--surface-2` | **4,07** | **4,08** | **4,10** |
 
-**Tint sobre `--surface-2` reprova nos três, e sobre o `--bg` passa raspando.** No escuro
-tudo fica entre 8 e 10, então **quem decide é o claro**. A regra prática: caixa tingida pode
-ficar sobre o fundo da página ou sobre `--surface`, e **nunca sobre `--surface-2`** se houver
-texto em accent dentro dela.
+**REGRA ENDURECIDA EM 2026-09-24: texto em accent sobre tint sempre com `--surface` opaco
+embaixo. Nunca direto sobre o `--bg`, nunca sobre o `--surface-2`.**
+
+O `--surface-2` reprova nos três. O `--bg` passa, e passa **no piso exato**: 4,50 contra o
+mínimo de 4,50. Qualquer mexida no `--bg` do tema claro derruba os três de uma vez, **e
+derruba em silêncio**, porque nada no build mede contraste. Por isso "o `--bg` também serve"
+não é uma opção. No escuro tudo fica entre 8 e 10, então **quem decide é o claro**.
+
+**A combinação virou a utilidade `.tingido`**, em `app/globals.css`, e não é reescrita por
+bloco. Quem precisa põe a classe e declara `--cor-tint`; sem a variável o gradiente fica
+transparente e sobra o `--surface`, que é o estado seguro. Usam ela a aba ativa do
+visualizador de estados e o chip destacado do fluxo.
+
+**A regra custa um pouco no escuro e compra muito no claro**, e isso é esperado: o chip CRM
+do VOGE foi de 4,54 para 5,04 no claro e de 10,11 para 9,55 no escuro. O lado que estava
+apertado é o que manda.
 
 **Isso pegou a aba ativa do visualizador de estados, que eu tinha escrito no dia anterior.**
 Ela era `color-mix` do accent atual a 10% sobre a barra de abas, que é `--surface-2`, e dava
