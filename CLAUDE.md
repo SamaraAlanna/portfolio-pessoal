@@ -222,8 +222,8 @@ cada um deixando o site buildando.
 3. **Feito.** Moldura nova do case: hero sem imagem nem abertura, ficha em faixa de cinco
    colunas, e o espaçamento vertical do Figma como padding.
 4. **Feito.** Índice lateral derivado do MDX, com âncoras, numeração, scroll-spy e foco.
-5. **Em andamento.** Blocos novos, um por vez. **Feitos: código com abas e visualizador de
-   estados.** Faltam o fluxo horizontal e o `opcoes` como cards de decisão.
+5. **Feito.** Blocos novos, um por vez: código com abas, visualizador de estados, fluxo
+   horizontal e o `opcoes` como cards de decisão.
 6. Reescrita do conteúdo dos quatro MDX, incluindo a ficha encurtada e o campo STACK.
 7. Limpeza: blocos órfãos, `docs/modelos-de-case.md`, este documento.
 
@@ -515,8 +515,9 @@ falsificaria a experiência dela, que aconteceu. O critério vem do próprio
 `docs/modelos-de-case.md`: nunca prometer o que a página não mostra.
 
 **Blocos que ficaram órfãos, e o que fazer com cada um** (decisão no passo 7):
-`bloco-frase` sem uso e sem uso previsto; `bloco-opcoes` sem uso mas **reservado**, porque
-vira os cards de decisão do CRUD; `bloco-paleta` perdeu os formatos padrão e `cartao`, e só
+`bloco-frase` sem uso e sem uso previsto; **o `bloco-opcoes` saiu dessa lista em 2026-09-24**,
+quando virou os cards de decisão do CRUD, que era o uso reservado para ele; `bloco-paleta`
+perdeu os formatos padrão e `cartao`, e só
 o `inline` continua invocado; `bloco-imagens` perdeu o `formato="linha"`. O
 `bloco-antes-depois` **perdeu o `formato="codigo"` em 2026-09-24**, quando o Bajaj passou a
 usar o código com abas, e continua vivo pelo `formato="numero"`, que o mesmo case usa.
@@ -541,6 +542,68 @@ poderia terminar numa seta apontando para o vazio quando a fileira quebra, e a l
 passaria a depender de adivinhar onde o fluxo continua. No mobile ela gira 90 graus em vez
 de virar um segundo caractere: dois glifos no HTML, com um escondido, fariam leitor de tela
 contar os dois.
+
+**CADA GLIFO DE SETA É DECORATIVO, E O `↳` DO DESVIO ESTAVA DE FORA.** Ele ficava dentro do
+mesmo `span` do texto da condição, então leitor de tela recebia o glifo grudado na frase. Foi
+separado em 2026-09-24 e ganhou `aria-hidden`, e a linha do desvio passou a ser lida como
+enunciado: "se falhar, envio por e-mail, para o lead não se perder". **Glifo com significado
+só visual precisa de elemento próprio**, senão não existe onde pendurar o atributo. O caminho
+principal nunca teve esse problema: é `ol` com uma etapa por `li`, e as setas entre etapas já
+nasceram escondidas.
+
+### Os cards de decisão, e a seção sem parágrafo
+
+**É o `bloco-opcoes` com outra roupa, e ele saiu de órfão para isso.** O formato do conteúdo
+não mudou, continua `rótulo | título | descrição | camada`, uma linha por card, **sem linha em
+branco entre elas**, pelo mesmo motivo do `estados`: o `linhasDeCampos` separa por quebra
+simples dentro de um parágrafo só, e linha em branco funde dois cards em um **sem o build
+reclamar**.
+
+**O título de cada card é `h3`, porque a seção já é `h2`.** Ele era um `p` até 2026-09-24, o
+que deixava fora da estrutura de cabeçalhos a única coisa que nomeia cada card. A página do
+CRUD hoje fecha em `h1` do case, `h2` por seção e `h3` nos dois cards.
+
+**OS DOIS CARDS TÊM A MESMA ALTURA POR CAUSA DE UMA CLASSE QUE SAIU, E NÃO DE UMA QUE ENTROU.**
+A grade tinha `items-start`, que encolhe cada card até o próprio conteúdo, e uma descrição de
+três linhas ao lado de uma de duas terminava mais baixa. Sem ele volta o `stretch`. É a mesma
+correção já registrada nos cards de formação do Sobre, e vale reler aquela seção antes de
+mexer em altura de card.
+
+**A cor padrão do rótulo virou o `--accent-case`, e não o rosa fixo**, pelo mesmo mecanismo do
+rótulo de seção e do índice. O atributo `camada` continua vencendo quando a linha declara uma,
+porque aí a cor está dizendo de que camada é aquela decisão, e isso não é assunto do case
+inteiro. A borda do card ESCOLHIDA acompanhou. Medido sobre o `--surface`, contra o piso de
+4,5: rosa 10,87 no escuro e 5,67 no claro, ciano 11,59 e 5,65.
+
+**O token do título é novo, e o empate se desfez pela família.** O Figma pede 20px e os
+vizinhos estão a 2px para os dois lados, `--tipo-card-compacto-titulo` em 18 e
+`--tipo-titulo-card` em 22. Os dois são de card de projeto, da listagem e da home, e amarrar o
+card de decisão a eles faria uma mudança no card de projeto mexer no corpo do case sem ninguém
+procurar por isso. Entrou `--tipo-opcao-titulo`, no grupo do case, que já tem um token por
+bloco. **Isso não contradiz a decisão do tracking da migalha**, onde a diferença era 0,22px:
+aqui são 2px sobre 20, e é visível.
+
+**A borda é 0,5 e não o 1 do arquivo**, porque 0,5 é a espessura de card do projeto inteiro e
+uma borda mais grossa faria este card pesar diferente dos outros do mesmo case.
+
+**A SEÇÃO DE DECISÕES NÃO TEM PARÁGRAFO, E ISSO QUEBRAVA O ESPAÇAMENTO EM SILÊNCIO.** A regra
+do respiro antes da prova era `[&>*+ul]`, `[&>*+figure]` e assim por diante, ou seja só valia
+para bloco **depois** de outro filho. Com o cabeçalho e os cards e mais nada, o seletor não
+casava e os cards subiam para o respiro curto do invólucro em vez dos 40 do Figma. A exigência
+de irmão saiu: o primeiro filho não tem `gap` antes dele e recebe os 26 somados aos 14 do
+invólucro, então os dois casos dão 40.
+
+**O índice e o `h2` não dependem do corpo da seção, e isso foi conferido no HTML servido.** O
+`lerSecoes` lê o atributo `rotulo=` da linha da directive, então a entrada existe com ou sem
+parágrafo, e o `bloco-secao` põe o `h2` no título grande do mesmo jeito. As cinco âncoras do
+CRUD batem com os cinco destinos.
+
+**UMA DIVERGÊNCIA MEDIDA QUE NÃO FOI APLICADA, de propósito.** Os quatro frames novos põem 14
+entre o rótulo e o título da seção, e o código tem 28; e o título de seção é 36 no arquivo
+contra os 26 do `--tipo-titulo-secao`, que o `--text-titulo-bloco` reaproveita do lado design
+da home. Os dois mudam a cara de **todas** as seções dos quatro cases, então ficam para o passo
+6, onde o conteúdo é reescrito e dá para ver os quatro juntos. O 18 que virou 14 entre título e
+corpo foi mexido porque o 40 dos cards depende dele e 4px num parágrafo não é redesenho.
 
 ### Metadata e compartilhamento
 

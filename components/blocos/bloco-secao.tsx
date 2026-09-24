@@ -6,8 +6,14 @@ import type { ReactNode } from "react";
  * Ritmo definido em docs/modelos-de-case.md e confirmado nos cases do Figma: rótulo curto
  * em mono caixa alta, título, um parágrafo, a prova.
  *
- * Os espaçamentos vêm do Figma: 28 entre rótulo e título, 18 entre título e primeiro
- * parágrafo, 14 entre parágrafos, e 40 antes da prova.
+ * Os espaçamentos vêm do Figma: 14 entre título e primeiro parágrafo, 14 entre parágrafos,
+ * e 40 antes da prova, que é a soma do `gap` de 14 com os 26 de margem.
+ *
+ * A REGRA DA PROVA NÃO EXIGE MAIS UM IRMÃO ANTES. Ela era `[&>*+ul]`, e só valia para bloco
+ * **depois** de parágrafo. A seção de decisões do CRUD não tem parágrafo nenhum, só o
+ * cabeçalho e os cards, e ali o seletor não casava: os cards subiam para os 14 do invólucro
+ * em vez dos 40 do Figma. Sem a exigência de irmão, os dois casos dão 40, porque o primeiro
+ * filho não tem `gap` antes dele e recebe os 26 somados aos 14 do invólucro.
  *
  * O NÚMERO E A ÂNCORA NÃO VÊM DO MDX, e sim de quem monta a página. Eles são injetados
  * pelo `blocosComIndice`, que já leu as seções em ordem: número é posição, e posição não é
@@ -101,7 +107,7 @@ export default function BlocoSecao({
         </h2>
       ) : null}
 
-      <div className="mt-[18px] flex w-full flex-col gap-[14px] text-corpo-case text-text-muted [&>*+figure]:mt-[26px] [&>*+ol]:mt-[26px] [&>*+ul]:mt-[26px] [&>*+div]:mt-[26px] [&>*+dl]:mt-[26px]">
+      <div className="mt-[14px] flex w-full flex-col gap-[14px] text-corpo-case text-text-muted [&>dl]:mt-[26px] [&>div]:mt-[26px] [&>figure]:mt-[26px] [&>ol]:mt-[26px] [&>ul]:mt-[26px]">
         {children}
       </div>
     </section>

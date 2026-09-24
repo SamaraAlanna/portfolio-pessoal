@@ -57,19 +57,12 @@ Erro de validação | /imagens/cases/crud-estado-erro.webp | Quando falta perfil
 :::
 ::::
 
-:::::secao{rotulo="DECISÕES" titulo="Cada decisão amarrada a um vetor de erro"}
-::::citacao
-A coluna de funcionalidades fica bloqueada até o perfil ser escolhido.
-
-Esse era o principal vetor de erro da tela anterior: dava para marcar funcionalidade antes de definir o perfil, e a configuração saía incoerente. O checkbox fica em cinza até a escolha do perfil, o que fecha o caminho errado antes de a pessoa entrar nele.
+::::secao{rotulo="DECISÕES" titulo="Cada decisão amarrada a um vetor de erro"}
+:::opcoes
+BLOQUEIO | Funcionalidade só depois do perfil | O checkbox fica cinza até o perfil ser escolhido. Fecha o caminho que gerava configuração incoerente.
+SILÊNCIO | Nenhum selo de "perfil definido" | O estado normal já comunica sucesso. Só o erro chama atenção, e a tela com muitos módulos fica limpa.
+:::
 ::::
-
-::::citacao
-Não coloquei nenhum selo de "perfil definido".
-
-O card de módulo configurado certo não recebe indicativo visual positivo. O estado normal já comunica sucesso. Só o erro chama atenção, e isso reduz o ruído numa tela que pode ter muitos módulos ao mesmo tempo.
-::::
-:::::
 
 ::::secao{rotulo="IMPACTO ESPERADO"}
 :::citacao{camada="ambar"}

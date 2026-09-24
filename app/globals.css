@@ -155,6 +155,14 @@
   --tipo-legenda: 14.5px; /* legenda de número e de ficha */
   --tipo-codigo: 12.5px;
   --tipo-titlebar: 11px; /* rótulo da barra do bloco de código */
+
+  /* Título do card de decisão, do bloco `opcoes`. 20px no Figma, e os tokens vizinhos estão
+     a 2px para os dois lados: `--tipo-card-compacto-titulo` em 18 e `--tipo-titulo-card` em
+     22. **O empate se desfaz pela família, e não pelo arredondamento**: os dois vizinhos são
+     de card de projeto, da listagem e da home, e amarrar o card de decisão a eles faria uma
+     mudança no card de projeto mexer no corpo do case sem ninguém procurar por isso. O grupo
+     do case já tem um token por bloco, e este entra na mesma prateleira. */
+  --tipo-opcao-titulo: 20px;
   --tipo-frase-construcao: 34px;
 
   --tipo-bio: 16px; /* parágrafo da seção sobre mim */
@@ -179,6 +187,7 @@
   --lh-titulo-bloco: 1.35;
   --lh-codigo: 1.9;
   --lh-legenda: 1.5;
+  --lh-opcao-titulo: 1.25;
 
   /* Tracking em em, e não em px, de propósito: assim o valor continua correto nos dois
      tamanhos do H1 sem precisar de um segundo token. No Figma são -2.4px sobre 80 e
@@ -516,6 +525,9 @@
 
   --text-legenda: var(--tipo-legenda);
   --text-legenda--line-height: var(--lh-legenda);
+
+  --text-opcao-titulo: var(--tipo-opcao-titulo);
+  --text-opcao-titulo--line-height: var(--lh-opcao-titulo);
 
   --text-numero: var(--tipo-numero);
   --text-numero--letter-spacing: var(--tracking-numero);

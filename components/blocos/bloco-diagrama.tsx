@@ -39,8 +39,12 @@ import { linhasDeCampos } from "@/lib/texto";
  * mesmo item: sem isso uma linha poderia terminar numa seta apontando para o vazio, e a
  * leitura passaria a depender de adivinhar onde o fluxo continua.
  *
- * A seta é decorativa nos dois sentidos: quem usa leitor de tela recebe a ordem pela lista
- * numerada, que o `ol` já garante.
+ * CADA GLIFO DE SETA É DECORATIVO, E ISSO INCLUI O `↳` DO DESVIO. Quem usa leitor de tela
+ * recebe a ordem do caminho principal pela lista numerada, que o `ol` já garante, e a linha do
+ * desvio precisa ser lida como frase: "se falhar, envio por e-mail". O `↳` ficou de fora do
+ * `aria-hidden` até 2026-09-24, grudado no texto da condição dentro do mesmo `span`, então ele
+ * era anunciado junto. **Glifo que carrega significado só visual precisa de elemento próprio**,
+ * senão não existe onde pendurar o atributo.
  */
 const CAMADAS: Record<string, string> = {
   rosa: "[--cor-tint:var(--tint-rosa)] border-accent-rosa text-accent-rosa",
@@ -103,8 +107,9 @@ export default function BlocoDiagrama({
 
       {condicao && consequencia ? (
         <p className="flex flex-col items-start gap-[12px] pl-[24px] lg:flex-row lg:items-center">
-          <span className="font-mono text-[12px] font-medium whitespace-nowrap text-accent-ambar">
-            &#8627; {condicao}
+          <span className="flex items-center gap-[6px] font-mono text-[12px] font-medium whitespace-nowrap text-accent-ambar">
+            <span aria-hidden="true">&#8627;</span>
+            {condicao}
           </span>
           <span aria-hidden="true" className={SETA}>
             &rarr;
