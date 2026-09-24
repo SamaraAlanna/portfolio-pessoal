@@ -28,6 +28,29 @@ export const FULL_STACK = "Full Stack";
 export const FILTROS = ["Todos", ...TAGS, FULL_STACK] as const;
 
 /**
+ * A cor de camada de cada valor, como referência de token e não como classe.
+ *
+ * UMA FONTE SÓ PARA O CHIP DO CARD E PARA A PÍLULA DO FILTRO. Os dois pintam o mesmo
+ * vocabulário, e duas tabelas divergiriam no dia em que uma camada entrasse: o chip
+ * mudaria de cor e a pílula não, sem erro nenhum aparecer.
+ *
+ * FULL STACK E TODOS USAM `--text`, QUE É ACESO SEM SER CAMADA. Nenhum dos dois pertence a
+ * uma camada: Full Stack é a união de duas e Todos é a ausência de recorte. Dar um dos
+ * quatro accents a eles diria o contrário.
+ *
+ * Vai como valor de CSS e não como classe do Tailwind porque o mesmo mapa é lido por um
+ * componente de servidor e por um de cliente, e valor não depende do scanner de classes
+ * ver a string escrita num arquivo de dados.
+ */
+export const COR_DA_CAMADA: Record<string, string> = {
+  "UX/UI Design": "var(--accent-rosa)",
+  "Front-End": "var(--accent-lavanda)",
+  "Back-End": "var(--accent-ciano)",
+  [FULL_STACK]: "var(--text)",
+  Todos: "var(--text)",
+};
+
+/**
  * Full Stack é condição, e não declaração.
  *
  * O case diz que faz front-end, que faz back-end, ou os dois, e **quem conclui que isso é

@@ -219,8 +219,8 @@ cada um deixando o site buildando.
 
 1. **Feito.** Remoção dos três cases de identidade visual, redirects e limpeza das menções.
 2. **Feito.** Tags e filtro novos, chip Full Stack derivado e cor por camada no hover.
-3. Moldura nova do case: hero sem imagem, ficha em linha de cinco colunas, imagem de
-   abertura opcional.
+3. **Feito.** Moldura nova do case: hero sem imagem nem abertura, ficha em faixa de cinco
+   colunas, e o espaçamento vertical do Figma como padding.
 4. Índice lateral derivado do MDX, com âncoras, numeração e scroll-spy.
 5. Blocos novos: código com abas, visualizador de estados, fluxo horizontal, e o `opcoes`
    reaproveitado como cards de decisão.
@@ -287,9 +287,60 @@ case declara só uma das duas. Não é defeito: a distinção aparece no primeir
 só front ou só back. **Se isso incomodar antes disso, o que sobra é juntar as pílulas, e
 não mudar a regra.**
 
-**As pílulas do filtro não ganharam cor por camada.** A ativa continua rosa. A decisão de
-cor por camada foi respondida para o chip do card, e pintar a pílula ativa de lavanda ou
-ciano é outra mudança, que não foi pedida.
+**A pílula ativa se pinta na cor da própria camada**, pelo mesmo `--cor-camada` do chip e
+lendo o mesmo mapa, o `COR_DA_CAMADA` de `lib/filtros.ts`. **Uma fonte só para os dois**,
+senão no dia em que uma camada entrasse o chip mudaria de cor e a pílula não.
+
+**O fundo da pílula ativa é accent cheio, e não tint**, com o texto em `--bg`. Medido nas
+quatro cores e nos dois temas, contra o mínimo de 4,5 para texto pequeno:
+
+| | escuro | claro |
+| --- | --- | --- |
+| UX/UI Design, rosa | 11,26 | 5,08 |
+| Front-End, lavanda | 10,72 | 5,09 |
+| Back-End, ciano | 12,01 | 5,06 |
+| Full Stack e Todos, `--text` | 16,76 | 15,87 |
+
+Os três do claro batem com os valores já escritos junto das variáveis, porque **contraste é
+simétrico** e ali o mesmo par está medido ao contrário, accent como texto sobre `--bg`.
+
+### O passo 3, e três divergências conscientes do Figma
+
+**Migalha e título viraram um bloco só**, e a migalha passou de texto corrido para rótulo em
+mono e caixa alta em `--text-dim`. Ela continua sendo `nav` com nome acessível: caixa alta é
+estilo, e trocar a semântica junto seria perder navegação por causa de tipografia.
+
+**A ficha deixou de ser card e virou faixa com filete em cima e embaixo**, sem fundo, e
+continua `dl` com `dt` no rótulo e `dd` no valor, que ela já era.
+
+**O espaçamento do Figma entrou como padding, nunca como altura.** O hero mede 205px lá e a
+ficha 105, e esses números são consequência do conteúdo daquele dia. O que o código guarda
+são os respiros: 56 em cima e embaixo do hero, 22 na faixa da ficha, 56 antes da imagem de
+abertura e 104 antes do corpo.
+
+**Onde o código não segue o arquivo, e por quê:**
+
+1. **As colunas da ficha são proporcionais ao conteúdo, e não quatro iguais mais uma de
+   170px fixos.** Largura fixa em coluna de texto quebra no primeiro valor que não couber,
+   que é a mesma armadilha da altura fixa. Com `flex: 1 1 auto` o PERÍODO devolve quase todo
+   o espaço dele para as colunas longas; com `1 0 0`, que é o do arquivo, "2026" fica com a
+   mesma largura do valor mais longo e empurra o vizinho para três linhas.
+2. **A entrelinha do título é 1,12 e não `leading-none`.** No Figma ele é uma linha só, com
+   `whitespace-nowrap`. Aqui ele quebra em tela estreita, e entrelinha 1 encostaria as duas
+   linhas.
+3. **O tracking da migalha está escrito no componente, e não em token.** O Figma pede 0,08em
+   sobre 11px e os tokens vizinhos são 0,06 e 0,1. Criar um token para 0,22px de diferença
+   custaria mais do que resolve, então o tamanho sai do sistema e o tracking fica no lugar.
+
+**A ABERTURA FICOU SEM LUGAR NA TELA, E ISSO É ESPERADO ATÉ O PASSO 6.** O Figma novo não
+tem parágrafo nenhum no hero: quem abre o assunto é o texto da primeira frente. O campo
+`abertura` continua no frontmatter dos cinco cases, intacto, e a reescrita decide se ele
+vira a primeira frente ou some. **O texto existe no dado e não aparece na tela**, que é o
+estado correto entre os dois passos, e não um defeito a corrigir.
+
+**A hierarquia de títulos já está certa e continua:** o título do case é o `h1` e cada seção
+é `h2`, pelo `bloco-secao`. A numeração que chega no passo 4 entra no rótulo, e não muda
+nível nenhum.
 
 **A menção a identidade visual saiu de uns lugares e ficou em outros, por critério.** Saiu
 de onde era promessa que a página não cumpre mais: a coluna Design da home, a descrição do

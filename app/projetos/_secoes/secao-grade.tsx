@@ -1,7 +1,8 @@
 "use client";
 
 import { Children, useState, type ReactNode } from "react";
-import { FILTROS, passaNoFiltro } from "@/lib/filtros";
+import { COR_DA_CAMADA, FILTROS, passaNoFiltro } from "@/lib/filtros";
+import type { CSSProperties } from "react";
 
 /**
  * Filtros e grade da listagem.
@@ -44,10 +45,11 @@ export default function SecaoGrade({
                 type="button"
                 onClick={() => setFiltro(valor)}
                 aria-pressed={ativo}
-                className={`alvo-toque-vertical rounded-full border-[0.5px] border-border px-[14px] py-[7px] text-cta whitespace-nowrap ${
-                  ativo
-                    ? "bg-accent-rosa font-medium text-bg"
-                    : "bg-surface text-text-muted"
+                style={
+                  { "--cor-camada": COR_DA_CAMADA[valor] ?? "var(--accent-rosa)" } as CSSProperties
+                }
+                className={`pilula-filtro alvo-toque-vertical rounded-full border-[0.5px] border-border px-[14px] py-[7px] text-cta whitespace-nowrap ${
+                  ativo ? "font-medium text-bg" : "bg-surface text-text-muted"
                 }`}
               >
                 {valor}

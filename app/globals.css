@@ -1012,6 +1012,26 @@ body {
 }
 
 /* ---------------------------------------------------------------------------
+   Pílula do filtro da listagem.
+
+   A ATIVA SE PINTA NA COR DA PRÓPRIA CAMADA desde 2026-09-23, pelo mesmo `--cor-camada` do
+   chip do card e lendo o mesmo mapa, em `lib/filtros.ts`. Antes eram todas rosa.
+
+   O FUNDO É ACCENT CHEIO, E NÃO TINT. O texto é o `--bg`, e a medição do par em cada
+   camada: no escuro 11,26 em rosa, 10,72 em lavanda, 12,01 em ciano e 16,76 no `--text`;
+   no claro 5,08, 5,09, 5,06 e 15,87. Todos passam em AA para texto pequeno com folga, e os
+   três do claro batem com os valores já registrados junto das variáveis, porque contraste
+   é simétrico e ali o mesmo par está medido ao contrário.
+
+   A pílula inativa não usa a variável: ela é `--surface` com texto apagado, e a cor só
+   aparece quando o filtro está em uso, senão as cinco competiriam entre si o tempo todo.
+   --------------------------------------------------------------------------- */
+
+.pilula-filtro[aria-pressed="true"] {
+  background-color: var(--cor-camada);
+}
+
+/* ---------------------------------------------------------------------------
    Digitação do whoami.
 
    O TEXTO NÃO MUDA DE TAMANHO. Ele ocupa o lugar final desde o primeiro quadro e o que

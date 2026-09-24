@@ -1,4 +1,5 @@
-import { FULL_STACK } from "@/lib/filtros";
+import type { CSSProperties } from "react";
+import { COR_DA_CAMADA, FULL_STACK } from "@/lib/filtros";
 
 /**
  * Chip do card de projeto.
@@ -12,27 +13,17 @@ import { FULL_STACK } from "@/lib/filtros";
  * o `.cartao-interativo:hover .tag-projeto` do `app/globals.css` lê dali. Escrever um par
  * de regras por camada daria o mesmo resultado e quebraria na quarta.
  *
- * O padrão do `.tag-projeto` é rosa, e isso é rede de segurança: chip com valor que não
- * esteja no mapa acende como antes, em vez de não acender e parecer defeito.
+ * O mapa vive em `lib/filtros.ts` e é o mesmo que a pílula do filtro usa. O padrão do
+ * `.tag-projeto` é rosa, e isso é rede de segurança: chip com valor fora do mapa acende
+ * como antes, em vez de não acender e parecer defeito.
  */
-const CAMADAS: Record<string, string> = {
-  "UX/UI Design": "[--cor-camada:var(--accent-rosa)]",
-  "Front-End": "[--cor-camada:var(--accent-lavanda)]",
-  "Back-End": "[--cor-camada:var(--accent-ciano)]",
-  /**
-   * Full Stack não é camada, é a união de duas, então não recebe nenhum dos quatro
-   * accents: dar um deles diria que este chip pertence a uma camada só. Ele acende em
-   * `--text`, que é aceso sem ser camada, e **quem diz quais duas são os pontinhos**.
-   */
-  [FULL_STACK]: "[--cor-camada:var(--text)]",
-};
-
 export default function Tag({ valor }: { valor: string }) {
-  const camada = CAMADAS[valor] ?? "";
+  const cor = COR_DA_CAMADA[valor];
 
   return (
     <span
-      className={`tag-projeto inline-flex items-center gap-[7px] rounded-full border-[0.5px] border-border bg-surface-2 px-[10px] py-[5px] text-tag whitespace-nowrap text-text-muted ${camada}`}
+      style={cor ? ({ "--cor-camada": cor } as CSSProperties) : undefined}
+      className="tag-projeto inline-flex items-center gap-[7px] rounded-full border-[0.5px] border-border bg-surface-2 px-[10px] py-[5px] text-tag whitespace-nowrap text-text-muted"
     >
       {/* Os dois pontinhos seguem o marcador de camada dos cards da Stack, e dizem as duas
           camadas que o chip resume: lavanda de front-end e ciano de back-end, nessa ordem,

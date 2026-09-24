@@ -9,7 +9,7 @@ import { directivasParaComponentes } from "@/lib/mdx";
 import { dimensaoDaImagem } from "@/lib/imagens";
 import { blocos } from "@/components/blocos";
 import { lerProjeto, lerProjetos, proximoProjeto } from "@/lib/conteudo";
-import SecaoCabecalho, { Migalha } from "@/app/projetos/[slug]/_secoes/secao-cabecalho";
+import SecaoCabecalho from "@/app/projetos/[slug]/_secoes/secao-cabecalho";
 import SecaoFicha from "@/app/projetos/[slug]/_secoes/secao-ficha";
 import SecaoEmConstrucao from "@/app/projetos/[slug]/_secoes/secao-em-construcao";
 import SecaoProximo from "@/app/projetos/[slug]/_secoes/secao-proximo";
@@ -28,6 +28,12 @@ import SecaoProximo from "@/app/projetos/[slug]/_secoes/secao-proximo";
  * o accent do case, ciano em engenharia e rosa em ux-produto.
  *
  * O hero é opcional de verdade: o CRUD tem imagem no topo, o Bajaj não.
+ *
+ * O ESPAÇAMENTO VERTICAL SAI DO FIGMA COMO PADDING, E NUNCA COMO ALTURA. O hero lá mede
+ * 205px e a ficha 105, e esses números são consequência do conteúdo daquele dia: 56 de
+ * respiro em cima e embaixo do hero, 22 em cima e embaixo da faixa da ficha, 56 antes da
+ * imagem de abertura e 104 antes do corpo. **Fixar a altura faria o primeiro título de duas
+ * linhas vazar**, então o que o código guarda são os respiros.
  */
 export function generateStaticParams() {
   return lerProjetos().map((projeto) => ({ slug: projeto.slug }));
@@ -65,7 +71,6 @@ export default async function PaginaCase({ params }: PageProps<"/projetos/[slug]
 
   return (
     <article>
-      <Migalha />
       <SecaoCabecalho projeto={projeto} />
 
       {emConstrucao ? (
@@ -83,7 +88,7 @@ export default async function PaginaCase({ params }: PageProps<"/projetos/[slug]
               share="morph-projeto"
               default="none"
             >
-            <div className="faixa pb-[72px]">
+            <div className="faixa pt-[56px]">
               <Image
                 src={projeto.heroCase}
                 alt={`Tela principal do projeto ${projeto.titulo}`}
@@ -97,7 +102,7 @@ export default async function PaginaCase({ params }: PageProps<"/projetos/[slug]
             </ViewTransition>
           ) : null}
 
-          <div className="flex flex-col gap-[72px] faixa pb-[80px]">
+          <div className="flex flex-col gap-[72px] faixa pt-[104px] pb-[80px]">
             <MDXRemote
               source={projeto.corpo}
               components={blocos}

@@ -1,53 +1,52 @@
 import type { CampoDaFicha } from "@/lib/conteudo";
 
 /**
- * Ficha técnica do case.
+ * Ficha técnica, em linha.
  *
  * Vem do frontmatter e não do corpo em MDX, porque é estruturada: sempre os mesmos
  * lugares, com rótulo e valor. No painel da fase dois isso vira campo a campo, em vez de
  * texto livre onde dá para errar a sintaxe.
  *
- * Os rótulos mudam por modelo de case, então cada campo carrega o próprio rótulo. No
- * Bajaj e no VOGE são PAPEL, CLIENTE, PERÍODO, STACK e TIME; no CRUD e no Assistente o
- * segundo e o quarto viram CONTEXTO e ENTREGAS.
+ * Os rótulos mudam por modelo de case, então cada campo carrega o próprio. No Bajaj e no
+ * VOGE são PAPEL, CLIENTE, STACK, TIME e PERÍODO; no CRUD e no Assistente o segundo e o
+ * terceiro viram CONTEXTO e ENTREGAS.
  *
- * No mobile o Figma quebra em duas colunas, e não em cinco nem em uma.
+ * DEIXOU DE SER CARD EM 2026-09-23. Ela era uma caixa com borda, fundo `--surface` e raio,
+ * e virou uma faixa com filete em cima e embaixo, sem fundo. O filete usa a `--border`
+ * comum: aqui ele separa, não delimita componente interativo.
  *
- * A LARGURA DAS COLUNAS É PROPORCIONAL AO CONTEÚDO, e essa é uma divergência consciente
- * do arquivo. No Figma as cinco colunas têm 227,2 cada e o espaço entre elas é zero: os
- * 1136 de dentro do card divididos em cinco partes exatas. O respiro que se vê lá não é
- * espaçamento, é efeito das quebras de linha digitadas à mão, que deixam cada linha mais
- * curta que a coluna. Como aqui a quebra é automática e o texto vem do frontmatter, o
- * respiro precisa virar regra.
+ * É `dl`, com `dt` no rótulo e `dd` no valor, e isso não é enfeite semântico: a ficha é
+ * literalmente uma lista de pares termo e definição, e um leitor de tela anuncia "PAPEL,
+ * Full stack" em vez de duas frases soltas.
  *
- * São duas mudanças, e as duas são necessárias:
+ * AS COLUNAS SÃO PROPORCIONAIS AO CONTEÚDO, E ISSO DIVERGE DO FIGMA DE PROPÓSITO. Lá quatro
+ * são iguais e a segunda tem 170px fixos. **Largura fixa em coluna de texto quebra no
+ * primeiro valor que não couber**, e é a mesma armadilha da altura fixa: a medida do
+ * arquivo descreve o conteúdo que estava lá naquele dia.
  *
- * 1. Espaço de 32 entre colunas, que é o mesmo padding interno do card, então a régua do
- *    espaçamento passa a ser a do próprio card.
- * 2. `flex: 1 1 auto` em vez de `flex-1`, que é `flex: 1 1 0`. Com base zero toda coluna
- *    fica com os mesmos 227, e "2026" desperdiça o que falta para "Desenvolvimento full
- *    stack, segurança e infraestrutura". Com base no conteúdo o encolhimento é
- *    proporcional: o PERÍODO fica com cerca de 50 e devolve quase 180 para as colunas
- *    longas.
+ * O `flex: 1 1 auto` faz o encolhimento ser proporcional. Com `1 0 0`, que é o do arquivo,
+ * toda coluna fica com a mesma largura e "2026" desperdiça o que falta para o valor mais
+ * longo do projeto, que empurra uma coluna vizinha para três linhas. Com base no conteúdo,
+ * o PERÍODO devolve quase todo o espaço dele para as colunas longas.
  *
- * Só o espaço de 32 não resolveria: com colunas iguais ele derruba cada uma para 201 e o
- * valor mais longo do projeto, de 56 caracteres, passa de duas linhas para três.
+ * O `text-balance` no valor reproduz o efeito da quebra manual: duas linhas do mesmo
+ * tamanho, em vez de uma cheia e uma sobra curta.
  *
- * O `text-balance` no valor é a última parte. Ele reproduz o efeito da quebra manual:
- * duas linhas do mesmo tamanho, em vez de uma cheia e uma sobra curta.
+ * No mobile são duas colunas, e não cinco nem uma, seguindo a exceção registrada no
+ * CLAUDE.md para conteúdo comparativo curto.
  */
 export default function SecaoFicha({ ficha }: { ficha: CampoDaFicha[] }) {
   if (ficha.length === 0) return null;
 
   return (
-    <section className="faixa pb-[64px]">
-      <dl className="grid grid-cols-2 items-start gap-[24px] rounded-[12px] border-[0.5px] border-border bg-surface px-[32px] py-[28px] lg:flex lg:gap-[32px]">
+    <section className="faixa">
+      <dl className="grid grid-cols-2 items-start gap-[24px] border-y-[0.5px] border-border py-[22px] lg:flex lg:gap-[40px]">
         {ficha.map((campo) => (
           <div
             key={campo.rotulo}
-            className="flex flex-col items-start gap-[10px] lg:flex-[1_1_auto]"
+            className="flex flex-col items-start gap-[8px] lg:flex-[1_1_auto]"
           >
-            <dt className="font-mono text-ficha-rotulo font-medium whitespace-nowrap text-text-muted">
+            <dt className="font-mono text-ficha-rotulo font-medium whitespace-nowrap text-text-dim">
               {campo.rotulo}
             </dt>
             <dd className="text-legenda text-balance text-text">{campo.valor}</dd>
