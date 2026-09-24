@@ -65,19 +65,20 @@ export function ancoraDeRotulo(rotulo: string): string {
 }
 
 /**
- * O rótulo como o índice mostra.
+ * NÃO EXISTE CONVERSÃO DE CAIXA AQUI, E ISSO FOI DECIDIDO EM 2026-09-24.
  *
- * Na seção ele é mono e caixa alta, "01. CORREÇÕES PONTUAIS". No índice ele é DM Sans em
- * caixa de frase, "Correções pontuais". **É o mesmo texto com outro tratamento**, e não um
- * segundo campo: quem escreve o conteúdo digita o rótulo uma vez só.
+ * Houve uma `rotuloParaIndice` que baixava o rótulo da seção para caixa de frase, porque a
+ * seção era caixa alta no MDX e o índice precisava dela em caixa normal. **Ela quebrava em
+ * sigla**: "SEO TÉCNICO" virava "Seo técnico" e "UX/UI" virava "Ux/ui", e a saída seria uma
+ * lista de exceções crescendo dentro de uma função de texto.
  *
- * LIMITE CONHECIDO: sigla vira palavra. Um rótulo "SEO TÉCNICO" sairia "Seo técnico", e
- * "UX/UI" sairia "Ux/ui". Nenhum dos rótulos dos cases de hoje tem sigla, e quando o
- * primeiro tiver, isso aparece na tela na hora. **A saída não é atributo de override no
- * `secao`**, que foi descartado de propósito para o índice não virar lista duplicada: é
- * uma exceção aqui dentro, ou escrever o rótulo já em caixa de frase.
+ * A FONTE FOI INVERTIDA EM VEZ DA FUNÇÃO GANHAR EXCEÇÃO. O rótulo passa a ser escrito em
+ * caixa normal no MDX, e **a caixa alta da seção vira `text-transform` no `BlocoSecao`**.
+ * O índice usa o texto como ele está, sem transformar nada, e sigla sobrevive porque
+ * ninguém mexe nela.
+ *
+ * Ganho que não era o objetivo e vale mais que ele: **leitor de tela deixa de receber texto
+ * em maiúsculas**. Caixa alta no dado faz parte dos leitores soletrarem letra a letra, ou
+ * lerem com a entonação de sigla. Em CSS, isso é aparência e o texto anunciado continua
+ * sendo a palavra.
  */
-export function rotuloParaIndice(rotulo: string): string {
-  const minusculo = rotulo.toLocaleLowerCase("pt-BR");
-  return minusculo.charAt(0).toLocaleUpperCase("pt-BR") + minusculo.slice(1);
-}

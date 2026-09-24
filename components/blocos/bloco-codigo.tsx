@@ -1,5 +1,6 @@
-import type { ReactNode } from "react";
+import { Children, isValidElement, type ReactNode } from "react";
 import AcordeaoMobile from "@/components/ui/acordeao-mobile";
+import CodigoComAbas from "@/components/ui/codigo-com-abas";
 
 /**
  * Bloco de código.
@@ -38,20 +39,58 @@ import AcordeaoMobile from "@/components/ui/acordeao-mobile";
  * entrada própria, mais elaborada que a dos outros: uma varredura de cima para baixo, como
  * se as linhas estivessem sendo escritas. Uma por case: se houver duas marcadas, vale a
  * primeira. A animação está no `app/globals.css` e só existe no desktop.
+ *
+ * O ATRIBUTO `abas` LIGA A VERSÃO COM MAIS DE UM CÓDIGO, e é o que substitui o
+ * `antes-depois` com `formato="codigo"`. Cada cerca de código vira um painel, e os rótulos
+ * saem da lista separada por vírgula:
+ *
+ *   :::codigo{arquivo="validacao.php" abas="Antes, Depois"}
+ *   ```php
+ *   ...
+ *   ```
+ *
+ *   ```php
+ *   ...
+ *   ```
+ *   :::
+ *
+ * A CONTAGEM PRECISA BATER, E O BUILD QUEBRA QUANDO NÃO BATE. Três rótulos com dois
+ * códigos deixaria uma aba apontando para painel inexistente, e isso não aparece navegando
+ * no desktop se a aba quebrada não for a primeira. Falhar na compilação é a única forma de
+ * o autor descobrir na hora.
  */
 export default function BlocoCodigo({
   arquivo,
   destaque,
   prova,
+  abas,
   children,
 }: {
   arquivo?: string;
   /** Marca o lado "depois" de uma comparação, que no Figma vem em accent. */
   destaque?: string;
   prova?: string;
+  /** Rótulos das abas, separados por vírgula. Ausente, o bloco tem um código só. */
+  abas?: string;
   children?: ReactNode;
 }) {
   const rotuloEmAccent = destaque === "true";
+  const rotulosDasAbas = abas
+    ? abas.split(",").map((rotulo) => rotulo.trim()).filter(Boolean)
+    : [];
+
+  // Só os elementos: o MDX deixa nós de texto em branco entre uma cerca e outra, e contar
+  // eles faria a validação reprovar conteúdo correto.
+  const paineis = Children.toArray(children).filter((filho) => isValidElement(filho));
+
+  if (rotulosDasAbas.length > 0 && rotulosDasAbas.length !== paineis.length) {
+    throw new Error(
+      `Bloco de código "${arquivo ?? "sem nome"}": ${rotulosDasAbas.length} rótulos em ` +
+        `\`abas\` para ${paineis.length} blocos de código. Os dois precisam bater.`,
+    );
+  }
+
+  const temAbas = rotulosDasAbas.length > 0;
   const ehProva = prova === "true";
   const marca = ehProva
     ? { "data-prova": "", "data-revelar": "", className: " prova-codigo" }
@@ -97,8 +136,15 @@ export default function BlocoCodigo({
         classeLinha="min-h-[var(--alvo-toque)] px-[20px] py-[13px] lg:min-h-0"
         classePainel="flex flex-col"
       >
-        <div aria-hidden="true" className="h-px w-full bg-border" />
-        {corpo}
+        {temAbas ? (
+          // As abas trazem o próprio filete, depois da lista, então não entra outro aqui.
+          <CodigoComAbas arquivo={arquivo} abas={rotulosDasAbas} paineis={paineis} />
+        ) : (
+          <>
+            <div aria-hidden="true" className="h-px w-full bg-border" />
+            {corpo}
+          </>
+        )}
       </AcordeaoMobile>
     </figure>
   );

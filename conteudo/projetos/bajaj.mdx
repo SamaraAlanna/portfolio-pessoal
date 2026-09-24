@@ -34,8 +34,7 @@ Atuo na manutenção do site: incluo novas concessionárias, analiso e corrijo b
 :::::secao{rotulo="LEADS" titulo="Um módulo central para os 106 formulários"}
 O time comercial recebia lead com CPF inválido e sem rastreio de origem. A mesma verificação faltava em quatro lugares ao mesmo tempo: o campo HTML só conferia o tamanho, a máscara formatava sem validar, o servidor confiava no que o front mandava, e o endpoint aceitava envio de bot. Escrevi um módulo PHP central e um JavaScript compartilhado. Como as 77 páginas carregavam o mesmo arquivo, um deploy alcançou os 106 formulários.
 
-::::antes-depois{formato="codigo"}
-:::codigo{arquivo="ANTES"}
+:::codigo{arquivo="validacao.php" abas="Antes, Depois" prova="true"}
 ```html
 <input name="cpf" pattern=".{11,14}" required>
 
@@ -44,9 +43,7 @@ if (cpf.length >= 11) enviarLead(form)
 
 // no servidor: nenhuma verificação
 ```
-:::
 
-:::codigo{arquivo="DEPOIS - validacao.php" destaque="true" prova="true"}
 ```php
 function cpf_valido(string $cpf): bool {
   $cpf = preg_replace("/\D/", "", $cpf);
@@ -56,7 +53,6 @@ function cpf_valido(string $cpf): bool {
 }
 ```
 :::
-::::
 :::::
 
 :::secao{rotulo="CREDENCIAIS" titulo="113 arquivos com a mesma senha escrita dentro"}

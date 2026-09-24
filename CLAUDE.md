@@ -222,8 +222,8 @@ cada um deixando o site buildando.
 3. **Feito.** Moldura nova do case: hero sem imagem nem abertura, ficha em faixa de cinco
    colunas, e o espaçamento vertical do Figma como padding.
 4. **Feito.** Índice lateral derivado do MDX, com âncoras, numeração, scroll-spy e foco.
-5. Blocos novos: código com abas, visualizador de estados, fluxo horizontal, e o `opcoes`
-   reaproveitado como cards de decisão.
+5. **Em andamento.** Blocos novos, um por vez. **Feito: código com abas.** Faltam o
+   visualizador de estados, o fluxo horizontal e o `opcoes` como cards de decisão.
 6. Reescrita do conteúdo dos quatro MDX, incluindo a ficha encurtada e o campo STACK.
 7. Limpeza: blocos órfãos, `docs/modelos-de-case.md`, este documento.
 
@@ -361,10 +361,54 @@ saber a própria posição**, porque o MDX monta um de cada vez sem contexto dos
 Limite conhecido: a ligação é pelo rótulo, então **duas seções com o mesmo rótulo no mesmo
 case recebem o mesmo número e a mesma âncora**.
 
-**O rótulo do índice é o mesmo texto com outro tratamento**, pelo `rotuloParaIndice`: mono
-caixa alta na seção, DM Sans em caixa de frase no índice. **Limite conhecido: sigla vira
-palavra**, então "SEO TÉCNICO" sairia "Seo técnico". Nenhum rótulo de hoje tem sigla, e a
-saída quando tiver não é atributo de override, que foi descartado, e sim exceção na função.
+**A CAIXA ALTA DO RÓTULO É `text-transform`, E A FONTE É CAIXA NORMAL.** Houve uma
+`rotuloParaIndice` que baixava o rótulo para caixa de frase, e ela **quebrava em sigla**:
+"SEO TÉCNICO" virava "Seo técnico". Em 2026-09-24 **a fonte foi invertida em vez de a função
+ganhar exceção**: o rótulo passa a ser escrito em caixa normal no MDX, o `BlocoSecao` sobe
+para maiúscula por CSS, e o índice usa o texto como está.
+
+Ganho que não era o objetivo e vale mais que ele: **leitor de tela deixa de receber texto em
+maiúsculas**, que parte deles soletra letra a letra. Em CSS isso é aparência, e o texto
+anunciado continua sendo a palavra.
+
+**Os rótulos nos MDX ainda estão em caixa alta**, e são reescritos no passo 6. Até lá o
+índice mostra "CONTEXTO" em vez de "Contexto", e isso é o estado esperado entre os passos,
+não um defeito. As âncoras não quebram na transição, porque `ancoraDeRotulo` minúsculiza
+dos dois jeitos.
+
+### O bloco de código com abas
+
+**É o `bloco-codigo` com o atributo `abas`**, e substitui o `antes-depois` com
+`formato="codigo"`. Cada cerca de código vira um painel, e os rótulos saem da lista separada
+por vírgula. O Bajaj já usa.
+
+**SEM JAVASCRIPT, TUDO APARECE EMPILHADO, COM O RÓTULO DE CADA PAINEL VISÍVEL, e nenhum
+papel de ARIA é declarado.** `role="tab"` num elemento que não troca nada seria mentir para
+o leitor de tela, prometendo um widget que não existe. Sem script aquilo é uma lista de
+versões, e a marcação diz isso.
+
+**O interruptor é `useSyncExternalStore`, e não `setState` dentro de efeito.** O padrão
+óbvio para "o JavaScript rodou" é `useState(false)` virando `true` num `useEffect`, e o
+ESLint deste projeto proíbe exatamente isso. Servidor devolve `false`, cliente devolve
+`true`, e a troca acontece depois da hidratação sem efeito nenhum. **O `subscribe` mora fora
+do componente**, senão o React reassina a cada render.
+
+**Ativação segue o foco**, que é o que o WAI-ARIA recomenda quando trocar de painel é
+barato, e aqui é: os painéis já estão renderizados. O `tabindex` é móvel, então uma
+comparação de duas abas custa uma parada de tabulação e não duas.
+
+**A contagem de rótulos precisa bater com a de códigos, e o build quebra quando não bate.**
+Três rótulos com dois códigos deixaria uma aba apontando para painel inexistente, e isso não
+aparece navegando se a aba quebrada não for a primeira.
+
+**A LISTA DE ABAS FICA EM LINHA PRÓPRIA, E NÃO NA BARRA DO NOME DO ARQUIVO**, que é onde o
+Figma a desenha. O cabeçalho do bloco é o `AcordeaoMobile`, que renderiza o próprio rótulo
+duas vezes, uma para o desktop e outra dentro do `summary`. Pôr as abas ali duplicaria os
+`id` e, no mobile, **clicar numa aba fecharia o accordion**, porque o clique chegaria ao
+`summary`.
+
+**A aba ativa é lida do `aria-selected`, e não de uma classe**, pelo mesmo motivo do item do
+índice.
 
 **`scroll-margin-top` NÃO foi acrescentado, e isso responde ao pedido em vez de contrariá-lo.**
 O `html` já tem `scroll-padding-top` de `--altura-nav` mais 12, e ele vale para qualquer
@@ -400,7 +444,8 @@ falsificaria a experiência dela, que aconteceu. O critério vem do próprio
 `bloco-frase` sem uso e sem uso previsto; `bloco-opcoes` sem uso mas **reservado**, porque
 vira os cards de decisão do CRUD; `bloco-paleta` perdeu os formatos padrão e `cartao`, e só
 o `inline` continua invocado; `bloco-imagens` perdeu o `formato="linha"`. O
-`bloco-antes-depois` fica órfão no passo 5, quando o código com abas entrar.
+`bloco-antes-depois` **perdeu o `formato="codigo"` em 2026-09-24**, quando o Bajaj passou a
+usar o código com abas, e continua vivo pelo `formato="numero"`, que o mesmo case usa.
 
 ### Metadata e compartilhamento
 

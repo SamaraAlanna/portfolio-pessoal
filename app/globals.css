@@ -1012,6 +1012,39 @@ body {
 }
 
 /* ---------------------------------------------------------------------------
+   Abas do bloco de código.
+
+   A ABA ATIVA É LIDA DO `aria-selected`, E NÃO DE UMA CLASSE, pelo mesmo motivo do item do
+   índice: o atributo já precisa existir para leitor de tela, e um segundo estado dizendo a
+   mesma coisa é onde os dois divergem com o tempo.
+
+   O fundo da ativa é `--surface`, que sobre o `--surface-2` do bloco dá pouco contraste de
+   propósito: quem carrega o estado é o texto, que sai de `--text-dim` para `--text`. Dois
+   sinais fracos somados leem melhor que um forte, e a pílula não compete com o código.
+
+   Só em ponteiro que faz hover, senão o toque no celular deixa a aba presa no estado depois
+   de trocar de painel.
+   --------------------------------------------------------------------------- */
+
+.aba-codigo {
+  color: var(--text-dim);
+  transition:
+    color var(--dur-rapida) linear,
+    background-color var(--dur-rapida) linear;
+}
+
+.aba-codigo[aria-selected="true"] {
+  background-color: var(--surface);
+  color: var(--text);
+}
+
+@media (hover: hover) {
+  .aba-codigo:hover {
+    color: var(--text);
+  }
+}
+
+/* ---------------------------------------------------------------------------
    Índice lateral do case.
 
    O ITEM ATIVO TROCA TRÊS COISAS: o filete da esquerda vai para accent, o número sai de

@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import AcordeaoMobile from "@/components/ui/acordeao-mobile";
 import type { SecaoDoCase } from "@/lib/conteudo";
-import { rotuloParaIndice } from "@/lib/texto";
 
 /**
  * Índice lateral do case.
@@ -106,7 +105,7 @@ export default function IndiceCase({ secoes }: { secoes: SecaoDoCase[] }) {
                   {secao.numero}
                 </span>
                 <span className="text-legenda text-text-muted">
-                  {rotuloParaIndice(secao.rotulo)}
+                  {secao.rotulo}
                 </span>
               </a>
             </li>

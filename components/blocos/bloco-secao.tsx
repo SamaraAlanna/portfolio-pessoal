@@ -31,6 +31,11 @@ import type { ReactNode } from "react";
  * O NÚMERO NÃO MUDA NÍVEL DE CABEÇALHO, só entra no texto do rótulo. A seção continua
  * sendo um `h2` por página, seja no rótulo, seja no título.
  *
+ * A CAIXA ALTA É `text-transform`, E NÃO O TEXTO DO MDX. O rótulo é escrito em caixa normal
+ * no conteúdo, e quem sobe é o CSS. Isso serve a três coisas de uma vez: o índice usa o
+ * mesmo texto sem converter nada, sigla não é destruída por uma função de caixa, e **leitor
+ * de tela recebe a palavra em vez de maiúsculas**, que parte deles soletra letra a letra.
+ *
  * A aparência é a mesma nos dois casos.
  */
 function RotuloDaSecao({
@@ -47,7 +52,7 @@ function RotuloDaSecao({
   return (
     <Elemento
       id={id}
-      className="font-mono text-rotulo-secao font-medium whitespace-nowrap text-accent-rosa"
+      className="font-mono text-rotulo-secao font-medium whitespace-nowrap text-accent-rosa uppercase"
     >
       {children}
     </Elemento>
