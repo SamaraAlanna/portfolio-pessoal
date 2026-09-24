@@ -5,7 +5,36 @@ import type { NextConfig } from "next";
  */
 const UM_ANO = 31536000;
 
+/**
+ * Cases que saíram do site em 2026-09-23 e cujas URLs precisam continuar respondendo.
+ *
+ * Eles estiveram publicados, então podem ter sido compartilhados, indexados ou salvos.
+ * **Deixar a URL virar 404 joga fora quem chega por um link antigo**, e a listagem é o
+ * lugar certo para essa pessoa cair: é onde ela descobre o que existe hoje.
+ */
+const CASES_REMOVIDOS = ["tech-girls", "miriam-araujo", "garage-stivalday"];
+
 const nextConfig: NextConfig = {
+  /**
+   * Redirecionamento dos cases removidos.
+   *
+   * PERMANENTE, E ISSO É DECISÃO. O 308 diz ao buscador para transferir o histórico da URL
+   * antiga para a nova e parar de visitar a velha, que é o correto porque estes cases não
+   * voltam. Um 307 temporário manteria as três URLs sendo rastreadas para sempre,
+   * esperando um retorno que não vem.
+   *
+   * Não há risco do laço que o www cria, registrado no CLAUDE.md: ali o conflito é entre
+   * dois lugares redirecionando o mesmo domínio, e aqui são caminhos fixos para um destino
+   * que não redireciona de volta.
+   */
+  async redirects() {
+    return CASES_REMOVIDOS.map((slug) => ({
+      source: `/projetos/${slug}`,
+      destination: "/projetos",
+      permanent: true,
+    }));
+  },
+
   /**
    * Cabeçalhos de segurança.
    *

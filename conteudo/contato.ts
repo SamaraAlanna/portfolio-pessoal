@@ -42,7 +42,6 @@ export const canais: Canal[] = [
  */
 export const assuntos: string[] = [
   "Projeto de site",
-  "Identidade visual",
   "Vaga ou processo seletivo",
   "Parceria",
   "Outro assunto",

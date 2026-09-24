@@ -112,6 +112,18 @@ sugerida, para a próxima sessão saber de onde continuar sem reabrir tudo.
   ciano, âmbar, âmbar, rosa, com os dois rosas nas pontas. **O Figma foi reordenado junto,
   nas quatro versões**, então os dois lados batem. A ordem vive em `conteudo/stack.ts`, com
   o critério comentado lá: mover um grupo não reordena uma lista, remonta as duplas.
+- **A listagem de Projetos perdeu o rótulo e a frase de anonimização em 2026-09-23.** O
+  texto de apoio virou "Projetos explicados de forma dinâmica e intuitiva para você conhecer
+  a qualidade do meu trabalho", e a descrição do metadata foi junto, porque ela repetia a
+  metade antiga do apoio. **A frase que saiu era a única do site que declarava a política**,
+  que cliente sob acordo aparece anonimizado, e ela era o único aviso que a pessoa recebia
+  **antes** de abrir um case. Saiu por decisão consciente.
+- **Dois cases são anonimizados, e só um explica isso:** o Assistente de IA e o Remake do
+  CRUD de permissões, os dois com "Produto interno" ou "Portal administrativo interno da
+  TecSinapse" na ficha. O Assistente tem duas frases visíveis sobre confidencialidade, uma
+  no contexto e uma citação neutra no fim; **o CRUD não tem nenhuma**. Se a explicação
+  precisar voltar, a ficha de cada case anonimizado é o lugar, porque é onde a ausência do
+  nome é notada e porque ela já carrega rótulo por linha.
 - **A Stack perdeu o rótulo e a explicação da lógica de cor em 2026-09-23.** O texto de
   apoio virou "Todas as tecnologias e ferramentas que eu consigo aplicar com autonomia", e
   o parágrafo que explicava o significado das camadas saiu. **Foi decisão consciente, com a
@@ -199,6 +211,76 @@ sugerida, para a próxima sessão saber de onde continuar sem reabrir tudo.
 - **Falta para publicar só o passo 10**, que é registrar o domínio, conectar o repositório
   e subir na Vercel.
 - Próximo passo é o 10, deploy na Vercel e domínio.
+
+### Redesenho dos cases, em andamento desde 2026-09-23
+
+**Está no passo 1 de 7.** O plano inteiro foi aprovado e os passos são revisáveis um a um,
+cada um deixando o site buildando.
+
+1. **Feito.** Remoção dos três cases de identidade visual, redirects e limpeza das menções.
+2. Tags e filtro novos: UX/UI Design, Front-End, Back-End e Full Stack.
+3. Moldura nova do case: hero sem imagem, ficha em linha de cinco colunas, imagem de
+   abertura opcional.
+4. Índice lateral derivado do MDX, com âncoras, numeração e scroll-spy.
+5. Blocos novos: código com abas, visualizador de estados, fluxo horizontal, e o `opcoes`
+   reaproveitado como cards de decisão.
+6. Reescrita do conteúdo dos quatro MDX, incluindo a ficha encurtada e o campo STACK.
+7. Limpeza: blocos órfãos, `docs/modelos-de-case.md`, este documento.
+
+**Os frames do Figma** são `434:797` Bajaj, `443:797` VOGE, `445:1002` CRUD e `450:797`
+Assistente. Só existe desktop escuro: o tema claro sai pelas variáveis e o mobile segue as
+regras deste documento.
+
+**Decisões já tomadas, que não devem ser reabertas:**
+
+- **A cor da tag é no hover, e não no estado parado.** A tag continua cinza parada, e no
+  hover do card cada chip acende na cor da própria camada: UX/UI em rosa, Front-End em
+  lavanda, Back-End em ciano. Isso preserva a decisão de 2026-09-14 em vez de substituí-la.
+- **Full Stack não é tag do frontmatter**, é a condição de o case declarar Front-End e
+  Back-End. Os filtros Front-End e Back-End incluem esses cases; o filtro Full Stack mostra
+  só eles. No card as duas viram um chip só.
+- **O chip Full Stack é neutro com dois pontinhos antes do texto**, um lavanda e um ciano,
+  no mesmo padrão do marcador de camada dos cards da Stack. No hover o texto acende como os
+  outros. **Nenhum token novo, e nenhum dos quatro accents é reaproveitado:** âmbar
+  significa ressalva e está ao lado do badge "Em construção" no mesmo card.
+- **O índice sempre usa o rótulo da seção, e não existe atributo de override.** O Figma
+  chegou a ter "Problema" no índice e "BRIEFING" na seção do Assistente, e foi corrigido
+  para "Briefing" nos dois lados.
+- **O `tipo` do frontmatter não é vestigial e fica.** Ele decide o accent do case, ciano em
+  engenharia e rosa em ux-produto, e índice, rótulos e abas dependem dele.
+- **As medidas do Figma não viram altura fixa.** O hero mede 205px no arquivo, e isso é
+  medida, não regra: bloco com texto dentro nunca ganha altura fixa.
+- **No scroll-spy o item ativo recebe `aria-current="location"`**, além do atributo que o
+  CSS usa para pintar.
+- **No mobile o índice vira o `details` fechado**, reaproveitando o `AcordeaoMobile`, com
+  "NESTA PÁGINA" no cabeçalho. Sticky foi descartado: uma barra fixa embaixo da nav fixa
+  come uns 110px de uma tela de 667.
+- **A âncora é calculada por uma função só, em `lib/texto.ts`**, chamada pelo extrator do
+  índice e pelo `bloco-secao`. Duas implementações divergiriam em silêncio e quebrariam os
+  links sem quebrar o build.
+
+**O que o passo 1 removeu:** os MDX de `tech-girls`, `miriam-araujo` e `garage-stivalday`,
+as três capas e **21 imagens** de `public/imagens/cases/`. As três URLs redirecionam para
+`/projetos` com **308 permanente**, declarado em `next.config.ts`: elas estiveram no ar e
+podem ter sido compartilhadas ou indexadas, e 404 joga fora quem chega por link antigo.
+
+**A home ficou com três cards e o desenho pede quatro.** O Míriam tinha `ordemHome: 3`. A
+grade é um destaque ao lado de três empilhados, e o destaque não tem altura própria: ele
+acompanha a coluna do lado. **Promover um projeto a `ordemHome: 3` devolve a composição, e
+qual promover é curadoria.** Está pendente.
+
+**A menção a identidade visual saiu de uns lugares e ficou em outros, por critério.** Saiu
+de onde era promessa que a página não cumpre mais: a coluna Design da home, a descrição do
+site inteiro, a pílula do filtro, o chip da Stack e o assunto do formulário. **Ficou onde é
+registro histórico:** o marcador do BORDA e o da Tech Girls, no Sobre. Apagar de lá
+falsificaria a experiência dela, que aconteceu. O critério vem do próprio
+`docs/modelos-de-case.md`: nunca prometer o que a página não mostra.
+
+**Blocos que ficaram órfãos, e o que fazer com cada um** (decisão no passo 7):
+`bloco-frase` sem uso e sem uso previsto; `bloco-opcoes` sem uso mas **reservado**, porque
+vira os cards de decisão do CRUD; `bloco-paleta` perdeu os formatos padrão e `cartao`, e só
+o `inline` continua invocado; `bloco-imagens` perdeu o `formato="linha"`. O
+`bloco-antes-depois` fica órfão no passo 5, quando o código com abas entrar.
 
 ### Metadata e compartilhamento
 

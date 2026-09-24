@@ -156,7 +156,14 @@ export function lerProjeto(slug: string): Projeto | undefined {
  * Projetos que aparecem na home, na ordem definida por ordemHome.
  *
  * A seleção é explícita e não "os primeiros da listagem", porque no Figma a home mostra
- * VOGE, Bajaj, Spirito e Míriam, que não são os quatro primeiros da grade de projetos.
+ * uma escolha própria, que não são os primeiros da grade de projetos.
+ *
+ * **HOJE SOBRARAM TRÊS, E O DESENHO PEDE QUATRO.** O Míriam Araújo tinha `ordemHome: 3` e
+ * saiu em 2026-09-23 com os cases de identidade visual. A grade da home é um card de
+ * destaque ao lado de três empilhados, e o destaque não tem altura própria: ele acompanha
+ * a coluna do lado. Com dois empilhados ele encolhe junto e a composição do Figma se
+ * perde. Promover um projeto a `ordemHome: 3` devolve a grade, e qual promover é escolha
+ * de curadoria.
  */
 export function lerProjetosDaHome(): Projeto[] {
   return lerProjetos()
@@ -167,9 +174,12 @@ export function lerProjetosDaHome(): Projeto[] {
 /**
  * O projeto seguinte na ordem da listagem, circulando no fim.
  *
- * Confirmado no Figma nos quatro cases lidos: Bajaj aponta para VOGE, CRUD para
- * Bilheteria, Spirito para CRUD e Tech Girls volta para o primeiro da lista. É regra de
- * ordem, então não precisa de campo no frontmatter.
+ * É regra de ordem, confirmada no Figma, então não precisa de campo no frontmatter: cada
+ * case aponta para o seguinte em `ordem` e o último volta para o primeiro.
+ *
+ * **Ela se conserta sozinha quando um case sai**, e é por isso que é regra e não campo:
+ * a remoção dos três cases de identidade visual em 2026-09-23 não deixou nenhum ponteiro
+ * quebrado. Com destino no frontmatter, três cases teriam passado a apontar para o vazio.
  */
 export function proximoProjeto(slug: string): Projeto | undefined {
   const projetos = lerProjetos();

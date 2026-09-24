@@ -27,7 +27,6 @@ const design = [
   "Wireframe e protótipo navegável no Figma",
   "Design system e design tokens",
   "Teste de usabilidade e acessibilidade WCAG",
-  "Branding e identidade visual",
   "Claude, ChatGPT e Gemini no processo de design",
 ];
 

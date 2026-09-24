@@ -37,7 +37,7 @@ export const metadata: Metadata = {
   ...metadataDaPagina({
     titulo: "Samara Alanna · UX/UI Designer e Desenvolvedora",
     descricao:
-      "Portfólio de Samara Alanna. Design de interface, identidade visual e desenvolvimento full stack.",
+      "Portfólio de Samara Alanna. Design de interface, UX/UI e desenvolvimento full stack.",
     caminho: "/",
   }),
 };

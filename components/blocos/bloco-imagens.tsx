@@ -7,9 +7,9 @@ import TrilhoRolavel from "@/components/ui/trilho-rolavel";
  * Cada imagem vai num parágrafo próprio no conteúdo, separada por linha em branco:
  *
  *   :::imagens{colunas="2"}
- *   ![Marca principal](/imagens/cases/tech-girls-logo-1.webp)
+ *   ![Estado vazio](/imagens/cases/crud-estado-vazio.webp)
  *
- *   ![Aplicação em camiseta](/imagens/cases/tech-girls-logo-2.webp)
+ *   ![Estado de carregamento](/imagens/cases/crud-estado-loading.webp)
  *   :::
  *
  * Sem a linha em branco o Markdown junta tudo num parágrafo só e o trilho passa a ter um
@@ -19,14 +19,14 @@ import TrilhoRolavel from "@/components/ui/trilho-rolavel";
  *
  * - padrão: grade de colunas iguais, com o número em `colunas`.
  * - formato="linha": fileira de altura igual, com a largura de cada imagem saindo da
- *   própria proporção. É o que a seção de marca do Míriam precisa, onde um retrato de 357
- *   e uma paisagem de 831 dividem a mesma linha. Em colunas iguais o retrato viraria quase
- *   o dobro da altura da paisagem e a linha desmontaria.
+ *   própria proporção, para um retrato e uma paisagem dividirem a mesma linha sem o
+ *   retrato virar quase o dobro da altura da paisagem.
  *
- *   A altura da fileira é fluida e limitada, calibrada pela proporção do Figma, onde a
- *   linha tem 536 de altura numa faixa de 1200. No mobile a fileira empilha, e não vira
- *   carrossel, porque as duas imagens dela são a mesma marca vista de dois jeitos:
- *   separar uma da outra por rolagem desfaz a comparação.
+ *   **Sem uso desde 2026-09-23**, quando os cases de identidade visual saíram. A altura da
+ *   fileira é fluida e limitada, calibrada pela proporção do Figma, onde a linha tinha 536
+ *   de altura numa faixa de 1200. No mobile ela empilha, e não vira carrossel, porque as
+ *   imagens de uma fileira assim são a mesma coisa vista de dois jeitos, e separar uma da
+ *   outra por rolagem desfaz a comparação.
  *
  * MOBILE: com duas ou três colunas a grade vira carrossel horizontal, que é a regra das
  * variações de logo do Figma. Com uma coluna não vira: ali a imagem é única e ocupa a

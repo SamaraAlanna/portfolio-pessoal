@@ -12,9 +12,12 @@ import TrilhoRolavel from "@/components/ui/trilho-rolavel";
  *
  * TRÊS DESENHOS, pelo atributo formato:
  *
- * - padrão: amostra nua, arredondada, com nome e hex embaixo em mono. É o do Tech Girls.
+ * - padrão: amostra nua, arredondada, com nome e hex embaixo em mono.
  * - formato="cartao": card com borda, amostra de 120px no topo e bloco de informação
- *   embaixo, com o nome em DM Sans e o hex em mono. É o do Míriam e do StivalDay.
+ *   embaixo, com o nome em DM Sans e o hex em mono.
+ *
+ *   Os dois primeiros formatos ficaram sem uso em 2026-09-23, quando os três cases de
+ *   identidade visual saíram. Só o `inline` continua invocado, pelo Assistente.
  * - formato="inline": amostra de 14px ao lado do hex, numa fileira. É a mini-paleta que
  *   o Assistente usa dentro de cada painel da comparação de cor, onde a paleta é legenda
  *   do mockup e não o conteúdo principal da seção.

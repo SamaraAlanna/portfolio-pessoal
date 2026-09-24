@@ -17,13 +17,17 @@ import SecaoProximo from "@/app/projetos/[slug]/_secoes/secao-proximo";
 /**
  * Página de case.
  *
- * É UMA página, não três. Os três modelos de case, identidade visual, ux-produto e
- * engenharia, não diferem em estrutura de página: diferem nos rótulos e na ordem das
- * seções, e isso vive no MDX. A moldura aqui é sempre a mesma:
+ * É UMA página, não uma por modelo. Os modelos de case não diferem em estrutura de
+ * página: diferem nos rótulos e na ordem das seções, e isso vive no MDX. A moldura aqui é
+ * sempre a mesma:
  *
  *   nav → migalha → cabeçalho → ficha técnica → [hero] → corpo → próximo projeto → footer
  *
- * O hero é opcional de verdade: o CRUD e o Tech Girls têm imagem no topo, o Bajaj não.
+ * **O modelo identidade visual saiu em 2026-09-23**, junto com os três cases que o usavam,
+ * e sobraram ux-produto e engenharia. O `tipo` do frontmatter continua valendo: ele decide
+ * o accent do case, ciano em engenharia e rosa em ux-produto.
+ *
+ * O hero é opcional de verdade: o CRUD tem imagem no topo, o Bajaj não.
  */
 export function generateStaticParams() {
   return lerProjetos().map((projeto) => ({ slug: projeto.slug }));

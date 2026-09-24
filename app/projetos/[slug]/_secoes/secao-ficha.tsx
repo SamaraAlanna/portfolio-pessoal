@@ -8,8 +8,8 @@ import type { CampoDaFicha } from "@/lib/conteudo";
  * texto livre onde dá para errar a sintaxe.
  *
  * Os rótulos mudam por modelo de case, então cada campo carrega o próprio rótulo. No
- * Bajaj são PAPEL, CLIENTE, PERÍODO, STACK e TIME; no CRUD e no Tech Girls o segundo e o
- * quarto viram CONTEXTO e ENTREGAS.
+ * Bajaj e no VOGE são PAPEL, CLIENTE, PERÍODO, STACK e TIME; no CRUD e no Assistente o
+ * segundo e o quarto viram CONTEXTO e ENTREGAS.
  *
  * No mobile o Figma quebra em duas colunas, e não em cinco nem em uma.
  *

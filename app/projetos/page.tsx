@@ -8,7 +8,7 @@ import SecaoGrade from "@/app/projetos/_secoes/secao-grade";
 export const metadata: Metadata = metadataDaPagina({
   titulo: "Projetos",
   descricao:
-    "Cada projeto traz o problema, a decisão de design, a decisão técnica e o que ficou de fora.",
+    "Projetos explicados de forma dinâmica e intuitiva para você conhecer a qualidade do meu trabalho.",
   caminho: "/projetos",
 });
 
@@ -17,10 +17,11 @@ export default function PaginaProjetos() {
 
   return (
     <>
-      <CabecalhoPagina rotulo="PROJETOS" titulo="Meus melhores projetos">
+      {/* Sem rótulo acima do título, como no Contato, no Sobre e na Stack. */}
+      <CabecalhoPagina titulo="Meus melhores projetos">
         <p>
-          Cada projeto traz o problema, a decisão de design, a decisão técnica e o que
-          ficou de fora. Clientes sob acordo de confidencialidade aparecem anonimizados.
+          Projetos explicados de forma dinâmica e intuitiva para você conhecer a
+          qualidade do meu trabalho.
         </p>
       </CabecalhoPagina>
       <SecaoGrade tagsPorProjeto={projetos.map((projeto) => [...projeto.tags])}>

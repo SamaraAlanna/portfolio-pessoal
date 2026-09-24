@@ -54,7 +54,6 @@ export const grupos: GrupoDaStack[] = [
       "Heurísticas de Nielsen",
       "Acessibilidade WCAG",
       "Arquitetura da informação",
-      "Identidade visual",
       "Adobe Illustrator",
       "Adobe Photoshop",
     ],
