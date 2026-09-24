@@ -38,7 +38,9 @@ export default function FocoNoHero() {
     function aoFocar() {
       // Rolagem quase no topo significa hero quase todo à mostra: não vale o salto.
       if (window.scrollY < 8) return;
-      window.scrollTo({ top: 0, behavior: "auto" });
+      // "instant", e não "auto": com a rolagem suave ligada no html, "auto" herda dela e
+      // esta volta ao topo viraria uma animação no meio de um Shift+Tab.
+      window.scrollTo({ top: 0, behavior: "instant" });
     }
 
     hero.addEventListener("focusin", aoFocar);

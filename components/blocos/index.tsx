@@ -11,6 +11,7 @@ import BlocoDestaque from "@/components/blocos/bloco-destaque";
 import BlocoDuo from "@/components/blocos/bloco-duo";
 import BlocoFrase from "@/components/blocos/bloco-frase";
 import ImagemMdx from "@/components/ui/imagem-mdx";
+import type { SecaoDoCase } from "@/lib/conteudo";
 
 /**
  * Mapa das directives para componentes.
@@ -38,3 +39,35 @@ export const blocos = {
   // imagens. Uma página de case com dez capturas sem otimização fica pesada.
   img: ImagemMdx,
 };
+
+/**
+ * O mesmo mapa, com as seções sabendo o número e a âncora delas.
+ *
+ * POR QUE ISSO É UM MAPA POR PÁGINA, E NÃO UM ESTADO GLOBAL. O `BlocoSecao` não tem como
+ * saber a própria posição: ele é montado pelo MDX, um de cada vez, sem contexto dos
+ * irmãos. Quem sabe a ordem é quem leu o arquivo. Passar por `components` mantém a
+ * informação fluindo de fora para dentro, sem contexto React nem contador de módulo, que
+ * é a solução que parece mais simples e vaza entre renderizações do servidor.
+ *
+ * A LIGAÇÃO É PELO RÓTULO, e isso tem uma consequência: **duas seções com o mesmo rótulo
+ * no mesmo case recebem o mesmo número e a mesma âncora**. O índice mostraria duas linhas
+ * iguais e o link levaria sempre à primeira. Não acontece hoje e não é erro de build, mas
+ * é o limite conhecido deste desenho.
+ */
+export function blocosComIndice(secoes: SecaoDoCase[]) {
+  const porRotulo = new Map(secoes.map((secao) => [secao.rotulo, secao]));
+
+  return {
+    ...blocos,
+    secao: function SecaoNumerada(props: { rotulo?: string; titulo?: string; children?: React.ReactNode }) {
+      const encontrada = props.rotulo ? porRotulo.get(props.rotulo) : undefined;
+      return (
+        <BlocoSecao
+          {...props}
+          numero={encontrada?.numero}
+          ancora={encontrada?.ancora}
+        />
+      );
+    },
+  };
+}

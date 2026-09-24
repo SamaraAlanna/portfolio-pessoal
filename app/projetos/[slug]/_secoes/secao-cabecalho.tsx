@@ -14,10 +14,11 @@ import type { Projeto } from "@/lib/conteudo";
  * que era. Ela continua sendo `nav` com nome acessível: caixa alta é estilo, e trocar a
  * semântica junto seria perder navegação por causa de tipografia.
  *
- * O TAMANHO VEM DO TOKEN, O TRACKING VEM DO FIGMA. O `--tipo-rotulo-secao` já é 11px, que
- * é o valor do arquivo, mas o tracking de lá é 0,08em e nenhum token do projeto tem esse
- * valor: os vizinhos são 0,06 e 0,1. **Criar um token para 0,22px de diferença custaria
- * mais do que resolve**, então o tamanho sai do sistema e o tracking fica escrito aqui.
+ * TAMANHO E TRACKING VÊM DO MESMO TOKEN, o `text-rotulo-secao`, que é 11px com 0,1em. O
+ * Figma pede 0,08em e **os dois tokens vizinhos estão à mesma distância dele**, 0,06 e 0,1,
+ * então proximidade não desempata. O desempate é de família: este é um rótulo em mono e
+ * caixa alta de 11px, igual aos rótulos de seção, e usar o par inteiro deixa os dois
+ * andarem juntos se o sistema mudar. A diferença para o arquivo é de 0,22px.
  *
  * A ABERTURA SAIU DAQUI, E A DECISÃO DE ONDE ELA VAI É DE CONTEÚDO. O Figma novo não tem
  * parágrafo nenhum no hero: quem abre o assunto passou a ser o texto da primeira frente. O
@@ -37,7 +38,7 @@ export default function SecaoCabecalho({ projeto }: { projeto: Projeto }) {
       <nav aria-label="Você está aqui">
         <Link
           href="/projetos"
-          className="link-realce alvo-toque-vertical inline-flex items-center gap-[10px] font-mono text-rotulo-secao font-medium tracking-[0.08em] text-text-dim"
+          className="link-realce alvo-toque-vertical inline-flex items-center gap-[10px] font-mono text-rotulo-secao font-medium text-text-dim"
         >
           <span aria-hidden="true">&larr;</span>
           TODOS OS PROJETOS

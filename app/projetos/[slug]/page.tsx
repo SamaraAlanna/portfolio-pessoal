@@ -7,8 +7,9 @@ import { MDXRemote } from "next-mdx-remote/rsc";
 import remarkDirective from "remark-directive";
 import { directivasParaComponentes } from "@/lib/mdx";
 import { dimensaoDaImagem } from "@/lib/imagens";
-import { blocos } from "@/components/blocos";
-import { lerProjeto, lerProjetos, proximoProjeto } from "@/lib/conteudo";
+import { blocosComIndice } from "@/components/blocos";
+import IndiceCase from "@/components/ui/indice-case";
+import { lerProjeto, lerProjetos, lerSecoes, proximoProjeto } from "@/lib/conteudo";
 import SecaoCabecalho from "@/app/projetos/[slug]/_secoes/secao-cabecalho";
 import SecaoFicha from "@/app/projetos/[slug]/_secoes/secao-ficha";
 import SecaoEmConstrucao from "@/app/projetos/[slug]/_secoes/secao-em-construcao";
@@ -68,6 +69,7 @@ export default async function PaginaCase({ params }: PageProps<"/projetos/[slug]
   const proximo = proximoProjeto(projeto.slug);
   const emConstrucao = projeto.estado === "em-construcao";
   const hero = projeto.heroCase ? dimensaoDaImagem(projeto.heroCase) : null;
+  const secoes = lerSecoes(projeto.corpo);
 
   return (
     <article>
@@ -102,16 +104,29 @@ export default async function PaginaCase({ params }: PageProps<"/projetos/[slug]
             </ViewTransition>
           ) : null}
 
-          <div className="flex flex-col gap-[72px] faixa pt-[104px] pb-[80px]">
-            <MDXRemote
-              source={projeto.corpo}
-              components={blocos}
-              options={{
-                mdxOptions: {
-                  remarkPlugins: [remarkDirective, directivasParaComponentes],
-                },
-              }}
-            />
+          {/* Duas colunas no desktop: o índice fixo de 220 e as frentes de 900, com 80 de
+              intervalo, que é o que o Figma mostra dentro da faixa de 1200. No mobile vira
+              coluna única e o índice, que ali é um `details` fechado, fica antes do corpo.
+
+              O `sticky` do índice precisa de um irmão alto para ter onde deslizar, e é a
+              própria grade que faz esse papel: ele gruda enquanto as frentes rolam e solta
+              no fim do corpo. O topo é a nav mais o mesmo respiro das âncoras. */}
+          <div className="grid grid-cols-1 gap-[40px] faixa pt-[104px] pb-[80px] lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-x-[80px]">
+            <div className="lg:sticky lg:top-[calc(var(--altura-nav)+24px)] lg:self-start">
+              <IndiceCase secoes={secoes} />
+            </div>
+
+            <div className="flex flex-col gap-[72px]">
+              <MDXRemote
+                source={projeto.corpo}
+                components={blocosComIndice(secoes)}
+                options={{
+                  mdxOptions: {
+                    remarkPlugins: [remarkDirective, directivasParaComponentes],
+                  },
+                }}
+              />
+            </div>
           </div>
         </>
       )}

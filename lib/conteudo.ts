@@ -1,4 +1,5 @@
 import { readFileSync, readdirSync } from "node:fs";
+import { ancoraDeRotulo } from "@/lib/texto";
 import { join } from "node:path";
 
 /**
@@ -45,6 +46,51 @@ export type Projeto = {
   heroCase?: string;
   corpo: string;
 };
+
+/** Uma frente do case, como o índice lateral a enxerga. */
+export type SecaoDoCase = {
+  /** Posição, com zero à esquerda: "01", "02". */
+  numero: string;
+  /** O rótulo como está escrito no MDX, em caixa alta. */
+  rotulo: string;
+  /** Destino da âncora, derivado do rótulo pela função de `lib/texto.ts`. */
+  ancora: string;
+};
+
+/**
+ * As seções de um case, lidas do próprio corpo em MDX.
+ *
+ * NÃO EXISTE LISTA NO FRONTMATTER, e é decisão. Um índice declarado à mão sai de sincronia
+ * na primeira seção renomeada ou reordenada, **e sai em silêncio**: o índice continua
+ * montando, só apontando para o lugar errado. Derivar do corpo faz as duas coisas não
+ * poderem divergir.
+ *
+ * A CONTAGEM DE DOIS-PONTOS VARIA, de três a cinco, porque o bloco de fora precisa de mais
+ * que o de dentro. Por isso o `:{3,}` em vez de `:::` literal: uma seção que ganhe um bloco
+ * aninhado passa a ter quatro e sumiria do índice sem erro nenhum.
+ *
+ * Seção sem rótulo não entra. Ela existe, o `bloco-secao` aceita, mas sem rótulo não há o
+ * que escrever no índice nem de onde tirar âncora.
+ */
+export function lerSecoes(corpo: string): SecaoDoCase[] {
+  const encontradas: SecaoDoCase[] = [];
+
+  for (const linha of corpo.split("\n")) {
+    const abertura = /^:{3,}secao\{(.*)\}\s*$/.exec(linha);
+    if (!abertura) continue;
+
+    const rotulo = /rotulo="([^"]*)"/.exec(abertura[1])?.[1]?.trim();
+    if (!rotulo) continue;
+
+    encontradas.push({
+      numero: String(encontradas.length + 1).padStart(2, "0"),
+      rotulo,
+      ancora: ancoraDeRotulo(rotulo),
+    });
+  }
+
+  return encontradas;
+}
 
 const PASTA = join(process.cwd(), "conteudo", "projetos");
 

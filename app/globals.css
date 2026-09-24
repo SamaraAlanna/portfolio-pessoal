@@ -1012,6 +1012,66 @@ body {
 }
 
 /* ---------------------------------------------------------------------------
+   Índice lateral do case.
+
+   O ITEM ATIVO TROCA TRÊS COISAS: o filete da esquerda vai para accent, o número sai de
+   `--text-dim` para accent e o rótulo sai de `--text-muted` regular para `--text` medium.
+   São três porque o filete sozinho é fino demais para carregar o estado numa coluna com
+   quatro itens parecidos.
+
+   QUEM DIZ QUAL É O ATIVO É O `aria-current="location"`, E NÃO UMA CLASSE. O atributo já
+   precisa existir para leitor de tela, então usar ele como seletor evita um segundo estado
+   dizendo a mesma coisa, que é onde os dois divergem com o tempo.
+
+   NÃO EXISTE `scroll-margin-top` AQUI, E ISSO É DE PROPÓSITO. O `html` já tem
+   `scroll-padding-top` de `--altura-nav` mais 12, e ele vale para qualquer âncora da
+   página. **Somar os dois desceria o título o dobro da nav**, deixando um buraco no topo a
+   cada clique do índice.
+
+   A ROLAGEM SUAVE VIVE NO `html`, ATRÁS DE MOVIMENTO REDUZIDO. Quem pediu menos movimento
+   recebe o salto instantâneo, que é o comportamento padrão do navegador.
+   --------------------------------------------------------------------------- */
+
+.item-indice {
+  transition:
+    color var(--dur-rapida) linear,
+    border-color var(--dur-rapida) linear;
+}
+
+.item-indice[aria-current="location"] {
+  border-color: var(--accent-rosa);
+}
+
+.item-indice[aria-current="location"] > :first-child {
+  color: var(--accent-rosa);
+}
+
+.item-indice[aria-current="location"] > :last-child {
+  color: var(--text);
+  font-weight: 500;
+}
+
+@media (hover: hover) {
+  .item-indice:hover > :last-child {
+    color: var(--text);
+  }
+}
+
+/* A seção recebe foco por código quando alguém clica no índice, e é `tabIndex={-1}`. O
+   anel do projeto vale aqui: ele é o sinal de que o foco mudou de lugar, que é justamente
+   o que o clique no índice faz. */
+.secao-de-case:focus-visible {
+  outline: var(--foco-espessura) solid var(--foco);
+  outline-offset: var(--foco-folga);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* ---------------------------------------------------------------------------
    Pílula do filtro da listagem.
 
    A ATIVA SE PINTA NA COR DA PRÓPRIA CAMADA desde 2026-09-23, pelo mesmo `--cor-camada` do

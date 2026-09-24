@@ -221,7 +221,7 @@ cada um deixando o site buildando.
 2. **Feito.** Tags e filtro novos, chip Full Stack derivado e cor por camada no hover.
 3. **Feito.** Moldura nova do case: hero sem imagem nem abertura, ficha em faixa de cinco
    colunas, e o espaçamento vertical do Figma como padding.
-4. Índice lateral derivado do MDX, com âncoras, numeração e scroll-spy.
+4. **Feito.** Índice lateral derivado do MDX, com âncoras, numeração, scroll-spy e foco.
 5. Blocos novos: código com abas, visualizador de estados, fluxo horizontal, e o `opcoes`
    reaproveitado como cards de decisão.
 6. Reescrita do conteúdo dos quatro MDX, incluindo a ficha encurtada e o campo STACK.
@@ -339,8 +339,55 @@ vira a primeira frente ou some. **O texto existe no dado e não aparece na tela*
 estado correto entre os dois passos, e não um defeito a corrigir.
 
 **A hierarquia de títulos já está certa e continua:** o título do case é o `h1` e cada seção
-é `h2`, pelo `bloco-secao`. A numeração que chega no passo 4 entra no rótulo, e não muda
-nível nenhum.
+é `h2`, pelo `bloco-secao`. A numeração entrou no rótulo e não mudou nível nenhum.
+
+### O passo 4, e o que sustenta o índice
+
+**A lista vem do corpo em MDX, pelo `lerSecoes`.** Índice declarado à mão sai de sincronia
+na primeira seção renomeada ou reordenada, **e sai em silêncio**: continua montando, só
+apontando para o lugar errado.
+
+**O regex é `:{3,}secao`, e não `:::secao`.** A contagem de dois-pontos varia de três a
+cinco, porque o bloco de fora precisa de mais que o de dentro, e uma seção que ganhasse um
+bloco aninhado sumiria do índice sem erro nenhum.
+
+**A âncora sai de `ancoraDeRotulo`, em `lib/texto.ts`, e é a única fonte.** O índice e o
+`bloco-secao` calculam o mesmo valor em arquivos diferentes; duas implementações
+divergiriam e quebrariam todos os links **sem quebrar o build**.
+
+**O número é injetado, e não escrito no MDX.** Ele vem do `blocosComIndice`, um mapa de
+componentes por página que fecha sobre as seções já lidas. **O `BlocoSecao` não tem como
+saber a própria posição**, porque o MDX monta um de cada vez sem contexto dos irmãos.
+Limite conhecido: a ligação é pelo rótulo, então **duas seções com o mesmo rótulo no mesmo
+case recebem o mesmo número e a mesma âncora**.
+
+**O rótulo do índice é o mesmo texto com outro tratamento**, pelo `rotuloParaIndice`: mono
+caixa alta na seção, DM Sans em caixa de frase no índice. **Limite conhecido: sigla vira
+palavra**, então "SEO TÉCNICO" sairia "Seo técnico". Nenhum rótulo de hoje tem sigla, e a
+saída quando tiver não é atributo de override, que foi descartado, e sim exceção na função.
+
+**`scroll-margin-top` NÃO foi acrescentado, e isso responde ao pedido em vez de contrariá-lo.**
+O `html` já tem `scroll-padding-top` de `--altura-nav` mais 12, e ele vale para qualquer
+âncora. **Somar os dois desceria o título o dobro da nav**, abrindo um buraco no topo a cada
+clique do índice.
+
+**A rolagem suave vive no `html`, atrás de `prefers-reduced-motion: no-preference`.** Ela
+cobra uma correção em outro lugar: o `foco-no-hero` rolava com `behavior: "auto"`, que
+**herda do CSS**, e a volta ao topo viraria uma animação no meio de um Shift+Tab. Passou a
+`"instant"`.
+
+**O foco vai para a seção, e a rolagem continua sendo a nativa.** O item é uma âncora de
+verdade, sem `preventDefault`, então funciona sem JavaScript. O `focus()` usa
+`preventScroll`, senão ele rolaria por conta própria e brigaria com a rolagem suave que o
+navegador acabou de começar. A seção é `tabIndex={-1}` com `aria-labelledby` no rótulo, para
+ser anunciada pelo nome em vez do conteúdo inteiro.
+
+**O destaque é lido do `aria-current="location"`, e não de uma classe.** O atributo já
+precisa existir para leitor de tela, e um segundo estado dizendo a mesma coisa é onde os
+dois divergem com o tempo.
+
+**O `rootMargin` do observador lê `--altura-nav` em JavaScript.** Ele só aceita px e
+porcentagem: `calc()` e `var()` são rejeitados e o observador nem chega a ser criado.
 
 **A menção a identidade visual saiu de uns lugares e ficou em outros, por critério.** Saiu
 de onde era promessa que a página não cumpre mais: a coluna Design da home, a descrição do

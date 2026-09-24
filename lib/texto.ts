@@ -43,3 +43,41 @@ export function linhasDeCampos(children: ReactNode): string[][] {
     .filter((linha) => linha.length > 0)
     .map((linha) => linha.split("|").map((campo) => campo.trim()));
 }
+
+/**
+ * A âncora de uma seção de case, derivada do rótulo dela.
+ *
+ * **ESTA FUNÇÃO É A ÚNICA FONTE DA ÂNCORA, e isso é a parte que importa.** O índice e o
+ * `bloco-secao` calculam o mesmo valor em lugares diferentes: se cada um tivesse a própria
+ * implementação, uma divergência quebraria todos os links do índice **sem quebrar o
+ * build**, e ninguém repara em link de âncora que não pula.
+ *
+ * "CORREÇÕES PONTUAIS" vira "correcoes-pontuais". O acento é removido pela decomposição
+ * NFD, que separa a letra do sinal, e o sinal cai na faixa de combinantes.
+ */
+export function ancoraDeRotulo(rotulo: string): string {
+  return rotulo
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+/**
+ * O rótulo como o índice mostra.
+ *
+ * Na seção ele é mono e caixa alta, "01. CORREÇÕES PONTUAIS". No índice ele é DM Sans em
+ * caixa de frase, "Correções pontuais". **É o mesmo texto com outro tratamento**, e não um
+ * segundo campo: quem escreve o conteúdo digita o rótulo uma vez só.
+ *
+ * LIMITE CONHECIDO: sigla vira palavra. Um rótulo "SEO TÉCNICO" sairia "Seo técnico", e
+ * "UX/UI" sairia "Ux/ui". Nenhum dos rótulos dos cases de hoje tem sigla, e quando o
+ * primeiro tiver, isso aparece na tela na hora. **A saída não é atributo de override no
+ * `secao`**, que foi descartado de propósito para o índice não virar lista duplicada: é
+ * uma exceção aqui dentro, ou escrever o rótulo já em caixa de frase.
+ */
+export function rotuloParaIndice(rotulo: string): string {
+  const minusculo = rotulo.toLocaleLowerCase("pt-BR");
+  return minusculo.charAt(0).toLocaleUpperCase("pt-BR") + minusculo.slice(1);
+}
