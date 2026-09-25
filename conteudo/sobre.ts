@@ -49,7 +49,7 @@ export const experiencia: Cargo[] = [
     cargo: "Fundadora, UX/UI Designer e Desenvolvedora Web",
     empresa: "BORDA Design",
     itens: [
-      "Conduzo projetos completos de identidade visual, UX/UI e desenvolvimento web, da pesquisa estratégica à entrega.",
+      "Conduzo projetos completos de UX/UI e desenvolvimento web, da pesquisa estratégica à entrega.",
       "Desenvolvi o site do estúdio com arquitetura modular em PHP, design tokens em CSS Variables, tema dark e light com persistência, PT e EN sem reload e deploy automatizado via GitHub Actions.",
       "Estruturei a presença digital com SEO técnico, Open Graph, Schema JSON-LD, Search Console e Google Ads.",
     ],
@@ -61,9 +61,11 @@ export const experiencia: Cargo[] = [
     empresa: "TecSinapse",
     itens: [
       "Responsável pelo design e pelo desenvolvimento dos sites de clientes e de produtos internos, da interface ao deploy.",
-      "Diagnostiquei a causa raiz de uma vulnerabilidade que permitia leads sem CPF válido chegarem ao CRM corporativo, e desenvolvi um módulo PHP central aplicado em 106 formulários e 77 páginas de concessionárias num único deploy.",
-      "Construí 3 formulários do zero com validação de CPF, telefone e email sem biblioteca externa, e integrei selects dependentes de estado e cidade consumindo JSON com mais de 5.570 municípios.",
-      "Criei design system, componentes e telas no Figma, com documentação de padrões e especificação de handoff para o desenvolvimento.",
+      "Diagnostiquei a causa de leads chegando sem CPF válido e desenvolvi um módulo PHP central, aplicado a 106 formulários e 77 páginas num único deploy.",
+      "Reduzi em 99,7% o tempo de resposta da home de um site de alto tráfego, encontrando o cache desligado por uma sessão PHP presente em cerca de 150 templates.",
+      "Centralizei credenciais expostas em 113 arquivos e implantei versionamento com deploy automático.",
+      "Desenvolvi formulários com validação sem biblioteca e integração de leads com o CRM via API REST, com envio de reserva por e-mail.",
+      "Criei design systems e telas de produtos internos no Figma, com estados documentados e handoff para o desenvolvimento.",
     ],
   },
   {
@@ -72,9 +74,8 @@ export const experiencia: Cargo[] = [
     cargo: "Administradora de comunidade (Voluntária)",
     empresa: "Tech Girls",
     itens: [
-      "Desenvolvi a identidade visual da comunidade, com paleta, tipografia, mascote e aplicações, produzo as peças de Instagram, Discord e WhatsApp, além de guias de projeto e planilhas de apoio, e redijo os avisos e comunicados.",
-      "Administro o servidor no Discord, principal canal de uma comunidade de mais de mil mulheres, com estrutura de canais, cargos e moderação, e faço a triagem de entrada que mantém o espaço exclusivo para mulheres.",
-      "Dou suporte técnico às palestrantes durante as transmissões e resolvo problemas de áudio, vídeo e acesso em tempo real.",
+      "Administro a comunidade e a publicação de vagas e anúncios para as membras.",
+      "Desenvolvo o bot de Discord da comunidade: serverless no Cloudflare Workers, JavaScript sem dependências em runtime e 121 testes automatizados.",
     ],
   },
 ];

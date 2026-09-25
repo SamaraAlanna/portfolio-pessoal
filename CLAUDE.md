@@ -360,6 +360,29 @@ saíram junto**, porque não sobrou consumidor.
 **A hierarquia de títulos já está certa e continua:** o título do case é o `h1` e cada seção
 é `h2`, pelo `bloco-secao`. A numeração entrou no rótulo e não mudou nível nenhum.
 
+**O HERO É COMUM AOS ESTADOS `no-ar` E `em-construcao`, E MOSTRA OS LINKS EXTERNOS NOS DOIS.**
+O `SecaoCabecalho` fica **fora** do ternário `emConstrucao` em `app/projetos/[slug]/page.tsx`,
+antes dele: o estado em construção troca **só o corpo**, e migalha, título, badge âmbar e
+links continuam. **Foi decisão, e não acidente de ordem de JSX.**
+
+**O motivo é que case em construção é justamente onde o link externo vale mais.** A página
+não tem corpo para ler, então sem os links ela não oferece **nenhuma** saída para a prova, e
+quem chegou interessado volta sem ver nada. Esconder o repositório de um projeto que existe e
+está público, só porque o texto do case ainda não foi escrito, é perder a única coisa que a
+página tinha para mostrar.
+
+**Os links vivem em `components/ui/links-do-case`, alimentados pelo campo `links` do
+frontmatter**, uma linha por link no formato `rótulo | destino`. Eles saíram do fim do case e
+foram para o hero em 2026-09-24, porque os frames novos os desenham à direita do título, e
+**nenhum case os mostra em dois lugares**. Abrem em nova aba com `rel="noopener"` e o aviso
+para leitor de tela, como todo link externo do site.
+
+**O Bot Tech Girls é o primeiro a exercitar isso**, desde 2026-09-25, com "Ver o repositório"
+num case sem corpo. **Nada precisou mudar para ele funcionar**, e é isso que a decisão
+registra: se um dia alguém mover o cabeçalho para dentro do ternário achando que arruma a
+ordem da página, o link desaparece justamente dos cases que mais dependem dele, **e nada no
+build reclama**.
+
 ### O passo 4, e o que sustenta o índice
 
 **A lista vem do corpo em MDX, pelo `lerSecoes`.** Índice declarado à mão sai de sincronia
@@ -1443,9 +1466,10 @@ que o plano antigo previa, porque os frames novos encurtaram o texto de cada fre
 **O detalhe vive no `docs/modelos-de-case.md`**, que foi reescrito no passo 7 e é a referência
 para montar case novo. Aqui fica só o critério.
 
-**Estado em construção:** o case não renderiza o corpo. Só nav, título com badge âmbar,
-frase centralizada "Este projeto ainda está em construção", uma linha de apoio, próximo
-projeto e footer.
+**Estado em construção:** o case não renderiza o corpo. Só nav, migalha, título com badge
+âmbar, **os links externos do hero quando o case tem o campo `links`**, frase centralizada
+"Este projeto ainda está em construção", uma linha de apoio, próximo projeto e footer. O hero
+inteiro é o mesmo dos cases no ar, e o porquê está na seção do passo 3.
 
 ---
 
