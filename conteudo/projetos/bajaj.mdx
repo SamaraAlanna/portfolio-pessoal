@@ -9,7 +9,7 @@ ordem: 2
 ordemHome: 1
 publicado: true
 imagem: /imagens/projetos/bajaj.webp
-descricao: Site institucional da terceira maior montadora de motos do mundo. Validação de CPF reescrita e distribuída para as 77 páginas, credenciais tiradas de 113 arquivos e versionamento do FTP manual ao deploy automático.
+descricao: Site institucional da terceira maior montadora de motos do mundo. Validação de CPF para 77 páginas, credenciais tiradas de 113 arquivos, deploy automático e tempo de resposta da home de 329 ms para 1 ms.
 resumo: Site institucional da terceira maior montadora de motos do mundo, com 77 páginas de concessionária. Atuo na manutenção, na correção de bugs e no desenvolvimento de novas funcionalidades.
 links:
   - Ver o site no ar | https://bajaj.com.br/
@@ -68,11 +68,31 @@ Deploy automático | ciano
 :::
 ::::
 
+::::secao{rotulo="Performance" titulo="Um cache desligado por uma linha"}
+Um `session_start()` no cabeçalho, carregado por cerca de 150 templates, fazia o PHP desligar o cache de todas as páginas. Centralizei a sessão num hook que só abre quando há formulário, e estendi o cache às visitas de campanha, que chegavam com parâmetros de UTM e passavam direto.
+
+:::numeros{formato="linha"}
+99,7% | Menos tempo de resposta na home, de 329 ms para 1 ms | case
+17 | Plugins ativos, que eram 38 | case
+86 | Requisições na home, que eram 115 | case
+:::
+::::
+
+::::secao{rotulo="FAQ" titulo="Um acordeão para dez páginas, sem virar dez cópias"}
+O tema já tinha o mesmo acordeão copiado em 22 arquivos. Criei um componente único, parametrizado por página e editável pelo cliente, com o foco de teclado visível que o original anulava. Antes de publicar, auditei o conteúdo entregue e corrigi três links quebrados.
+
+:::imagens{colunas="1"}
+![Seção de perguntas frequentes publicada, com as respostas em acordeão](/imagens/cases/bajaj-faq.webp)
+:::
+::::
+
 ::::secao{rotulo="Correções pontuais"}
 :::numeros{formato="linha"}
 83 | Formulários protegidos contra duplo clique | case
 11 | Páginas corrigidas com uma linha de CSS | case
 700+ | Arquivos órfãos removidos do servidor | case
 UF | Mapa de concessionárias com busca por estado | case
+213 | Arquivos com links internos corrigidos | case
+A | Nota em cabeçalhos de segurança do servidor | case
 :::
 ::::
