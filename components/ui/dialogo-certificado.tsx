@@ -28,11 +28,15 @@ import { useRef, type ReactNode } from "react";
  */
 export default function DialogoCertificado({
   titulo,
+  tituloCurto,
   legenda,
   miniatura,
   children,
 }: {
+  /** Nome completo. Vai no dialog e no nome acessível do cartão. */
   titulo: string;
+  /** O que o cartão mostra, quando o completo não cabe em duas linhas. */
+  tituloCurto?: string;
   /** Instituição, ano e carga, já montados. */
   legenda: string;
   /** A imagem de 480px, renderizada no servidor. */
@@ -47,18 +51,33 @@ export default function DialogoCertificado({
       <button
         type="button"
         onClick={() => dialogo.current?.showModal()}
-        className="cartao-interativo group flex w-full flex-col items-start gap-[12px] rounded-[12px] border-[0.5px] border-border bg-surface p-[12px] text-left"
+        /* O NOME ACESSÍVEL É DECLARADO, E NÃO MONTADO DO TEXTO VISÍVEL. Concatenado, ele
+           saía "Formação React DeveloperAlura (34h, 2026)", sem separação entre o curso e a
+           instituição, porque são dois spans irmãos e nada põe pausa entre eles. Aqui ele
+           carrega a mesma informação, na mesma ordem, com a pontuação certa, e começa pelo
+           verbo, que é o que diz o que o clique faz. */
+        aria-label={`Ver certificado de ${titulo}, ${legenda}`}
+        className="cartao-interativo group flex h-full w-full flex-col items-start gap-[12px] rounded-[12px] border-[0.5px] border-border bg-surface p-[12px] text-left"
       >
-        {/* O nome acessível do botão vem do texto visível, e o "Ver certificado de" diz o que
-            o clique faz. Sem ele o botão se chamaria só pelo nome do curso, que descreve o
-            conteúdo e não a ação. */}
-        <span className="sr-only">Ver certificado de </span>
-        <span className="w-full overflow-hidden rounded-[8px] bg-surface-2">
+        {/* A MOLDURA TEM PROPORÇÃO FIXA E A IMAGEM ENCAIXA DENTRO. Os certificados vão de
+            1,32 a 1,75 de proporção, então imagem solta daria altura diferente por cartão. O
+            1,45 é perto da mediana, 1,44, e reparte a sobra: o mais alto perde 9% na
+            horizontal e o mais largo perde 17% na vertical. `contain` e não `cover`, porque
+            cortar certificado é cortar informação. */}
+        <span className="flex aspect-[1.45] w-full items-center justify-center overflow-hidden rounded-[8px] bg-surface-2">
           {miniatura}
         </span>
-        <span className="flex flex-col gap-[3px] px-[4px] pb-[4px]">
-          <span className="text-card-descricao leading-[1.45] text-text">{titulo}</span>
-          <span className="font-mono text-[11.5px] text-text-muted">{legenda}</span>
+
+        {/* O `flex-1` faz este bloco absorver a sobra de altura do cartão e o `mt-auto`
+            prende o detalhe na base. Nome de três linhas e nome de uma terminam com a linha
+            de instituição no mesmo lugar. */}
+        <span className="flex w-full flex-1 flex-col gap-[3px] px-[4px] pb-[4px]">
+          <span className="text-card-descricao leading-[1.45] text-text">
+            {tituloCurto ?? titulo}
+          </span>
+          <span className="mt-auto pt-[6px] font-mono text-[11.5px] text-text-muted">
+            {legenda}
+          </span>
         </span>
       </button>
 

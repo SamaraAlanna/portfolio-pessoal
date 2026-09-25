@@ -146,7 +146,17 @@ export function miniaturaDe(caminho: string): string {
 }
 
 export type Certificacao = {
+  /** Nome completo, como o certificado escreve. Vai no dialog e no nome acessivel do cartao. */
   nome: string;
+  /**
+   * Versao curta, so para o cartao da grade.
+   *
+   * MESMA IDEIA DO `tituloCase` DOS PROJETOS: o nome inteiro cabe onde ha espaco e contexto,
+   * e encurta onde ele empurraria o cartao para uma terceira linha. **O completo nunca some**,
+   * continua no dado, no dialog e no `aria-label`, entao quem usa leitor de tela ouve o nome
+   * de verdade.
+   */
+  nomeCurto?: string;
   instituicao: string;
   /** Ausente nos tres da Anthropic, que nao declaram data no certificado. */
   ano?: number;
@@ -189,6 +199,7 @@ export const certificacoes: GrupoDeCertificacoes[] = [
       },
       {
         nome: "WordPress: crie sites com Elementor e Figma",
+        nomeCurto: "WordPress com Elementor e Figma",
         instituicao: "Alura",
         ano: 2026,
         horas: 10,
@@ -207,6 +218,7 @@ export const certificacoes: GrupoDeCertificacoes[] = [
       },
       {
         nome: "Git e GitHub: compartilhando e colaborando em projetos",
+        nomeCurto: "Git e GitHub",
         instituicao: "Alura",
         ano: 2025,
         horas: 8,
@@ -216,6 +228,7 @@ export const certificacoes: GrupoDeCertificacoes[] = [
       },
       {
         nome: "Lógica de programação: mergulhe em programação com JavaScript",
+        nomeCurto: "Lógica de programação",
         instituicao: "Alura",
         ano: 2025,
         horas: 6,
@@ -275,6 +288,7 @@ export const certificacoes: GrupoDeCertificacoes[] = [
       },
       {
         nome: "Formação UX Research: pesquisa em ambientes dinâmicos com tecnologia e IA",
+        nomeCurto: "Formação UX Research",
         instituicao: "Alura",
         ano: 2025,
         horas: 32,
@@ -307,7 +321,9 @@ export const certificacoes: GrupoDeCertificacoes[] = [
       },
       {
         nome: "Gerenciamento de ameaças cibernéticas",
-        instituicao: "Cisco Networking Academy, pela Universidade Cruzeiro do Sul",
+        // A co-atribuicao à Universidade Cruzeiro do Sul saiu do texto em 2026-09-24, para o
+        // cartao nao crescer. Ela continua legivel na propria imagem do certificado.
+        instituicao: "Cisco Networking Academy",
         ano: 2025,
         imagens: [
           { caminho: "/imagens/certificados/ameacas-ciberneticas-cisco.webp", alt: "Certificado de Gerenciamento de ameaças cibernéticas, emitido por Cisco Networking Academy, pela Universidade Cruzeiro do Sul" },

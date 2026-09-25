@@ -24,11 +24,18 @@ import { dimensaoDaImagem } from "@/lib/imagens";
  * mão.
  */
 
-/** A frase da linha de apoio, montada dos campos separados. */
+/**
+ * A linha de apoio: instituição, e entre parênteses a carga e o ano, nessa ordem.
+ *
+ *   Alura (10h, 2026)
+ *   Cisco Networking Academy, pela Universidade Cruzeiro do Sul (2025)
+ *
+ * OS PARÊNTESES SÓ APARECEM QUANDO TEM O QUE PÔR DENTRO. O Cisco não declara carga, e um
+ * `(, 2025)` seria o tipo de lixo que só aparece no dado que falta.
+ */
 function legendaDe(item: Certificacao): string {
-  return [item.instituicao, item.ano, item.horas && `${item.horas}h`]
-    .filter(Boolean)
-    .join(" · ");
+  const entre = [item.horas && `${item.horas}h`, item.ano].filter(Boolean).join(", ");
+  return entre ? `${item.instituicao} (${entre})` : item.instituicao;
 }
 
 function Certificado({ item }: { item: Certificacao }) {
@@ -38,9 +45,13 @@ function Certificado({ item }: { item: Certificacao }) {
   // Sem imagem o cartão não vira botão: abrir um dialog vazio é pior que não abrir.
   if (imagens.length === 0) {
     return (
-      <li className="flex flex-col gap-[3px] rounded-[12px] border-[0.5px] border-border bg-surface p-[16px]">
-        <span className="text-card-descricao leading-[1.45] text-text">{item.nome}</span>
-        <span className="font-mono text-[11.5px] text-text-muted">{legenda}</span>
+      <li className="flex h-full flex-col gap-[3px] rounded-[12px] border-[0.5px] border-border bg-surface p-[16px]">
+        <span className="text-card-descricao leading-[1.45] text-text">
+          {item.nomeCurto ?? item.nome}
+        </span>
+        <span className="mt-auto pt-[6px] font-mono text-[11.5px] text-text-muted">
+          {legenda}
+        </span>
       </li>
     );
   }
@@ -57,7 +68,7 @@ function Certificado({ item }: { item: Certificacao }) {
       width={medidaMini.largura}
       height={medidaMini.altura}
       sizes="(max-width: 640px) 100vw, 320px"
-      className="h-auto w-full"
+      className="h-full w-full object-contain"
     />
   ) : null;
 
@@ -77,8 +88,14 @@ function Certificado({ item }: { item: Certificacao }) {
   });
 
   return (
-    <li>
-      <DialogoCertificado titulo={item.nome} legenda={legenda} miniatura={miniatura}>
+    // `h-full` para o botão poder medir 100% da altura que a linha da grade deu ao item.
+    <li className="h-full">
+      <DialogoCertificado
+        titulo={item.nome}
+        tituloCurto={item.nomeCurto}
+        legenda={legenda}
+        miniatura={miniatura}
+      >
         {imagens.length > 1 ? (
           /* Três arquivos e um certificado só: os níveis viram abas no mesmo visualizador
              que os cases usam, em vez de um segundo componente de abas no projeto. */
