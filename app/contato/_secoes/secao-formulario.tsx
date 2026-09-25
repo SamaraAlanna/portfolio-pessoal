@@ -260,7 +260,10 @@ export default function SecaoFormulario() {
           defaultValue={estado.valores?.assunto ?? ""}
           aria-invalid={estado.erros.assunto ? true : undefined}
           aria-describedby={estado.erros.assunto ? "erro-assunto" : undefined}
-          className={CAMPO}
+          // A `.campo-select` pinta o texto em `--text-dim` enquanto a opção vazia é a
+          // escolhida, para o select parecer placeholder como os outros campos. O porquê
+          // de não usar `:invalid` está comentado na regra, no `app/globals.css`.
+          className={`${CAMPO} campo-select`}
         >
           <option value="" disabled>
             Selecione um assunto
@@ -316,7 +319,12 @@ export default function SecaoFormulario() {
           disabled={pendente}
           className="botao-interativo botao-cheio rounded-full bg-accent-rosa px-[30px] py-[16px] text-corpo font-medium text-bg disabled:opacity-50"
         >
-          {pendente ? "enviando..." : "enviar mensagem"}
+          {/* MAIÚSCULA INICIAL NOS DOIS, E ISSO DIVERGE DO FIGMA DE PROPÓSITO. O arquivo
+              escreve "enviar mensagem" em caixa baixa, e era o único botão do site assim:
+              "Baixar CV", "Ver stack completa", "Todos os projetos", "Entre em contato" e
+              "Ir para a home" todos começam com maiúscula. O texto sai daqui, do código, e
+              não de `text-transform` no CSS, então é aqui que se corrige. */}
+          {pendente ? "Enviando..." : "Enviar mensagem"}
         </button>
 
         {/* A REGIÃO VIVA PRECISA EXISTIR ANTES DE TER CONTEÚDO. Leitor de tela só anuncia a

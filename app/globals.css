@@ -1480,6 +1480,32 @@ body {
 }
 
 /* ---------------------------------------------------------------------------
+   O select enquanto nenhuma opção foi escolhida.
+
+   ELE PRECISA PARECER PLACEHOLDER, E NÃO VALOR ESCOLHIDO. Os outros campos resolvem isso
+   com `placeholder:text-text-dim`, mas **`select` não tem placeholder**: o "Selecione um
+   assunto" é uma `option` de verdade, e o texto do select herda a cor do campo. Sem esta
+   regra ele sai em `--text`, com a mesma cor de um assunto já escolhido, e a fileira de
+   campos fica com um deles parecendo preenchido antes de a pessoa tocar nele.
+
+   A REGRA LÊ O ESTADO REAL, E NÃO UMA CLASSE. Quem diz que nada foi escolhido é a `option`
+   de valor vazio estar `:checked`, que é exatamente o que se quer descrever. Isso segue o
+   padrão do projeto de pintar a partir do atributo que já existe, como o item ativo do
+   índice lê `aria-current` e a aba ativa lê `aria-selected`.
+
+   POR QUE NÃO `:invalid`, que é o truque clássico: ele funciona hoje só porque o campo é
+   `required`, e amarra a aparência à validação. No dia em que o `required` saísse, o
+   placeholder mudaria de cor sem ninguém entender por quê.
+
+   Sem suporte a `:has` a regra é ignorada e o texto fica em `--text`, que é legível e
+   passa em contraste. Degrada para um placeholder escuro demais, nunca para invisível.
+   --------------------------------------------------------------------------- */
+
+.campo-select:has(option[value=""]:checked) {
+  color: var(--text-dim);
+}
+
+/* ---------------------------------------------------------------------------
    Realce dos chips da Stack.
 
    Mesmo tratamento das tags do card de projeto, texto e borda passando para a cor, com a

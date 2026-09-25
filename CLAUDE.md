@@ -1747,6 +1747,34 @@ de ser apertado. O erro é âmbar, que é exatamente o que âmbar significa.
 `--surface` opaco embaixo do tint. Regra endurecida em 2026-09-24: texto em accent sobre
 tint nunca direto sobre o `--bg` nem sobre o `--surface-2`.
 
+**O BOTÃO DIZ "ENVIAR MENSAGEM", COM MAIÚSCULA, E ISSO DIVERGE DO FIGMA DE PROPÓSITO.** O
+arquivo escreve em caixa baixa, e era **o único botão do site assim**: "Baixar CV", "Ver
+stack completa", "Todos os projetos", "Minha trajetória completa", "Entre em contato", "Ir
+para a home" e "Quem sou eu" todos começam com maiúscula. O estado de envio acompanha, em
+"Enviando...". **Mudado em 2026-09-25, e se voltar para caixa baixa por causa do Figma, é
+regressão.**
+
+**O texto sai do código, e não de `text-transform`.** Não existe transformação de caixa
+tocando este botão, conferido no `app/globals.css` e nas classes do componente. Vale saber
+onde procurar: a caixa alta dos rótulos de seção **é** CSS, pela utilidade `uppercase`, e é
+o caminho oposto ao deste botão.
+
+**O SELECT PARECE PLACEHOLDER ENQUANTO NADA FOI ESCOLHIDO**, na mesma `--text-dim` dos
+placeholders dos outros campos, pela `.campo-select` do `app/globals.css`. **`select` não
+tem placeholder:** o "Selecione um assunto" é uma `option` de verdade e o texto do campo
+herdaria `--text`, deixando um campo com cara de preenchido antes de a pessoa tocar nele.
+
+**A regra lê `option[value=""]:checked`, e não `:invalid`.** O truque do `:invalid` é o mais
+conhecido e funciona hoje só porque o campo é `required`: ele amarra aparência a validação,
+e no dia em que o `required` saísse o placeholder mudaria de cor sem ninguém entender por
+quê. **Sem suporte a `:has` a regra é ignorada** e o texto sai em `--text`, que continua
+legível: degrada para placeholder escuro demais, nunca para invisível.
+
+**Ela precisa ficar fora de `@layer` para funcionar**, e fica. No Tailwind 4 as utilidades
+vivem na camada `utilities`, e **regra sem camada vence regra em camada independente de
+especificidade**. Dentro de uma camada ela perderia para o `text-text` do próprio campo.
+Conferido no CSS compilado, no mesmo nível do `.chip-stack` e da `.tingido`.
+
 #### A configuração, que entrou em 2026-09-25
 
 | | |
