@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 import { apresentacao } from "@/conteudo/sobre";
 import { idadeEmAnos } from "@/lib/idade";
 import { CURRICULO } from "@/lib/site";
@@ -77,7 +76,10 @@ export default function SecaoCabecalho() {
           className="h-auto w-full rounded-full object-cover lg:h-[296px] lg:w-[296px]"
         />
 
-        <Link
+        {/* ÂNCORA COMUM, E NÃO `Link`, PORQUE O DESTINO É ARQUIVO E NÃO ROTA. O `Link`
+            pré-carrega pedindo o payload do RSC, com `?_rsc=` na URL, e um PDF em
+            `public/` não é rota: o servidor responde 404. */}
+        <a
           href={CURRICULO.pt}
           target="_blank"
           rel="noopener"
@@ -85,7 +87,7 @@ export default function SecaoCabecalho() {
         >
           Baixar CV
           <span className="sr-only"> (abre em nova aba)</span>
-        </Link>
+        </a>
       </div>
 
       <div className="flex max-w-[720px] flex-col gap-[18px] text-hero-paragrafo text-text-muted lg:col-start-1 lg:row-start-2 lg:self-start">

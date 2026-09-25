@@ -115,7 +115,11 @@ export default function SecaoHero() {
             >
               Quem sou eu
             </Link>
-            <Link
+            {/* ÂNCORA COMUM, E NÃO `Link`, PORQUE O DESTINO É ARQUIVO E NÃO ROTA. O
+                `Link` pré-carrega pedindo o payload do RSC, com `?_rsc=` na URL, e um PDF
+                em `public/` não é rota: o servidor responde 404. O currículo baixava do
+                mesmo jeito ao clicar, então o defeito vivia só no console. */}
+            <a
               href={CURRICULO.pt}
               target="_blank"
               rel="noopener"
@@ -123,7 +127,7 @@ export default function SecaoHero() {
             >
               Baixar CV
               <span className="sr-only"> (abre em nova aba)</span>
-            </Link>
+            </a>
           </div>
         </div>
 

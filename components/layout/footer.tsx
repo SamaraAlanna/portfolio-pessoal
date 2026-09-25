@@ -28,15 +28,41 @@ import { canalPor } from "@/conteudo/contato";
  * `externo` marca o que sai do site e abre em nova aba. O `mailto` não entra: ele não
  * navega, entrega para o cliente de e-mail, e abrir aba para isso deixa uma aba em branco
  * para trás em parte dos navegadores.
+ *
+ * `rota` MARCA O QUE É PÁGINA DESTE APP, E É O QUE DECIDE ENTRE `Link` E `<a>`. Só quem
+ * tem `rota` ganha o `Link` do Next; currículo, perfil e `mailto` saem como âncora comum.
+ *
+ * ISSO NÃO É PREFERÊNCIA DE ESTILO, É CORREÇÃO DE UM 404. O `Link` pré-carrega o destino
+ * pedindo o payload do React Server Components, com `?_rsc=` no fim da URL. Para uma rota
+ * isso é o que deixa a navegação instantânea; **para um PDF em `public/` é um pedido de
+ * payload a um arquivo que não é rota**, e o servidor responde 404. O currículo continua
+ * baixando ao clicar, então o defeito só aparece no console, que é onde ninguém procura.
+ *
+ * O campo é `rota` e não `arquivo` de propósito: o que distingue não é ser arquivo, é ser
+ * ou não uma página deste app. `mailto:` também não é arquivo e também não é rota.
+ *
+ * O TIPO É DECLARADO, E NÃO INFERIDO. Com três formatos de item na mesma lista, um com
+ * `rota`, outro com `externo` e o `mailto` sem nenhum dos dois, o TypeScript infere uma
+ * união e recusa a leitura de qualquer um dos campos. Declarar os dois como opcionais
+ * resolve e ainda documenta que eles são independentes.
  */
-const colunas = [
+type ItemDoRodape = {
+  rotulo: string;
+  destino: string;
+  /** Página deste app. Só quem tem isso ganha o `Link` do Next. */
+  rota?: boolean;
+  /** Sai do site e abre em nova aba, com o aviso para leitor de tela. */
+  externo?: boolean;
+};
+
+const colunas: { rotulo: string; itens: ItemDoRodape[] }[] = [
   {
     rotulo: "NAVEGAR",
     itens: [
-      { rotulo: "Projetos", destino: "/projetos" },
-      { rotulo: "Sobre", destino: "/sobre" },
-      { rotulo: "Stack", destino: "/stack" },
-      { rotulo: "Contato", destino: "/contato" },
+      { rotulo: "Projetos", destino: "/projetos", rota: true },
+      { rotulo: "Sobre", destino: "/sobre", rota: true },
+      { rotulo: "Stack", destino: "/stack", rota: true },
+      { rotulo: "Contato", destino: "/contato", rota: true },
     ],
   },
   {
@@ -106,21 +132,37 @@ export default function Footer() {
               <p className="mb-[2px] font-mono text-rotulo-coluna font-medium whitespace-nowrap text-text-dim lg:mb-0">
                 {coluna.rotulo}
               </p>
-              {coluna.itens.map((item) => (
-                <Link
-                  key={item.rotulo}
-                  href={item.destino}
-                  {...(item.externo
+              {coluna.itens.map((item) => {
+                // Mesmas props nos dois casos. O que muda é só o elemento, `Link` para
+                // rota deste app e `<a>` para o resto, pelo motivo comentado no `colunas`.
+                const props = {
+                  href: item.destino,
+                  className:
+                    "link-realce py-[12px] text-corpo whitespace-nowrap text-text-muted lg:py-0",
+                  ...(item.externo
                     ? { target: "_blank", rel: "noopener" }
-                    : {})}
-                  className="link-realce py-[12px] text-corpo whitespace-nowrap text-text-muted lg:py-0"
-                >
-                  {item.rotulo}
-                  {item.externo ? (
-                    <span className="sr-only"> (abre em nova aba)</span>
-                  ) : null}
-                </Link>
-              ))}
+                    : {}),
+                };
+
+                const conteudo = (
+                  <>
+                    {item.rotulo}
+                    {item.externo ? (
+                      <span className="sr-only"> (abre em nova aba)</span>
+                    ) : null}
+                  </>
+                );
+
+                return item.rota ? (
+                  <Link key={item.rotulo} {...props}>
+                    {conteudo}
+                  </Link>
+                ) : (
+                  <a key={item.rotulo} {...props}>
+                    {conteudo}
+                  </a>
+                );
+              })}
             </div>
           ))}
         </div>

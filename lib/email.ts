@@ -52,8 +52,17 @@ const DESTINO = canalPor("email");
 export async function enviarMensagemPorEmail(
   dados: MensagemValidada,
 ): Promise<ResultadoDoEnvio> {
-  const chave = process.env.BREVO_API_KEY;
-  const remetente = process.env.CONTATO_REMETENTE;
+  /**
+   * O `trim` NÃO É ENFEITE, É DEFESA CONTRA UM ERRO DE COLAR.
+   *
+   * Valor colado no painel da Vercel entra com espaço ou quebra de linha no fim com
+   * facilidade, e **quebra de linha num valor de cabeçalho faz o `fetch` lançar** em vez de
+   * devolver 401, o que joga o defeito no `catch` de rede e aponta para o lugar errado.
+   * Espaço no fim é pior ainda: o cabeçalho vai, o Brevo recusa com 401, e a chave "está
+   * certa" para quem olha o painel.
+   */
+  const chave = process.env.BREVO_API_KEY?.trim();
+  const remetente = process.env.CONTATO_REMETENTE?.trim();
 
   /**
    * SEM CONFIGURAÇÃO, FALHA LIMPO E AVISA NO LOG.
@@ -64,8 +73,23 @@ export async function enviarMensagemPorEmail(
    * aparecer, o que assusta o visitante por um problema que é de configuração, não dele.
    */
   if (!chave || !remetente) {
+    /**
+     * O LOG NOMEIA QUAL VARIÁVEL FALTA, E NÃO AS DUAS JUNTAS.
+     *
+     * "falta uma e/ou outra" obriga quem está lendo o log a conferir as duas no painel, e
+     * em produção esse é justamente o caso em que não dá para simplesmente olhar. Nomear a
+     * que falta transforma a investigação em uma conferência só. **São os nomes das
+     * variáveis, nunca os valores.**
+     */
+    const faltando = [
+      !chave ? "BREVO_API_KEY" : null,
+      !remetente ? "CONTATO_REMETENTE" : null,
+    ]
+      .filter(Boolean)
+      .join(" e ");
+
     console.error(
-      "[contato] Envio não configurado: falta BREVO_API_KEY e/ou CONTATO_REMETENTE nas variáveis de ambiente. A mensagem NÃO foi enviada.",
+      `[contato] Envio não configurado: falta ${faltando} nas variáveis de ambiente deste deploy. A mensagem NÃO foi enviada. Lembre que variável nova na Vercel só vale para deploy novo.`,
     );
     return { ok: false, motivo: "sem-configuracao" };
   }
