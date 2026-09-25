@@ -82,3 +82,35 @@ export function ancoraDeRotulo(rotulo: string): string {
  * lerem com a entonação de sigla. Em CSS, isso é aparência e o texto anunciado continua
  * sendo a palavra.
  */
+
+/**
+ * Separa a parte numérica do sufixo, no formato brasileiro.
+ *
+ * Devolve `null` quando o valor não começa com dígito, que é o caso do "UF" do Bajaj: ele
+ * ocupa a coluna do número e não é um número.
+ *
+ * O PONTO É SEPARADOR DE MILHAR E A VÍRGULA É DECIMAL, porque o conteúdo é escrito em
+ * português: "1.200" vale mil e duzentos, "2,68" vale dois e sessenta e oito centésimos. Ler
+ * ao contrário transformaria mil e duzentos em um vírgula dois, e **o erro não apareceria no
+ * build**, só num número errado na tela.
+ *
+ * UMA IMPLEMENTAÇÃO SÓ, LIDA PELOS DOIS LADOS. O `bloco-numeros` usa para decidir se o valor
+ * ganha a estrutura de contagem, e o `ContarAoRolar` usa para contar. Duas cópias
+ * divergiriam em silêncio: o bloco marcaria um valor que o observador recusa, ou o contrário.
+ */
+export function numeroDoValor(
+  valor: string,
+): { numero: number; casas: number; sufixo: string } | null {
+  const partes = /^(\d[\d.]*(?:,\d+)?)(.*)$/.exec(valor.trim());
+  if (!partes) return null;
+
+  const [, bruto, sufixo] = partes;
+  const numero = Number(bruto.replace(/\./g, "").replace(",", "."));
+  if (!Number.isFinite(numero)) return null;
+
+  return {
+    numero,
+    casas: bruto.includes(",") ? bruto.split(",")[1].length : 0,
+    sufixo,
+  };
+}

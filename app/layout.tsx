@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { SITE, metadataDaPagina } from "@/lib/site";
 import RevelarAoRolar from "@/components/ui/revelar-ao-rolar";
+import ContarAoRolar from "@/components/ui/contar-ao-rolar";
 import PausaForaDaTela from "@/components/ui/pausa-fora-da-tela";
 import LuzSegueCursor from "@/components/ui/luz-segue-cursor";
 import FocoNoHero from "@/components/ui/foco-no-hero";
@@ -88,6 +89,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         </main>
         <Footer />
         <RevelarAoRolar />
+        <ContarAoRolar />
         <PausaForaDaTela />
         <LuzSegueCursor />
         <FocoNoHero />

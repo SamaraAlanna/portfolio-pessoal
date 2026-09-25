@@ -1,22 +1,22 @@
 import type { CSSProperties } from "react";
 import { grupos } from "@/conteudo/stack";
-import { TINT_DA_COR, VAR_DA_COR } from "@/lib/filtros";
+import { VAR_DA_COR } from "@/lib/filtros";
 
 /**
  * Os oito grupos de habilidade, em cards de duas colunas.
  *
- * O CARD INTEIRO CARREGA A CAMADA DESDE 2026-09-24: antes só o marcador de 44x3 pintava, e
- * o fundo e o glifo eram neutros. Agora o fundo é tingido na cor do grupo e o glifo sai em
- * accent, o que faz a varredura da página acontecer pela cor antes de acontecer pelo texto.
+ * EM REPOUSO O CARD É NEUTRO, E A CAMADA APARECE NO HOVER. O fundo é `--surface`, a borda é
+ * `--border` e o glifo é apagado, como sempre foram. No ponteiro a borda do card e o glifo
+ * acendem na cor da camada, pela `.cartao-stack` do `app/globals.css`.
  *
- * QUATRO MAPAS DE CLASSE VIRARAM DUAS VARIÁVEIS. As cores saem do `VAR_DA_COR` e do
- * `TINT_DA_COR` de `lib/filtros.ts`, que é o mesmo lugar de onde a pílula do filtro tira a
- * dela, e descem por `--cor-camada` e `--cor-tint`. **O CSS não precisa mais saber quantas
- * camadas existem**: uma camada nova entra no mapa e nada aqui muda.
+ * O FUNDO TINGIDO DUROU POUCAS HORAS EM 2026-09-24 e foi desfeito: ele acendia os oito cards
+ * ao mesmo tempo, e cor que está sempre ligada deixa de destacar qualquer coisa. O realce por
+ * hover diz "este aqui", que é o que a cor de camada existe para fazer.
  *
- * O FUNDO É A `.tingido` E NÃO O TINT SOZINHO. Ela põe `--surface` opaco embaixo do tint,
- * que é a regra endurecida do projeto para texto em accent sobre tingido: direto sobre o
- * `--bg` o par passa no piso exato de 4,50 no tema claro, e sobre o `--surface-2` reprova.
+ * AS CORES SAEM DO `VAR_DA_COR` DE `lib/filtros.ts`, o mesmo lugar de onde a pílula do filtro
+ * tira a dela, e descem por `--cor-camada`. **O CSS não precisa saber quantas camadas
+ * existem**: camada nova entra no mapa e nada aqui muda. O marcador de 44x3 continua aceso em
+ * repouso, porque ele é o portador fixo da camada; o resto é resposta ao ponteiro.
  *
  * O glifo grande à direita continua decorativo e escondido de leitor de tela.
  */
@@ -33,13 +33,8 @@ export default function SecaoGrupos() {
         {grupos.map((grupo) => (
           <li
             key={grupo.titulo}
-            style={
-              {
-                "--cor-camada": VAR_DA_COR[grupo.camada],
-                "--cor-tint": TINT_DA_COR[grupo.camada],
-              } as CSSProperties
-            }
-            className="tingido flex flex-col items-start rounded-[12px] border-[0.5px] border-border px-[28px] pt-[28px] pb-[32px]"
+            style={{ "--cor-camada": VAR_DA_COR[grupo.camada] } as CSSProperties}
+            className="cartao-stack flex flex-col items-start rounded-[12px] border-[0.5px] border-border bg-surface px-[28px] pt-[28px] pb-[32px]"
           >
             <span
               aria-hidden="true"
@@ -50,7 +45,7 @@ export default function SecaoGrupos() {
               <h2 className="text-[19px] font-bold text-text">{grupo.titulo}</h2>
               <span
                 aria-hidden="true"
-                className="font-mono text-[44px] leading-none text-[var(--cor-camada)]"
+                className="glifo-stack font-mono text-[44px] leading-none text-text-dim/40"
               >
                 {grupo.glifo}
               </span>

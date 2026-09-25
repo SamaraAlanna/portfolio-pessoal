@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { linhasDeCampos } from "@/lib/texto";
+import { linhasDeCampos, numeroDoValor } from "@/lib/texto";
 import TrilhoRolavel from "@/components/ui/trilho-rolavel";
 
 /**
@@ -42,6 +42,42 @@ import TrilhoRolavel from "@/components/ui/trilho-rolavel";
  * vale a primeira. A animação está no `app/globals.css` e só existe no desktop. Ela anima o
  * `dt`, então vale nos dois formatos.
  */
+/**
+ * O valor, preparado para a contagem do `ContarAoRolar`.
+ *
+ * TRÊS CAMADAS, E CADA UMA RESOLVE UMA COISA:
+ *
+ * 1. O `sr-only` carrega o valor final e **nunca muda**, então leitor de tela recebe "700+" e
+ *    não a sequência da contagem. Ele é o único dos três que a árvore de acessibilidade vê.
+ * 2. A cópia invisível reserva a largura do valor final. Sem ela o número cresceria de "0"
+ *    até "700+" e empurraria o layout a cada quadro. **É ela que garante a largura, e não o
+ *    `tabular-nums`**: a variante tabular iguala os dígitos entre si, mas não faz um dígito
+ *    ocupar o espaço de quatro.
+ * 3. O `data-contar` é o que anima, e nasce com o valor final escrito.
+ *
+ * O `aria-hidden` cobre as duas de baixo de uma vez, no invólucro.
+ *
+ * VALOR QUE NÃO É NÚMERO SAI COMO TEXTO, SEM NADA DISSO. O "UF" do Bajaj ocupa a coluna do
+ * número e não conta, e envolver ele custaria uma duplicação de texto na árvore de
+ * acessibilidade e um alvo a mais para o observador recusar. Quem decide é o
+ * `numeroDoValor`, a mesma função que o `ContarAoRolar` usa para contar.
+ */
+function Valor({ children }: { children: string }) {
+  if (!numeroDoValor(children)) return <>{children}</>;
+
+  return (
+    <>
+      <span className="sr-only">{children}</span>
+      <span aria-hidden="true" className="grid tabular-nums">
+        <span className="invisible col-start-1 row-start-1">{children}</span>
+        <span data-contar className="col-start-1 row-start-1">
+          {children}
+        </span>
+      </span>
+    </>
+  );
+}
+
 const CORES: Record<string, string> = {
   case: "text-accent-case",
   rosa: "text-accent-rosa",
@@ -84,7 +120,7 @@ export default function BlocoNumeros({
                   CORES[camada ?? ""] ?? CORES.rosa
                 }`}
               >
-                {valor}
+                <Valor>{valor}</Valor>
               </dt>
               <dd className="text-corpo-case text-text">{legenda}</dd>
             </div>
@@ -115,7 +151,7 @@ export default function BlocoNumeros({
                   CORES[camada ?? ""] ?? CORES.rosa
                 }`}
               >
-                {valor}
+                <Valor>{valor}</Valor>
               </dt>
               <dd className="text-legenda text-text-muted">{legenda}</dd>
             </div>

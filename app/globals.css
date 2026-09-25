@@ -1504,6 +1504,52 @@ body {
    do toque.
    --------------------------------------------------------------------------- */
 
+/* ---------------------------------------------------------------------------
+   Card de grupo da Stack.
+
+   EM REPOUSO ELE É NEUTRO E NO HOVER A CAMADA ACENDE, na borda do card e no glifo grande. O
+   fundo tingido em todos os cards durou poucas horas em 2026-09-24 e foi desfeito: cor que
+   está sempre ligada deixa de destacar. O marcador de 44x3 continua aceso sempre, porque ele
+   é o portador fixo da camada; borda e glifo são resposta ao ponteiro.
+
+   A COR VEM DO `--cor-camada` QUE O CARD DECLARA, então existe uma regra só em vez de um par
+   por camada, e o CSS não precisa saber quantas camadas existem. É o mesmo mecanismo do
+   `.chip-stack` logo abaixo.
+
+   O `:focus-within` ESTÁ AQUI E HOJE NÃO DISPARA, de propósito. Nada dentro do card é
+   focável: ele não é link, e o chip não é focável porque não há o que ativar. **No dia em que
+   entrar um link no card, o estado de teclado já funciona** em vez de alguém descobrir que o
+   hover não tinha par. Fora do `@media (hover: hover)` porque teclado não depende de ponteiro.
+
+   O hover fica dentro do `@media (hover: hover)`, senão o toque no celular deixa o card preso
+   na cor depois do toque.
+   --------------------------------------------------------------------------- */
+
+.cartao-stack,
+.glifo-stack {
+  transition:
+    color var(--dur-rapida) linear,
+    border-color var(--dur-rapida) linear;
+}
+
+.cartao-stack:focus-within {
+  border-color: var(--cor-camada);
+}
+
+.cartao-stack:focus-within .glifo-stack {
+  color: var(--cor-camada);
+}
+
+@media (hover: hover) {
+  .cartao-stack:hover {
+    border-color: var(--cor-camada);
+  }
+
+  .cartao-stack:hover .glifo-stack {
+    color: var(--cor-camada);
+  }
+}
+
 .chip-stack {
   transition:
     color var(--dur-rapida) linear,

@@ -58,6 +58,10 @@ const colunas = [
     itens: [
       { rotulo: "GitHub", destino: canalPor("github"), externo: true },
       { rotulo: "LinkedIn", destino: canalPor("linkedin"), externo: true },
+      { rotulo: "WhatsApp", destino: canalPor("whatsapp"), externo: true },
+      { rotulo: "Instagram", destino: canalPor("instagram"), externo: true },
+      // O e-mail fica por último e **não é externo**: ele é `mailto:`, não navega, e abrir
+      // aba para entregar ao cliente de e-mail deixa uma aba em branco para trás.
       { rotulo: "E-mail", destino: canalPor("email") },
     ],
   },
