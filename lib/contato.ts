@@ -13,7 +13,12 @@ import { assuntos } from "@/conteudo/contato";
  * aqui é tratado como texto hostil.
  */
 
-export type CampoDoFormulario = "nome" | "email" | "assunto" | "mensagem";
+export type CampoDoFormulario =
+  | "nome"
+  | "email"
+  | "assunto"
+  | "referencia"
+  | "mensagem";
 
 /**
  * A ordem do resumo de erro, que é a ordem visual dos campos.
@@ -27,6 +32,7 @@ export const ORDEM_DOS_CAMPOS: CampoDoFormulario[] = [
   "nome",
   "email",
   "assunto",
+  "referencia",
   "mensagem",
 ];
 
@@ -35,6 +41,7 @@ export const ROTULO_DO_CAMPO: Record<CampoDoFormulario, string> = {
   nome: "Nome",
   email: "E-mail",
   assunto: "Assunto",
+  referencia: "Link",
   mensagem: "Mensagem",
 };
 
@@ -97,8 +104,20 @@ export const CAMPO_CARIMBO = "carimbo";
 const LIMITES = {
   nome: { minimo: 2, maximo: 80 },
   email: { maximo: 254 },
+  referencia: { maximo: 500 },
   mensagem: { minimo: 10, maximo: 3000 },
 } as const;
+
+/**
+ * Os únicos esquemas aceitos no campo de link.
+ *
+ * É ESTA LISTA QUE BARRA `javascript:`, `data:` E `file:`, e é a parte que importa da
+ * validação inteira. Sem ela, um `javascript:` chegaria ao corpo do e-mail e bastaria o
+ * cliente de e-mail transformar em link para existir um alvo de clique perigoso na caixa
+ * de entrada. `mailto:` e `ftp:` também ficam de fora: o campo pede referência para
+ * arquivo ou página, e endereço de e-mail já tem campo próprio.
+ */
+const ESQUEMAS_DO_LINK = ["http:", "https:"];
 
 /**
  * E-mail de uma linha, com arroba e domínio com ponto.
@@ -140,6 +159,52 @@ function limparTexto(valor: string): string {
     .trim();
 }
 
+/**
+ * O campo de link, que é opcional e por isso valida diferente dos outros.
+ *
+ * VAZIO PASSA, e esse é o primeiro caso tratado: campo opcional que reprova em branco é o
+ * jeito mais comum de transformar "opcional" em obrigatório sem perceber.
+ *
+ * A CONFERÊNCIA USA `new URL()`, E NÃO EXPRESSÃO REGULAR. É construtor nativo, então não
+ * entra dependência nenhuma, e ele já resolve o que um regex de URL erra: porta, IPv6
+ * entre colchetes, caractere internacional, credencial embutida. **Regex de URL é uma das
+ * coisas que parecem simples e não são**, e a que costuma ser copiada aceita
+ * `javascript:alert(1)` sem piscar.
+ *
+ * DEPOIS DE ANALISAR, O QUE DECIDE É O ESQUEMA. Ter forma de URL não basta: `javascript:`
+ * e `data:` são URLs válidas para o construtor e são exatamente o que não pode passar.
+ *
+ * CREDENCIAL EMBUTIDA É RECUSADA, o `https://usuario:senha@site.com`. Ela é a forma
+ * clássica de disfarçar o domínio de verdade, porque o olho lê o começo e o navegador
+ * obedece o fim. Num campo que vira texto num e-mail meu, não há motivo para aceitar.
+ */
+function validarReferencia(valor: string): string | null {
+  if (valor.length === 0) {
+    return null;
+  }
+
+  if (valor.length > LIMITES.referencia.maximo) {
+    return `Link longo demais. O limite é ${LIMITES.referencia.maximo} caracteres.`;
+  }
+
+  let url: URL;
+  try {
+    url = new URL(valor);
+  } catch {
+    return "Esse link não parece uma URL completa. Começa com https://";
+  }
+
+  if (!ESQUEMAS_DO_LINK.includes(url.protocol)) {
+    return "Só aceito link http ou https.";
+  }
+
+  if (url.username !== "" || url.password !== "") {
+    return "Tira o usuário e a senha de dentro do link.";
+  }
+
+  return null;
+}
+
 /** `FormData.get` devolve `File` quando o campo é de arquivo. Aqui só texto interessa. */
 function texto(dados: FormData, chave: string): string {
   const valor = dados.get(chave);
@@ -152,6 +217,7 @@ export function validarFormulario(dados: FormData): ResultadoDaValidacao {
     // Minúsculo para o endereço não variar só pela tecla Shift de quem digitou.
     email: limparLinha(texto(dados, "email")).toLowerCase(),
     assunto: limparLinha(texto(dados, "assunto")),
+    referencia: limparLinha(texto(dados, "referencia")),
     mensagem: limparTexto(texto(dados, "mensagem")),
   };
 
@@ -188,6 +254,11 @@ export function validarFormulario(dados: FormData): ResultadoDaValidacao {
    */
   if (!assuntos.includes(valores.assunto)) {
     erros.assunto = "Escolhe um assunto na lista.";
+  }
+
+  const erroDaReferencia = validarReferencia(valores.referencia);
+  if (erroDaReferencia) {
+    erros.referencia = erroDaReferencia;
   }
 
   if (valores.mensagem.length === 0) {
@@ -236,6 +307,9 @@ export function corpoEmTexto(dados: MensagemValidada): string {
     `Nome: ${dados.nome}`,
     `E-mail: ${dados.email}`,
     `Assunto: ${dados.assunto}`,
+    // A linha do link só existe quando ele existe. Um "Link:" seguido de nada seria ruído
+    // na maioria das mensagens, já que o campo é opcional.
+    ...(dados.referencia ? [`Link: ${dados.referencia}`] : []),
     "",
     "Mensagem:",
     dados.mensagem,
@@ -249,10 +323,21 @@ export function corpoEmTexto(dados: MensagemValidada): string {
  * o `<br>` recém-inserido viraria `&lt;br&gt;` e apareceria como texto, enquanto qualquer
  * `<script>` que a pessoa tenha digitado continuaria escapado. O resultado seria um e-mail
  * feio que parece seguro, que é o tipo de defeito que ninguém investiga.
+ *
+ * O LINK SAI COMO TEXTO, DENTRO DE UM `<span>`, E NUNCA COMO `<a>`. Daqui não sai marcação
+ * clicável apontando para endereço que um desconhecido escreveu, e o escape garante que o
+ * valor não vire marcação por conta própria.
+ *
+ * **O QUE O CLIENTE DE E-MAIL FAZ DEPOIS NÃO ESTÁ NO MEU CONTROLE, E ISSO FOI ACEITO.** O
+ * Outlook e a maioria dos outros transformam URL solta em link clicável sozinhos, mesmo
+ * dentro de um `<span>`. Quebrar a URL com espaços derrotaria o auto-link e deixaria o
+ * endereço impossível de copiar de uma vez, o que foi julgado pior. **A decisão é: mando
+ * texto, e se o leitor de e-mail linkar, tudo bem.** O que a validação garante é que só
+ * chega ali `http` ou `https`.
  */
 export function corpoEmHtml(dados: MensagemValidada): string {
   const linha = (rotulo: string, valor: string) =>
-    `<p><strong>${escaparHtml(rotulo)}:</strong> ${escaparHtml(valor)}</p>`;
+    `<p><strong>${escaparHtml(rotulo)}:</strong> <span>${escaparHtml(valor)}</span></p>`;
 
   const mensagem = escaparHtml(dados.mensagem).replaceAll("\n", "<br />");
 
@@ -260,6 +345,7 @@ export function corpoEmHtml(dados: MensagemValidada): string {
     linha("Nome", dados.nome),
     linha("E-mail", dados.email),
     linha("Assunto", dados.assunto),
+    ...(dados.referencia ? [linha("Link", dados.referencia)] : []),
     "<hr />",
     `<p>${mensagem}</p>`,
   ].join("\n");

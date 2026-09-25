@@ -253,7 +253,29 @@ export default function SecaoFormulario() {
         <label htmlFor="assunto" className={ROTULO}>
           ASSUNTO
         </label>
+        {/* O `key` NÃO É ENFEITE, ELE CONSERTA O ASSUNTO QUE VOLTAVA PARA O PLACEHOLDER.
+
+            Duas coisas do React se somavam. **Primeira:** depois que uma action termina, o
+            React chama o `reset()` nativo do formulário, e o `reset()` restaura cada campo
+            pelo ATRIBUTO, não pelo que está na tela. **Segunda:** o React atualiza o
+            atributo de um `<input defaultValue>` quando ele muda, mas **não atualiza um
+            `<select defaultValue>` fora da montagem**. Dá para ler no `react-dom`: no
+            caminho de atualização, sem prop `value` e sem mudança de `multiple`, ele não
+            chama `updateOptions` nenhuma vez; só na montagem ele passa `setDefaultSelected`
+            e escreve o `selected` da `option`.
+
+            Resultado: nome, e-mail e mensagem sobreviviam porque o atributo deles tinha
+            sido atualizado, e o assunto voltava para "Selecione um assunto" porque o
+            atributo continuava no placeholder desde a primeira renderização.
+
+            Trocar o `key` remonta o select, e na montagem o React escreve o `selected` na
+            `option` certa. Aí o `reset()` restaura o valor certo, porque o atributo agora
+            está certo. **Consertar o atributo é o que resolve**, e é por isso que tornar o
+            campo controlado não seria garantia: o `reset()` lê atributo, não propriedade.
+
+            Sem JavaScript nada disso acontece e o servidor já mandava o `selected` certo. */}
         <select
+          key={estado.valores?.assunto ?? ""}
           id="assunto"
           name="assunto"
           required
@@ -277,6 +299,40 @@ export default function SecaoFormulario() {
         {estado.erros.assunto && (
           <p id="erro-assunto" className={ERRO}>
             {estado.erros.assunto}
+          </p>
+        )}
+      </div>
+
+      {/* CAMPO OPCIONAL, ENTRE ASSUNTO E MENSAGEM. Ali ele fica junto do contexto do
+          pedido, e não separa o botão da mensagem.
+
+          `type="url"` FOI ESCOLHA CONSCIENTE, COM UM CUSTO. Ele dá o teclado com barra no
+          celular e uma primeira validação de graça, e em troca **recusa "exemplo.com" sem
+          esquema com a mensagem do navegador**, que não dá para escrever. O teclado certo
+          valeu mais, e quem decide de verdade continua sendo a validação do servidor.
+
+          O "(opcional)" é texto, e não asterisco, que precisaria de legenda para
+          significar alguma coisa. É o mesmo tratamento que o telefone tinha. */}
+      <div className="flex flex-col gap-[9px]">
+        <label htmlFor="referencia" className={ROTULO}>
+          LINK PARA ARQUIVO OU REFERÊNCIA{" "}
+          <span className="text-text-dim">(opcional)</span>
+        </label>
+        <input
+          id="referencia"
+          name="referencia"
+          type="url"
+          autoComplete="url"
+          maxLength={500}
+          defaultValue={estado.valores?.referencia ?? ""}
+          aria-invalid={estado.erros.referencia ? true : undefined}
+          aria-describedby={estado.erros.referencia ? "erro-referencia" : undefined}
+          placeholder="https://exemplo.com/arquivo"
+          className={CAMPO}
+        />
+        {estado.erros.referencia && (
+          <p id="erro-referencia" className={ERRO}>
+            {estado.erros.referencia}
           </p>
         )}
       </div>

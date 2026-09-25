@@ -1687,6 +1687,71 @@ de rate limit por projeto, então essa é a regra do projeto; e **a regra mora n
 no repositório**. Ela não aparece em diff, não vem num clone e a próxima sessão não tem como
 saber que ela existe. É o mesmo tipo de risco já registrado sobre o redirecionamento do www.
 
+#### O campo de link, e o bug do assunto que ele encontrou
+
+**O QUINTO CAMPO ENTROU EM 2026-09-25: "LINK PARA ARQUIVO OU REFERÊNCIA", OPCIONAL**, entre
+ASSUNTO e MENSAGEM, onde fica junto do contexto do pedido sem separar o botão da mensagem.
+
+**ELE ACRESCENTA DADO DOIS DIAS DEPOIS DE O TELEFONE SAIR POR MINIMIZAÇÃO, E ISSO NÃO É
+CONTRADIÇÃO.** O critério não é quantidade de campo, é natureza do dado: **link de
+referência é sobre o assunto, telefone é sobre a pessoa.** O telefone identifica e cria um
+segundo canal que ninguém pediu; o link é material do próprio pedido, e some junto com ele
+quando a conversa acaba. **Quem for julgar um campo novo no futuro, é essa pergunta que
+vale, e não a contagem.**
+
+**A validação usa `new URL()`, e não expressão regular.** É construtor nativo, sem
+dependência, e resolve o que regex de URL erra: porta, IPv6 entre colchetes, caractere
+internacional, credencial embutida. **A regex de URL que costuma ser copiada aceita
+`javascript:alert(1)` sem piscar.**
+
+**Depois de analisar, quem decide é o esquema:** só `http:` e `https:`. Ter forma de URL não
+basta, porque `javascript:` e `data:` são URLs válidas para o construtor e são exatamente o
+que não pode passar. **URL com usuário e senha embutidos também é recusada**, porque é a
+forma clássica de disfarçar o domínio real: o olho lê o começo e o navegador obedece o fim.
+
+**No e-mail o link vai como texto, dentro de um `<span>`, e nunca como `<a>`.** Daqui não
+sai marcação clicável apontando para endereço que um desconhecido escreveu.
+
+**O QUE O CLIENTE DE E-MAIL FAZ DEPOIS FOI ACEITO DE OLHO ABERTO.** Outlook e afins
+transformam URL solta em link clicável sozinhos, mesmo dentro de `<span>`. Quebrar a URL com
+espaços derrotaria o auto-link e deixaria o endereço impossível de copiar de uma vez, o que
+é pior. **A decisão é mandar texto e aceitar que o leitor linke**, porque a validação já
+garante que só chega `http` ou `https` ali.
+
+**O `type="url"` foi escolha consciente, com custo declarado.** Ele dá o teclado com barra
+no celular e uma primeira validação de graça, e em troca **recusa "exemplo.com" sem esquema
+com a mensagem do navegador**, que não dá para escrever. O teclado certo valeu mais.
+
+##### O BUG DO ASSUNTO, QUE É DE REACT E NÃO DESTE CÓDIGO
+
+**Quando o envio dava erro, nome, e-mail e mensagem voltavam preenchidos e o assunto voltava
+para "Selecione um assunto".** Duas coisas do React se somavam, e as duas estão no
+`react-dom`:
+
+1. **Depois que uma action termina, o React chama o `reset()` nativo do formulário.** Dá
+   para ver em `commitLayoutEffectOnFiber`, que chega a `fiber.stateNode.reset()`. E
+   `reset()` restaura cada campo **pelo atributo**, não pelo que está na tela.
+2. **O React atualiza o atributo de um `<input defaultValue>` quando ele muda, e não
+   atualiza o de um `<select defaultValue>` fora da montagem.** No caminho de atualização do
+   select, sem prop `value` e sem mudança de `multiple`, ele não chama `updateOptions`
+   nenhuma vez. Só na montagem ele passa `setDefaultSelected` e escreve o `selected` da
+   `option`.
+
+Resultado: os campos de texto sobreviviam porque o atributo tinha sido atualizado, e o
+assunto voltava ao placeholder porque o atributo continuava apontando para lá desde a
+primeira renderização.
+
+**A CORREÇÃO É UM `key` NO SELECT, ligado ao assunto devolvido.** Trocar o `key` remonta o
+campo, e na montagem o React escreve o `selected` na `option` certa; aí o `reset()` restaura
+o valor certo, porque o atributo passou a estar certo.
+
+**Tornar o campo controlado não seria garantia, e essa é a parte que engana.** O `reset()` lê
+**atributo**, e o caminho controlado do React escreve **propriedade**. Consertar o atributo é
+o que resolve.
+
+**Sem JavaScript nada disso acontece**, porque não há action no cliente nem `reset()`: o
+servidor já mandava o `selected` na opção certa, e mandava antes da correção também.
+
 #### O telefone saiu, e a decisão antiga foi revertida
 
 **O CAMPO DE TELEFONE SAIU EM 2026-09-25, POR MINIMIZAÇÃO DE DADO.** Ele era o único
@@ -1708,7 +1773,8 @@ código de país e sem isso "+55 41 99999-8888" virava um número errado com car
 **não existe `maxLength`**, porque ele corta o texto antes de o `onChange` disparar e o
 limite real é de dígitos, não de caracteres.
 
-**O formulário ficou com quatro campos, como o Figma sempre teve**, e com isso a divergência
+**O formulário ficou com quatro campos, como o Figma sempre teve** (e voltou a cinco no
+mesmo dia, com o campo de link, que também não está no arquivo), e com isso a divergência
 entre arquivo e código naquele ponto acabou.
 
 #### O que mais mudou junto
@@ -1824,6 +1890,31 @@ chave vazaria se alguma versão futura anexasse a requisição com os cabeçalho
 
 **Ainda falta a regra de rate limit no painel da Vercel**, que é a única peça do conjunto
 que não vive no repositório.
+
+#### A lição do primeiro deploy, que custou um erro genérico em produção
+
+**O envio funcionava em desenvolvimento e no `next start` local, e devolvia o aviso
+genérico em produção.** Duas regras da Vercel explicam, e as duas pegam quem acha que
+"criei a variável, está criada".
+
+**VARIÁVEL NOVA SÓ VALE PARA DEPLOY CRIADO DEPOIS DELA.** As variáveis são anexadas ao
+deploy no momento em que ele é criado, então o que está no ar continua rodando sem a
+variável que acabou de ser cadastrada. **Não existe recarregar:** precisa de deploy novo,
+por push ou por redeploy no painel.
+
+**E ELA PRECISA ESTAR NA LISTA DO PROJETO, NÃO SÓ NAS COMPARTILHADAS DA CONTA.** Variável
+compartilhada existe no time, e só chega ao projeto que a tiver vinculada. Ela aparece
+cadastrada quando se olha no lugar errado, o que faz a conferência dar falso positivo.
+
+**O sintoma é o mesmo dos outros defeitos de configuração**, o aviso genérico na tela, e
+quem diferencia é o log. Por isso o log passou a **nomear qual variável falta** e a
+lembrar da regra do deploy, em vez de dizer "falta uma e/ou outra".
+
+**As duas variáveis passam por `trim()` desde 2026-09-25**, e isso é defesa contra erro de
+colar no painel. **Quebra de linha num valor de cabeçalho faz o `fetch` lançar** em vez de
+devolver 401, o que joga o defeito no `catch` de rede e aponta para o lugar errado. Espaço
+no fim é pior: o cabeçalho vai, o Brevo recusa com 401, e a chave "está certa" para quem
+olha o painel.
 
 **Currículo:** PDF vai para o repositório, também via API do GitHub, em base64.
 **Limite de 5 MB no upload**, porque arquivo grande entra no histórico do Git e não sai.
