@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { idadeEmAnos } from "@/lib/idade";
 import type { CSSProperties } from "react";
 
 /**
@@ -86,8 +87,8 @@ export default function SecaoSobre() {
           <p>
             Sou estagiária em Design Multimídia na TecSinapse, toco meu estúdio BORDA
             Design e sou voluntária na Tech Girls, uma comunidade acolhedora e segura para
-            mulheres em TI. Tenho 20 anos, sou mãe de um gato chamado Dio e gosto muito de
-            jogos online ;)
+            mulheres em TI. Tenho {idadeEmAnos()} anos, sou mãe de um gato chamado Dio e
+            gosto muito de jogos online ;)
           </p>
         </div>
 

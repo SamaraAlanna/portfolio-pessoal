@@ -3,6 +3,17 @@ import SecaoSkills from "@/app/_secoes/secao-skills";
 import SecaoTrabalhos from "@/app/_secoes/secao-trabalhos";
 import SecaoSobre from "@/app/_secoes/secao-sobre";
 
+/**
+ * A HOME REGENERA UMA VEZ POR DIA PELO MESMO MOTIVO DO SOBRE: a idade na seção "sobre mim".
+ *
+ * As duas páginas dizem a idade, e **só uma revalidando deixaria as duas em desacordo no dia
+ * do aniversário**. Elas usam a mesma função e agora têm a mesma janela.
+ *
+ * Revalidação sem mudança de saída não gera unidade de escrita, e o único trecho variável
+ * aqui é um inteiro que muda uma vez por ano.
+ */
+export const revalidate = 86400;
+
 export default function Home() {
   return (
     <>

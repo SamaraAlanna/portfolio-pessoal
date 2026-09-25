@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { apresentacao } from "@/conteudo/sobre";
+import { idadeEmAnos } from "@/lib/idade";
 import { CURRICULO } from "@/lib/site";
 
 /**
@@ -88,8 +89,13 @@ export default function SecaoCabecalho() {
       </div>
 
       <div className="flex max-w-[720px] flex-col gap-[18px] text-hero-paragrafo text-text-muted lg:col-start-1 lg:row-start-2 lg:self-start">
+        {/* A IDADE É RESOLVIDA AQUI, NO RENDER, e não no escopo do módulo: constante de
+            módulo é avaliada uma vez por instância do servidor e sobreviveria à revalidação,
+            deixando a idade velha numa página regenerada. */}
         {apresentacao.map((paragrafo) => (
-          <p key={paragrafo.slice(0, 32)}>{paragrafo}</p>
+          <p key={paragrafo.slice(0, 32)}>
+            {paragrafo.replace("{IDADE}", String(idadeEmAnos()))}
+          </p>
         ))}
       </div>
     </section>

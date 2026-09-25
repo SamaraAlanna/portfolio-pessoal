@@ -6,10 +6,18 @@
  * inteira num lugar só. Experiência, formação e certificações são lista estruturada e
  * pertencem aqui por definição.
  */
+/**
+ * O `{IDADE}` é resolvido no render, pelo `idadeEmAnos` de `lib/idade.ts`.
+ *
+ * ELE FICA AQUI COMO MARCADOR, E NÃO COMO NÚMERO, porque idade escrita à mão fica errada no
+ * dia do aniversário e ninguém percebe: bio é texto que ninguém reabre para conferir. A data
+ * de nascimento mora só no código e nunca chega à página.
+ */
 export const apresentacao: string[] = [
-  "Oi, muito prazer! Me chamo Samara Alanna, moro em Colombo, no Paraná, e eu comecei pelo design antes de ir pro código.",
-  "Fui pro código porque queria terminar o que desenhava. Me incomodava entregar uma tela e não saber se ela ia sair do jeito que eu pensei. Hoje faço as duas partes no mesmo projeto: a pesquisa, o wireframe e a interface, e depois o PHP, o JavaScript e o deploy. Em quase tudo que eu pego, a decisão de design e a decisão técnica saem da mesma pessoa.",
-  "Estou fazendo dois tecnólogos ao mesmo tempo, Análise e Desenvolvimento de Sistemas na Universidade Positivo e Design Gráfico na Uninter, os dois EAD. É bastante coisa, mas é o que me deixa confortável nos dois lados :)",
+  "Sou a Samara Alanna, tenho {IDADE} anos e sou UX/UI Designer e Desenvolvedora Full Stack Pleno. Moro em Colombo, no Paraná.",
+  "Meu primeiro contato com programação foi em 2020, com dois amigos desenvolvedores: um me apresentou o Python, o outro o Ruby. Desde então, não larguei mais a lógica nem a vontade de construir produtos. Em 2025 aprofundei os estudos, comecei a atender projetos como freelancer e, em agosto, entrei no tecnólogo em Análise e Desenvolvimento de Sistemas. Foi lá que conheci o UX/UI Design, e foi amor à primeira vista: em novembro, comecei também o tecnólogo em Design Gráfico.",
+  "Gosto de construir e de reconstruir produtos. Trabalhar do design ao desenvolvimento me dá a visão do todo: acompanho cada etapa e garanto que o que vai ao ar é fiel ao layout, porque sou eu quem constrói. Na maioria dos meus projetos, a decisão de design e a decisão técnica saem da mesma pessoa. Atuo com autonomia técnica de ponta a ponta.",
+  "Estou aberta a oportunidades remotas de nível pleno.",
 ];
 
 export type Cargo = {
@@ -52,6 +60,7 @@ export const experiencia: Cargo[] = [
     cargo: "Estagiária em Design Multimídia",
     empresa: "TecSinapse",
     itens: [
+      "Responsável pelo design e pelo desenvolvimento dos sites de clientes e de produtos internos, da interface ao deploy.",
       "Diagnostiquei a causa raiz de uma vulnerabilidade que permitia leads sem CPF válido chegarem ao CRM corporativo, e desenvolvi um módulo PHP central aplicado em 106 formulários e 77 páginas de concessionárias num único deploy.",
       "Construí 3 formulários do zero com validação de CPF, telefone e email sem biblioteca externa, e integrei selects dependentes de estado e cidade consumindo JSON com mais de 5.570 municípios.",
       "Criei design system, componentes e telas no Figma, com documentação de padrões e especificação de handoff para o desenvolvimento.",
