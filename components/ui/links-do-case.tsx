@@ -38,7 +38,15 @@ export default function LinksDoCase({ links }: { links?: LinkExterno[] }) {
   if (!links || links.length === 0) return null;
 
   return (
-    <div className="flex flex-wrap items-center gap-[12px]">
+    // OS BOTÕES FICAM LADO A LADO EM TODA LARGURA, e só quebram quando não couberem. O
+    // `lg:shrink-0` é o que garante isso no desktop: sem ele este container é um item de
+    // flex ao lado do título, encolhe abaixo do próprio conteúdo quando o título é longo, e
+    // aí o `flex-wrap` passa a quebrar **um botão por linha**, que era o que acontecia na
+    // SouJunior. Quem cede espaço é o título, que já tem `min-w-0` e quebra em duas linhas.
+    //
+    // O `shrink-0` é só do desktop de propósito: no mobile o pai é coluna, e aí um container
+    // de largura máxima passaria da faixa em vez de deixar o `flex-wrap` trabalhar.
+    <div className="flex flex-wrap items-center gap-[12px] lg:shrink-0">
       {links.map((link) => (
         <a
           key={link.destino}
