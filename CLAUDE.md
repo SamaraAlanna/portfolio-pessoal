@@ -560,6 +560,31 @@ registro histórico:** o marcador do BORDA e o da Tech Girls, no Sobre. Apagar d
 falsificaria a experiência dela, que aconteceu. O critério vem do próprio
 `docs/modelos-de-case.md`: nunca prometer o que a página não mostra.
 
+**UM SEGUNDO CRITÉRIO ENTROU EM 2026-09-24, E ELE É SOBRE A STACK.** Quando um item sai da
+Stack, a pergunta não é se ele sumiu da página, é **por que ele saiu**, e as duas respostas
+levam a lugares opostos:
+
+- **Saiu por redundância, e o trabalho continua:** o texto fora da Stack **pode continuar
+  citando**. "Wireframe" saiu porque "Protótipo navegável" cobre, e "Grid" e "Flexbox" saíram
+  porque "CSS3" cobre. A home diz "Wireframe e protótipo navegável no Figma" e a bio diz "a
+  pesquisa, o wireframe e a interface", e as duas **continuam verdadeiras**, porque ela faz
+  wireframe. A Stack é a lista de ferramentas com autonomia, não o inventário de tudo que
+  aparece no trabalho.
+- **Saiu porque não é mais usado:** o texto fora da Stack **precisa sair junto**. Foi o caso
+  do `styled-components`, que saiu da Stack e saiu da home no mesmo dia: a linha "React,
+  TypeScript e styled-components" virou "React, Next.js e TypeScript". Deixar seria a home
+  prometer uma ferramenta que a Stack já não sustenta.
+
+**A diferença entre os dois critérios é o eixo.** O de cima é sobre **tempo**, o que aconteceu
+fica como registro; este é sobre **cobertura**, o que outro item já diz não precisa ser
+repetido. Um item pode sair da Stack sem sair da vida dela, e confundir as duas coisas leva a
+apagar texto verdadeiro.
+
+**Dois casos ficaram de fora dos dois critérios, por serem de outra natureza:** o "Google Ads"
+no marcador do BORDA é registro histórico, pelo critério de cima; e o "Elementor" está no
+**nome literal de uma certificação da Alura**, impresso no certificado que a página exibe ao
+lado, então mexer criaria divergência entre o texto e a imagem.
+
 **Três blocos foram apagados em 2026-09-24**, depois de auditoria que confirmou zero uso no
 conteúdo e nenhuma importação fora do mapa de directives: `bloco-destaque`,
 `bloco-antes-depois` e `bloco-frase`. Nenhum tinha CSS próprio no `app/globals.css`, então não

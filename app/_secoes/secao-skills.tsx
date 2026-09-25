@@ -33,7 +33,7 @@ const design = [
 const codigo = [
   "HTML5 semântico e CSS3 (variáveis, Grid, Flexbox)",
   "JavaScript ES6+, jQuery e Bootstrap 5",
-  "React, TypeScript e styled-components",
+  "React, Next.js e TypeScript",
   "PHP modular e WordPress com tema customizado",
   "APIs REST, webhooks n8n e integração com CRM",
   "Git, GitHub Actions e deploy automatizado",
