@@ -94,7 +94,12 @@ export default function IndiceCase({ secoes }: { secoes: SecaoDoCase[] }) {
       >
         <ol className="mt-[16px] flex w-full flex-col gap-[4px]">
           {secoes.map((secao) => (
-            <li key={secao.ancora} className="w-full">
+            // O item some junto da seção: índice apontando para destino que não existe na
+            // tela é pior que índice curto.
+            <li
+              key={secao.ancora}
+              className={secao.somenteDesktop ? "hidden w-full lg:block" : "w-full"}
+            >
               <a
                 href={`#${secao.ancora}`}
                 onClick={() => levarFocoPara(secao.ancora)}

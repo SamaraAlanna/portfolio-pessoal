@@ -40,6 +40,20 @@ import { linhasDeCampos } from "@/lib/texto";
  * borda é 0,5 e não o 1 do arquivo, porque 0,5 é a espessura de card do projeto inteiro e
  * uma borda mais grossa aqui faria este card pesar diferente dos outros do mesmo case.
  */
+/**
+ * Colunas no desktop, pela contagem de cards.
+ *
+ * MAPA E NÃO INTERPOLAÇÃO, pelo mesmo motivo do `bloco-imagens`: o Tailwind gera classe a
+ * partir de texto encontrado no código. Acima de três a grade volta para duas, porque quatro
+ * cards de decisão numa linha de 900 deixam cada um com 210 e o título quebra em quatro
+ * linhas.
+ */
+const COLUNAS: Record<number, string> = {
+  1: "lg:grid-cols-1",
+  2: "lg:grid-cols-2",
+  3: "lg:grid-cols-3",
+};
+
 const CORES: Record<string, string> = {
   rosa: "text-accent-rosa",
   lavanda: "text-accent-lavanda",
@@ -53,7 +67,11 @@ export default function BlocoOpcoes({ children }: { children?: ReactNode }) {
   if (opcoes.length === 0) return null;
 
   return (
-    <ul className="grid w-full grid-cols-1 gap-[16px] lg:grid-cols-2">
+    <ul
+      className={`grid w-full grid-cols-1 gap-[16px] ${
+        COLUNAS[opcoes.length] ?? "lg:grid-cols-2"
+      }`}
+    >
       {opcoes.map(([rotulo, titulo, descricao, camada], indice) => {
         const escolhida = rotulo?.toUpperCase() === "ESCOLHIDA";
         return (

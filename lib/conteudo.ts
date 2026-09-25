@@ -49,6 +49,8 @@ export type Projeto = {
   heroCase?: ImagemDeAbertura[];
   /** Linha de apoio abaixo das imagens de abertura, como o aviso de confidencialidade. */
   heroNota?: string;
+  /** Links de saida do case. Ausente significa que o case nao mostra nenhum. */
+  links?: LinkExterno[];
   corpo: string;
 };
 
@@ -62,6 +64,17 @@ export type Projeto = {
  */
 export type ImagemDeAbertura = { caminho: string; alt?: string };
 
+/**
+ * Um link externo do case: o site no ar, o repositorio.
+ *
+ * FICA NO FRONTMATTER E NAO NO CORPO, porque nao e conteudo de secao: e a saida do case, e
+ * aparece sempre no mesmo lugar, depois da ultima frente. Escrito no corpo, ele viraria
+ * decisao de posicao do autor a cada case.
+ *
+ * Mesmo formato de campos separados por barra que a ficha usa.
+ */
+export type LinkExterno = { rotulo: string; destino: string };
+
 /** Uma frente do case, como o índice lateral a enxerga. */
 export type SecaoDoCase = {
   /** Posição, com zero à esquerda: "01", "02". */
@@ -70,6 +83,14 @@ export type SecaoDoCase = {
   rotulo: string;
   /** Destino da âncora, derivado do rótulo pela função de `lib/texto.ts`. */
   ancora: string;
+  /**
+   * Secao que so existe no desktop.
+   *
+   * A MARCA VIVE NA SECAO E NAO NO BLOCO, porque ela governa duas coisas de uma vez: a secao
+   * some do corpo e o item some do indice. Escondida so no bloco, o indice continuaria
+   * listando um destino que nao existe na tela.
+   */
+  somenteDesktop: boolean;
 };
 
 /**
@@ -101,6 +122,7 @@ export function lerSecoes(corpo: string): SecaoDoCase[] {
       numero: String(encontradas.length + 1).padStart(2, "0"),
       rotulo,
       ancora: ancoraDeRotulo(rotulo),
+      somenteDesktop: /somenteDesktop="true"/.test(abertura[1]),
     });
   }
 
@@ -191,6 +213,18 @@ function lerAbertura(
   return imagens.length ? imagens : undefined;
 }
 
+/** Le a lista de links, no formato `rotulo | destino`. */
+function lerLinks(lista: string[] | undefined): LinkExterno[] | undefined {
+  const links = (lista ?? [])
+    .map((linha) => {
+      const [rotulo, ...resto] = linha.split("|");
+      return { rotulo: rotulo.trim(), destino: resto.join("|").trim() };
+    })
+    .filter((link) => link.rotulo && link.destino);
+
+  return links.length ? links : undefined;
+}
+
 function paraProjeto(arquivo: string): Projeto {
   const bruto = readFileSync(join(PASTA, arquivo), "utf8");
   const [campos, listas, corpo] = lerFrontmatter(bruto);
@@ -219,6 +253,7 @@ function paraProjeto(arquivo: string): Projeto {
     imagem: campos.imagem ? lerTexto(campos.imagem) : undefined,
     heroCase: lerAbertura(listas.heroCase, campos.heroCase),
     heroNota: campos.heroNota ? lerTexto(campos.heroNota) : undefined,
+    links: lerLinks(listas.links),
     corpo,
   };
 }

@@ -44,6 +44,11 @@ yarn-error.log*
 .env*
 !.env.example
 
+# imagens de origem
+# Os PNGs de origem sao grandes e entram no historico do Git para sempre se escaparem. O que
+# vai para o repositorio e o WebP tratado em public/imagens, e nao o original.
+/imagens-originais/
+
 # certificados originais
 # OS PDFs DE CERTIFICADO PODEM TRAZER CPF, RG, DATA DE NASCIMENTO E ENDERECO, E ESTE
 # REPOSITORIO E PUBLICO. Nada desta pasta vai para o GitHub. Os arquivos daqui tambem nunca

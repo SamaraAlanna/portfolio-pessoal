@@ -1,0 +1,104 @@
+---
+slug: soujunior
+titulo: Landing Apoia.se SouJunior
+tipo: ux-produto
+tags: [UX/UI Design, Front-End]
+estado: no-ar
+destaque: false
+ordem: 4
+publicado: true
+imagem: /imagens/projetos/soujunior.webp
+heroCase: /imagens/cases/soujunior-hero.webp | Topo da landing publicada, com o mascote da SouJunior e a chamada de apoio
+links:
+  - Ver a página no ar | https://soujunior-apoiase-landingpage.vercel.app/
+  - Ver o repositório | https://github.com/Girls-In-Cortex/soujunior-apoiase-landingpage
+descricao: Landing de campanha para a SouJunior, feita em hackathon. Sistema de tokens em três camadas, uma cor do kit oficial trocada por reprovar em contraste, e o esqueleto de HTML que deixou três devs construírem em paralelo.
+resumo: Landing de campanha de doação para a SouJunior, em hackathon com nove pessoas. Fiz o design system em tokens, o contraste de todos os pares de cor e a ponte que dividiu a página entre três devs.
+ficha:
+  - PAPEL | UX/UI e design system
+  - CONTEXTO | Hackathon SouJunior 2026
+  - STACK | HTML, CSS e JS sem framework
+  - TIME | Girls in Cortex, 9 pessoas
+  - PERÍODO | 2026
+---
+
+{/* REGRA DE ANINHAMENTO: o bloco de fora precisa de MAIS dois-pontos que o de dentro. */}
+
+{/* RÓTULOS EM CAIXA NORMAL: a caixa alta vem do `text-transform` do `bloco-secao`. */}
+
+:::secao{rotulo="Problema" titulo="Uma página que não foi feita para converter doação"}
+A SouJunior é mantida por voluntários e sustentada por doações no Apoia.se. O pedido de apoio vivia no fim de uma página institucional longa, e nada explicava para onde o dinheiro ia.
+:::
+
+::::secao{rotulo="Contraste" titulo="Uma cor do kit que não podia ser botão"}
+O UI Kit oficial chegou no meio do projeto. O azul primário dele dá 3,79 de contraste com texto branco, abaixo dos 4,5 exigidos. Usei a cor de destaque do próprio kit no botão, com 11,22.
+
+:::opcoes
+ADOTADO DO KIT | Tipografia, mascotes, ação e hover
+MANTIDO DO CÓDIGO | O navy dos títulos e o azul das seções
+CRIADO PARA A CAMPANHA | Âmbar de destaque, espaçamento, raios e tema claro
+:::
+::::
+
+::::secao{rotulo="Sistema" titulo="Tokens antes de qualquer componente"}
+Montei o sistema em três camadas: primitivas, tokens semânticos e componentes. O nome do token diz a função, não a cor, então a identidade inteira troca num arquivo.
+
+:::codigo{arquivo="tokens.css" abas="Primitivas, Semânticos" prova="true"}
+```css
+/* Vindas do UI Kit oficial da SouJunior */
+--kit-destaque: #0e14bf;
+--kit-secundaria: #0a1662;
+--kit-neutra: #242731;
+
+/* Azuis da marca SouJunior */
+--brand-900: #00205f;
+--brand-300: #95c6ff;
+
+/* Âmbar: cor de acento criada para esta campanha */
+--accent-400: #ffb020;
+--accent-700: #b25e00;
+```
+
+```css
+--color-heading: var(--brand-900);
+--color-text: var(--kit-neutra);
+--color-action: var(--kit-destaque);
+/* botão principal. 11.22:1 com texto branco */
+--color-action-hover: var(--kit-secundaria);
+/* hover do botão. 16.10:1 */
+
+/* Campanha: o âmbar marca valor e decisão.
+   Nunca é fundo de botão: branco sobre ele dá 1.83:1 e reprova. */
+--color-highlight: var(--accent-400);
+--color-on-highlight: var(--kit-neutra);
+/* texto sobre o âmbar. 8.15:1 */
+```
+:::
+::::
+
+::::secao{rotulo="Ponte" titulo="Três devs construindo em paralelo sem colidir"}
+Entreguei o esqueleto do HTML com os textos escritos, os tokens e o CSS base, e dividi as seções em um arquivo por responsável.
+
+:::diagrama
+Figma
+tokens.css
+base.css
+esqueleto HTML
+3 devs em paralelo | lavanda
+:::
+::::
+
+::::secao{rotulo="Página" somenteDesktop="true"}
+:::paginas{desktop="/imagens/cases/soujunior-landing-desktop.webp" mobile="/imagens/cases/soujunior-landing-mobile.webp"}
+:::
+::::
+
+::::secao{rotulo="Em números"}
+:::numeros{formato="linha"}
+16 | Pares de cor calculados antes do layout | case
+5,23 | Menor contraste em uso na página | case
+9 | Seções, cada uma com uma responsável | case
+9 | Pessoas no time | case
+2 | Semanas de hackathon | case
+:::
+::::

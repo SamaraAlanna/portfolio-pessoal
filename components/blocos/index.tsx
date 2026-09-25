@@ -8,6 +8,7 @@ import BlocoPaleta from "@/components/blocos/bloco-paleta";
 import BlocoOpcoes from "@/components/blocos/bloco-opcoes";
 import BlocoDuo from "@/components/blocos/bloco-duo";
 import BlocoEstados from "@/components/blocos/bloco-estados";
+import BlocoPaginas from "@/components/blocos/bloco-paginas";
 import ImagemMdx from "@/components/ui/imagem-mdx";
 import type { SecaoDoCase } from "@/lib/conteudo";
 
@@ -29,6 +30,7 @@ export const blocos = {
 
   // Visualizador de estados de tela, em abas. Entrou com o redesenho dos cases.
   estados: BlocoEstados,
+  paginas: BlocoPaginas,
 
   // Dois blocos que os cases exigiram e que não estavam na lista original dos nove.
   duo: BlocoDuo,
@@ -57,13 +59,19 @@ export function blocosComIndice(secoes: SecaoDoCase[]) {
 
   return {
     ...blocos,
-    secao: function SecaoNumerada(props: { rotulo?: string; titulo?: string; children?: React.ReactNode }) {
+    secao: function SecaoNumerada(props: {
+      rotulo?: string;
+      titulo?: string;
+      somenteDesktop?: string;
+      children?: React.ReactNode;
+    }) {
       const encontrada = props.rotulo ? porRotulo.get(props.rotulo) : undefined;
       return (
         <BlocoSecao
           {...props}
           numero={encontrada?.numero}
           ancora={encontrada?.ancora}
+          somenteDesktop={encontrada?.somenteDesktop}
         />
       );
     },

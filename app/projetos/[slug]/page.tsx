@@ -15,6 +15,7 @@ import { lerProjeto, lerProjetos, lerSecoes, proximoProjeto } from "@/lib/conteu
 import SecaoCabecalho from "@/app/projetos/[slug]/_secoes/secao-cabecalho";
 import SecaoFicha from "@/app/projetos/[slug]/_secoes/secao-ficha";
 import SecaoEmConstrucao from "@/app/projetos/[slug]/_secoes/secao-em-construcao";
+import SecaoLinks from "@/app/projetos/[slug]/_secoes/secao-links";
 import SecaoProximo from "@/app/projetos/[slug]/_secoes/secao-proximo";
 
 /**
@@ -208,6 +209,10 @@ export default async function PaginaCase({ params }: PageProps<"/projetos/[slug]
                   },
                 }}
               />
+
+              {/* Os links de saída fecham a coluna do conteúdo, alinhados com o texto das
+                  frentes e antes do próximo projeto. Case sem o campo não renderiza nada. */}
+              <SecaoLinks links={projeto.links} />
             </div>
           </div>
         </>

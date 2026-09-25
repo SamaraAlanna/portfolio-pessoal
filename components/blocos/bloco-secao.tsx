@@ -72,6 +72,7 @@ export default function BlocoSecao({
   titulo,
   numero,
   ancora,
+  somenteDesktop,
   children,
 }: {
   rotulo?: string;
@@ -80,6 +81,15 @@ export default function BlocoSecao({
   numero?: string;
   /** Destino da âncora do índice. Injetada, não escrita no MDX. */
   ancora?: string;
+  /**
+   * Seção que só existe acima de 64rem. Injetada a partir do atributo do MDX.
+   *
+   * ESCONDE COM `display`, E NÃO COM `visibility` NEM COM ALTURA ZERO, porque o que se quer é
+   * o conteúdo sair do fluxo e da árvore de acessibilidade. Hoje a única marcada é a página
+   * completa da SouJunior, que são duas janelas roláveis: rolagem dentro de rolagem num
+   * toque é ambígua, o dedo não distingue as duas.
+   */
+  somenteDesktop?: boolean;
   children?: ReactNode;
 }) {
   const idDoRotulo = ancora ? `${ancora}-rotulo` : undefined;
@@ -91,7 +101,9 @@ export default function BlocoSecao({
       id={ancora}
       tabIndex={ancora ? -1 : undefined}
       aria-labelledby={idDoRotulo}
-      className="secao-de-case flex w-full flex-col items-start"
+      className={`secao-de-case w-full flex-col items-start ${
+        somenteDesktop ? "hidden lg:flex" : "flex"
+      }`}
     >
       {rotulo ? (
         // Quando a seção tem título grande, ele é o cabeçalho e o rótulo é só um selo
