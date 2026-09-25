@@ -2,6 +2,7 @@ import { ViewTransition } from "react";
 import Link from "next/link";
 import BadgeConstrucao from "@/components/ui/badge-construcao";
 import type { Projeto } from "@/lib/conteudo";
+import LinksDoCase from "@/components/ui/links-do-case";
 
 /**
  * Hero do case: migalha e título, e nada mais.
@@ -50,17 +51,30 @@ export default function SecaoCabecalho({ projeto }: { projeto: Projeto }) {
         </Link>
       </nav>
 
-      <div className="flex flex-wrap items-center gap-[16px]">
-        <ViewTransition
-          name={`titulo-${projeto.slug}`}
-          share="morph-projeto"
-          default="none"
-        >
-          <h1 className="text-titulo-case font-extrabold text-text">
-            {projeto.tituloCase ?? projeto.titulo}
-          </h1>
-        </ViewTransition>
-        {projeto.estado === "em-construcao" ? <BadgeConstrucao /> : null}
+      {/* TÍTULO E LINKS NA MESMA LINHA NO DESKTOP, alinhados pela base, que é como os
+          frames desenham: o `items-end` encosta o fim dos botões no fim do título, e não no
+          meio dele. No mobile vira coluna e os links descem para baixo do título, à esquerda.
+
+          O `min-w-0` no bloco do título é o que impede um título longo de empurrar os
+          botões para fora da faixa: sem ele o item de flex não encolhe abaixo do conteúdo.
+
+          NA ORDEM DE LEITURA E DO TAB OS LINKS VÊM DEPOIS DO `h1`, porque é essa a ordem no
+          HTML. O desktop só muda onde eles são pintados, não a sequência. */}
+      <div className="flex w-full flex-col items-start gap-[20px] lg:flex-row lg:items-end lg:justify-between lg:gap-[40px]">
+        <div className="flex min-w-0 flex-wrap items-center gap-[16px]">
+          <ViewTransition
+            name={`titulo-${projeto.slug}`}
+            share="morph-projeto"
+            default="none"
+          >
+            <h1 className="text-titulo-case font-extrabold text-text">
+              {projeto.tituloCase ?? projeto.titulo}
+            </h1>
+          </ViewTransition>
+          {projeto.estado === "em-construcao" ? <BadgeConstrucao /> : null}
+        </div>
+
+        <LinksDoCase links={projeto.links} />
       </div>
     </header>
   );
