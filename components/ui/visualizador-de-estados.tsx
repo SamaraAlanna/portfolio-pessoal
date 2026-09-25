@@ -41,6 +41,7 @@ export default function VisualizadorDeEstados({
   imagens,
   proporcao,
   total,
+  rotulo = "Estados da tela",
 }: {
   estados: Estado[];
   imagens: ReactNode[];
@@ -48,6 +49,14 @@ export default function VisualizadorDeEstados({
   proporcao: number;
   /** Quantos estados existem no case inteiro, que é maior que o número de abas. */
   total?: string;
+  /**
+   * Nome acessível da lista de abas.
+   *
+   * **É PARÂMETRO PORQUE O COMPONENTE DEIXOU DE SER SÓ DOS CASES.** As certificações
+   * reaproveitam ele para os três níveis da Carreira UX, e um tablist fixo em "Estados da
+   * tela" anunciaria estado de tela para quem está olhando um certificado.
+   */
+  rotulo?: string;
 }) {
   const base = useId();
   const [ativa, setAtiva] = useState(0);
@@ -113,7 +122,7 @@ export default function VisualizadorDeEstados({
     <div className="flex w-full flex-col overflow-hidden rounded-[12px] border-[0.5px] border-border bg-surface">
       <div
         role="tablist"
-        aria-label="Estados da tela"
+        aria-label={rotulo}
         className="flex w-full flex-wrap items-center gap-[4px] bg-surface-2 p-[10px]"
       >
         {estados.map((estado, indice) => (

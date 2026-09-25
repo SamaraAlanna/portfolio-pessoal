@@ -733,7 +733,7 @@ body {
       interpolate-size: allow-keywords;
     }
 
-    .acordeao-mobile::details-content {
+    .acordeao::details-content {
       height: 0;
       overflow: clip;
       overflow-clip-margin: 6px;
@@ -742,7 +742,7 @@ body {
         content-visibility var(--dur-media) allow-discrete;
     }
 
-    .acordeao-mobile[open]::details-content {
+    .acordeao[open]::details-content {
       height: auto;
     }
   }
@@ -2222,7 +2222,7 @@ body {
    --------------------------------------------------------------------------- */
 
 /* O marcador nativo sai: quem indica aberto e fechado é o chevron do Figma. */
-.acordeao-mobile > summary {
+.acordeao > summary {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -2231,7 +2231,7 @@ body {
   list-style: none;
 }
 
-.acordeao-mobile > summary::-webkit-details-marker {
+.acordeao > summary::-webkit-details-marker {
   display: none;
 }
 
@@ -2239,13 +2239,22 @@ body {
   transition: rotate var(--dur-media) var(--curva-saida);
 }
 
-.acordeao-mobile[open] > summary .acordeao-chevron {
+.acordeao[open] > summary .acordeao-chevron {
   rotate: 180deg;
 }
 
-/* O rótulo do desktop é outro elemento, e não o mesmo escondido: no desktop o summary sai
+/* DUAS CLASSES, E A DIFERENÇA É SÓ O DESKTOP. A `.acordeao` é o `details` de sempre, com
+   cabeçalho clicável e chevron, e vale em qualquer largura. A `.acordeao-mobile` acrescenta
+   o comportamento de abrir sozinho acima de 64rem, que é o que a home e os blocos de código
+   precisam.
+
+   As certificações usam a base, porque lá o accordion **fecha nos dois tamanhos**: são três
+   áreas com 18 certificados, e abrir tudo no desktop devolveria a parede de itens que o
+   accordion existe para evitar.
+
+   O rótulo do desktop é outro elemento, e não o mesmo escondido: no desktop o summary sai
    do layout por inteiro, então ele não deixa parada de tabulação nem anuncia um estado de
-   disclosure que a tela não mostra. */
+   disclosure que a tela não mostra. Ele só é renderizado pela variante mobile. */
 .acordeao-rotulo-fixo {
   display: none;
 }
@@ -2278,6 +2287,35 @@ body {
       display: none;
     }
   }
+}
+
+/* ---------------------------------------------------------------------------
+   Dialog do certificado.
+
+   O `<dialog>` nativo traz estilo de user agent proprio, entao largura, altura e padding
+   sao declarados aqui em vez de ficarem por conta dele. O `margin: auto` centra nos dois
+   eixos, que e o que o dialog modal faz por padrao e se perde ao declarar largura.
+
+   O FUNDO DO BACKDROP E PRETO FIXO NOS DOIS TEMAS, e nao um token. Ele existe para apagar a
+   pagina atras de uma imagem que tem fundo claro nos dois temas, porque certificado e papel
+   branco: um backdrop que clareia no tema claro deixaria a imagem sem limite visivel.
+   --------------------------------------------------------------------------- */
+
+.dialogo-certificado {
+  width: min(1100px, calc(100vw - 48px));
+  max-height: calc(100dvh - 48px);
+  margin: auto;
+  padding: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  border: 0.5px solid var(--border);
+  border-radius: 12px;
+  background-color: var(--surface);
+  color: var(--text);
+}
+
+.dialogo-certificado::backdrop {
+  background-color: rgb(0 0 0 / 0.72);
 }
 
 /* ---------------------------------------------------------------------------

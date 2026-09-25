@@ -111,44 +111,223 @@ export const idiomas: Idioma[] = [
   { idioma: "Espanhol", nivel: "básico" },
 ];
 
-export type GrupoDeCertificacoes = {
-  titulo: string;
-  itens: { nome: string; origem: string }[];
+/**
+ * Uma imagem de certificado, ja tratada e pronta para publicar.
+ *
+ * UM CERTIFICADO PODE TER MAIS DE UMA IMAGEM, e o caso real é a Carreira UX Design, que a
+ * Alura emite em tres niveis. **Sao tres arquivos e um certificado so**, entao no dialog
+ * eles viram abas, reaproveitando o visualizador de estados dos cases em vez de um segundo
+ * componente de abas.
+ *
+ * O `rotulo` so existe quando ha mais de uma: ele é o texto da aba.
+ *
+ * O NOME PUBLICADO NAO CARREGA DADO PESSOAL. Os originais têm nome inconsistente e um deles
+ * traz o e-mail dela, entao o caminho daqui é sempre um slug escrito à mão.
+ */
+export type ImagemDeCertificado = {
+  /** Caminho da versao grande, de 1400px, que abre no dialog. */
+  caminho: string;
+  alt: string;
+  /** Texto da aba, so quando o certificado tem mais de uma imagem. */
+  rotulo?: string;
+  /** Linha de apoio abaixo da imagem, so na versao em abas. */
+  legenda?: string;
 };
 
+/**
+ * A miniatura de 480px e o mesmo caminho com sufixo.
+ *
+ * A CONVENCAO MORA NUMA FUNCAO E NAO EM DOIS CAMPOS. Guardar os dois caminhos no dado
+ * deixaria a porta aberta para eles divergirem, e nao existe caso em que a miniatura de um
+ * certificado seja outra imagem: ela e sempre a mesma, menor.
+ */
+export function miniaturaDe(caminho: string): string {
+  return caminho.replace(/\.webp$/, "-miniatura.webp");
+}
+
+export type Certificacao = {
+  nome: string;
+  instituicao: string;
+  /** Ausente nos tres da Anthropic, que nao declaram data no certificado. */
+  ano?: number;
+  /** Ausente onde o certificado nao declara carga. */
+  horas?: number;
+  /** Preenchido quando as imagens forem geradas a partir dos PDFs originais. */
+  imagens?: ImagemDeCertificado[];
+};
+
+export type GrupoDeCertificacoes = {
+  titulo: string;
+  itens: Certificacao[];
+};
+
+/**
+ * TRES AREAS DESDE 2026-09-24. Eram quatro: "Fundamentos" foi absorvida por
+ * "Desenvolvimento", e "Seguranca e IA" virou "Dados, IA e seguranca" e recebeu o bootcamp
+ * da DIO, que o nome ja anunciava.
+ *
+ * OS DADOS VIERAM DA LEITURA DOS 20 PDFS ORIGINAIS, e nao do nome dos arquivos, que estao
+ * inconsistentes. Duas correcoes que vieram dessa leitura e valem registrar:
+ *
+ * 1. **As 198h nunca foram da Formacao UX Design.** Elas sao da Carreira UX Design, os tres
+ *    niveis somados, 60 mais 86 mais 52. A Formacao UX Design tem 42h, e o site anunciava
+ *    198 nela.
+ * 2. **Duas certificacoes existiam e nao apareciam:** a Formacao Desenvolvimento de Carreira
+ *    em UX e o Git e GitHub.
+ *
+ * Nenhum certificado tem CPF, RG, data de nascimento ou endereco. Nome completo e assinatura
+ * institucional podem aparecer nas imagens.
+ */
 export const certificacoes: GrupoDeCertificacoes[] = [
   {
     titulo: "Desenvolvimento",
     itens: [
-      { nome: "React Developer", origem: "DIO - 2026" },
+      { nome: "Formação React Developer", instituicao: "DIO", ano: 2026, horas: 34,
+        imagens: [
+          { caminho: "/imagens/certificados/react-developer-dio.webp", alt: "Certificado de Formação React Developer, emitido por DIO" },
+        ],
+      },
+      {
+        nome: "WordPress: crie sites com Elementor e Figma",
+        instituicao: "Alura",
+        ano: 2026,
+        horas: 10,
+        imagens: [
+          { caminho: "/imagens/certificados/wordpress-elementor-figma-alura.webp", alt: "Certificado de WordPress: crie sites com Elementor e Figma, emitido por Alura" },
+        ],
+      },
+      {
+        nome: "Engenharia de Software",
+        instituicao: "Universidade Cruzeiro do Sul",
+        ano: 2025,
+        horas: 20,
+        imagens: [
+          { caminho: "/imagens/certificados/engenharia-de-software-cruzeiro-do-sul.webp", alt: "Certificado de Engenharia de Software, emitido por Universidade Cruzeiro do Sul" },
+        ],
+      },
+      {
+        nome: "Git e GitHub: compartilhando e colaborando em projetos",
+        instituicao: "Alura",
+        ano: 2025,
+        horas: 8,
+        imagens: [
+          { caminho: "/imagens/certificados/git-github-alura.webp", alt: "Certificado de Git e GitHub: compartilhando e colaborando em projetos, emitido por Alura" },
+        ],
+      },
+      {
+        nome: "Lógica de programação: mergulhe em programação com JavaScript",
+        instituicao: "Alura",
+        ano: 2025,
+        horas: 6,
+        imagens: [
+          { caminho: "/imagens/certificados/logica-de-programacao-alura.webp", alt: "Certificado de Lógica de programação: mergulhe em programação com JavaScript, emitido por Alura" },
+        ],
+      },
+      {
+        nome: "Elas+ Tech: Front-End em JavaScript",
+        instituicao: "Ada",
+        ano: 2025,
+        horas: 6,
+        imagens: [
+          { caminho: "/imagens/certificados/front-end-javascript-ada.webp", alt: "Certificado de Elas+ Tech: Front-End em JavaScript, emitido por Ada" },
+        ],
+      },
+      { nome: "HTML", instituicao: "Ada", ano: 2025, horas: 3,
+        imagens: [
+          { caminho: "/imagens/certificados/html-ada.webp", alt: "Certificado de HTML, emitido por Ada" },
+        ],
+      },
     ],
   },
   {
     titulo: "UX e design",
     itens: [
-      { nome: "UX Design, 198h", origem: "Alura - 2025" },
-      { nome: "UX Research, 32h", origem: "Alura - 2025" },
-      { nome: "Acessibilidade em UX, 31h", origem: "Alura - 2025" },
-      { nome: "Figma, 41h", origem: "Alura - 2025" },
-      { nome: "WordPress, Elementor e Figma", origem: "Alura - 2026" },
-    ],
-  },
-  {
-    titulo: "Fundamentos",
-    itens: [
-      { nome: "Engenharia de Software", origem: "Cruzeiro do Sul - 2025" },
-      { nome: "Lógica de Programação", origem: "Alura - 2025" },
-      { nome: "Front-end com JavaScript, HTML e CSS", origem: "Ada - 2025" },
+      // 198h é a soma dos tres niveis: 60, 86 e 52. As tres imagens viram abas no dialog.
+      {
+        nome: "Carreira UX Design, 3 níveis",
+        instituicao: "Alura",
+        ano: 2025,
+        horas: 198,
+        imagens: [
+          { caminho: "/imagens/certificados/carreira-ux-design-nivel-1.webp", alt: "Certificado de Carreira UX Design, nível 1, emitido por Alura", rotulo: "Nível 1", legenda: "60 horas" },
+          { caminho: "/imagens/certificados/carreira-ux-design-nivel-2.webp", alt: "Certificado de Carreira UX Design, nível 2, emitido por Alura", rotulo: "Nível 2", legenda: "86 horas" },
+          { caminho: "/imagens/certificados/carreira-ux-design-nivel-3.webp", alt: "Certificado de Carreira UX Design, nível 3, emitido por Alura", rotulo: "Nível 3", legenda: "52 horas" },
+        ],
+      },
+      {
+        nome: "Formação Desenvolvimento de Carreira em UX",
+        instituicao: "Alura",
+        ano: 2025,
+        horas: 46,
+        imagens: [
+          { caminho: "/imagens/certificados/desenvolvimento-carreira-ux-alura.webp", alt: "Certificado de Formação Desenvolvimento de Carreira em UX, emitido por Alura" },
+        ],
+      },
+      { nome: "Formação UX Design", instituicao: "Alura", ano: 2025, horas: 42,
+        imagens: [
+          { caminho: "/imagens/certificados/ux-design-alura.webp", alt: "Certificado de Formação UX Design, emitido por Alura" },
+        ],
+      },
+      { nome: "Formação Figma", instituicao: "Alura", ano: 2025, horas: 41,
+        imagens: [
+          { caminho: "/imagens/certificados/figma-alura.webp", alt: "Certificado de Formação Figma, emitido por Alura" },
+        ],
+      },
+      {
+        nome: "Formação UX Research: pesquisa em ambientes dinâmicos com tecnologia e IA",
+        instituicao: "Alura",
+        ano: 2025,
+        horas: 32,
+        imagens: [
+          { caminho: "/imagens/certificados/ux-research-alura.webp", alt: "Certificado de Formação UX Research: pesquisa em ambientes dinâmicos com tecnologia e IA, emitido por Alura" },
+        ],
+      },
+      {
+        nome: "Formação Acessibilidade em UX",
+        instituicao: "Alura",
+        ano: 2025,
+        horas: 31,
+        imagens: [
+          { caminho: "/imagens/certificados/acessibilidade-em-ux-alura.webp", alt: "Certificado de Formação Acessibilidade em UX, emitido por Alura" },
+        ],
+      },
     ],
   },
   {
     titulo: "Dados, IA e segurança",
     itens: [
-      { nome: "Gerenciamento de Ameaças Cibernéticas", origem: "Cisco - 2025" },
-      { nome: "IA Generativa, Dados e Cibersegurança", origem: "DIO - 2026" },
-      { nome: "AI Fluency: Framework and Foundations", origem: "Anthropic - 2026" },
-      { nome: "Claude Code in Action", origem: "Anthropic - 2026" },
-      { nome: "Claude 101", origem: "Anthropic - 2026" },
+      {
+        nome: "Bootcamp Bradesco: GenAI, Dados & Cyber",
+        instituicao: "DIO",
+        ano: 2026,
+        horas: 52,
+        imagens: [
+          { caminho: "/imagens/certificados/bootcamp-genai-dados-cyber-dio.webp", alt: "Certificado de Bootcamp Bradesco: GenAI, Dados & Cyber, emitido por DIO" },
+        ],
+      },
+      {
+        nome: "Gerenciamento de ameaças cibernéticas",
+        instituicao: "Cisco Networking Academy, pela Universidade Cruzeiro do Sul",
+        ano: 2025,
+        imagens: [
+          { caminho: "/imagens/certificados/ameacas-ciberneticas-cisco.webp", alt: "Certificado de Gerenciamento de ameaças cibernéticas, emitido por Cisco Networking Academy, pela Universidade Cruzeiro do Sul" },
+        ],
+      },
+      { nome: "Claude Code in Action", instituicao: "Anthropic", ano: 2026,
+        imagens: [
+          { caminho: "/imagens/certificados/claude-code-in-action-anthropic.webp", alt: "Certificado de Claude Code in Action, emitido por Anthropic" },
+        ],
+      },
+      { nome: "Claude 101", instituicao: "Anthropic", ano: 2026,
+        imagens: [
+          { caminho: "/imagens/certificados/claude-101-anthropic.webp", alt: "Certificado de Claude 101, emitido por Anthropic" },
+        ],
+      },
+      { nome: "AI Fluency: Framework & Foundations", instituicao: "Anthropic", ano: 2026,
+        imagens: [
+          { caminho: "/imagens/certificados/ai-fluency-anthropic.webp", alt: "Certificado de AI Fluency: Framework & Foundations, emitido por Anthropic" },
+        ],
+      },
     ],
   },
 ];
