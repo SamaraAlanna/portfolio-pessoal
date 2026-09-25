@@ -158,11 +158,13 @@ sugerida, para a próxima sessão saber de onde continuar sem reabrir tudo.
   são trabalho da TecSinapse e o site do estúdio é do BORDA. Para o case ficar alcançável do
   Sobre, o certo é tratamento igual nas três, e isso passa pelo Figma. **Com isso a cota de
   uma caixa tingida por página está livre no Sobre.**
-- **O formulário de contato voltou em 2026-09-23, só o front.** Ele tinha saído em
-  2026-09-13 e foi recuperado do primeiro commit por `git show`, como estava previsto. O
-  envio continua desligado e **o destino é decisão de outro momento**: não existe rota de
-  API, e formulário que aceita envio e joga fora é pior que um desligado, porque a pessoa
-  acredita que mandou. Botão desabilitado, com aviso visível.
+- **O formulário de contato voltou em 2026-09-23, só o front, e ganhou envio em
+  2026-09-25.** Ele tinha saído em 2026-09-13 e foi recuperado do primeiro commit por
+  `git show`, como estava previsto; passou dois dias com o botão desabilitado e um aviso
+  visível, porque **formulário que aceita envio e joga fora é pior que um desligado**. Hoje
+  ele manda de verdade, por Server Action e Brevo, e **o campo de telefone saiu junto, por
+  minimização de dado**. Os detalhes estão na seção "O envio do formulário, ligado em
+  2026-09-25".
 - **A página voltou ao arranjo do Figma, duas colunas de 568 com 64 de intervalo:** canais
   e ponte do BORDA à esquerda, formulário à direita. Com isso **os canais voltaram a ser
   linhas com separador, e deixaram de ser três cartões**. O cartão era remendo do período
@@ -1537,74 +1539,263 @@ entra depois e vira case próprio.
 push dispara build na Vercel, o site atualiza em um ou dois minutos. Mostre esse estado
 na interface ("publicando" que vira "publicado"), senão a pessoa acha que não salvou.
 
-### O envio do formulário é o que falta
+### O envio do formulário, ligado em 2026-09-25
 
-**O formulário está no ar desde 2026-09-23, e só o front.** A marcação, o visual e a
-acessibilidade estão prontos em `app/contato/_secoes/secao-formulario.tsx`. O que não
-existe é destino, e **essa decisão é dela, não foi tomada**.
+**O formulário deixou de ser só front.** Ele esteve no ar desde 2026-09-23 com o botão
+desabilitado, porque não havia destino e **formulário que aceita envio e joga fora é pior
+que um desligado**. Agora existe destino.
 
-Ele saiu em 2026-09-13 porque dependia de serviço externo, e formulário que despacha para
-terceiro não demonstra nada tecnicamente. O que fecha o ciclo é rota de API própria, com
-validação escrita à mão, e aí vira caso de uso de verdade em vez de enfeite.
+**O serviço é o Brevo, por `fetch` puro, sem dependência nova.** Ele autentica com um
+cabeçalho `api-key` e é só isso. O plano gratuito é de 300 e-mails por dia, permanente, e
+a autenticação de domínio pede três TXT, sem MX.
 
-**Para ligar o envio:** por o `action`, tirar o `disabled` do botão e remover o aviso. Os
-cinco campos já têm `name`, tipo e `autoComplete` certos.
+**O AMAZON SES FOI DESCARTADO POR UM MOTIVO TÉCNICO, E NÃO POR PREÇO.** A API da AWS não
+aceita chave em cabeçalho: ela exige assinatura SigV4, e a própria documentação diz que
+quem escreve código sem SDK precisa incluir o código que assina. Sem SDK são umas sessenta
+linhas de requisição canônica e cadeia de HMAC, onde um `\n` errado devolve 403 sem dizer
+onde; com SDK é dependência grande para mandar um e-mail por semana. Some-se que **o grátis
+do SES acabou para conta nova**, e que ele começa em sandbox, só mandando para endereço
+verificado até alguém pedir acesso de produção.
 
-**Cinco campos**, cada um com rótulo associado por `htmlFor` e `id`: NOME, EMAIL, TELEFONE,
-ASSUNTO e MENSAGEM. **O telefone é o único opcional**, e o rótulo diz isso em texto, e não
-por asterisco, que precisa de legenda para significar alguma coisa. Os outros quatro têm
-`required`, que hoje não é exercido porque o envio não acontece, e passa a valer no dia em
-que acontecer.
+**É SERVER ACTION, E NÃO ROUTE HANDLER, E O CRITÉRIO É FUNCIONAR SEM JAVASCRIPT.** A
+documentação da versão instalada, em
+`node_modules/next/dist/docs/01-app/01-getting-started/07-mutating-data.md`, garante que
+formulário que chama Server Action é enviado mesmo com o script desligado. Um Route Handler
+também funcionaria, mas a volta seria um redirecionamento e **os campos preenchidos se
+perderiam** junto com o erro, a menos que voltassem por query string, o que joga a mensagem
+inteira na barra de endereço.
 
-**Os cinco assuntos do select vivem em `conteudo/contato.ts`**, e é por isso que não
-precisaram ser reescritos: eles ficaram lá parados os dez dias em que o formulário esteve
-fora. São a única parte do formulário que é conteúdo, e não código.
+**A `/contato` continua pré-renderizada estática**, conferido no build. Ter uma Server
+Action não torna a rota dinâmica.
 
-**O `--border-forte` voltou a ter uso, e é este.** Ele foi criado para borda de campo, ficou
-parado quando o formulário saiu, passou pelo filete da folha do hero e pelo botão neutro e
-saiu dos dois. **Manter o token parado foi a decisão certa**, porque apagar teria custado
-refazer a medição de 3:1 agora. Campo é componente interativo e o limite dele precisa de
-3:1; a `--border` comum fica em 1,2 e deixaria os campos quase invisíveis. Isso os deixa
-mais visíveis que no Figma, e é intencional.
+#### A armadilha que o teste sem JavaScript encontrou
 
-**Três decisões de acessibilidade que não são óbvias e não devem ser desfeitas:**
+**SERVER ACTION SEM JAVASCRIPT SÓ FUNCIONA EM `multipart/form-data`.** O Next recusa
+`application/x-www-form-urlencoded`, e o comentário está no código dele, em
+`node_modules/next/dist/server/lib/server-action-request-meta.js`: *"We don't actually
+support URL encoded actions, and the action handler will bail out if it sees one."* O
+`action-handler.js` confirma, saindo cedo quando `isURLEncodedAction`.
 
-- **O `h2` do formulário é só para leitor de tela**, ligado ao `form` por `aria-labelledby`.
-  O Figma não põe título ali, e a coluna ao lado já se chama CANAIS DIRETOS.
-- **O aviso vem antes do botão no HTML.** Botão desabilitado não recebe foco, então quem
-  navega por teclado nunca chega nele e o `aria-describedby` sozinho não seria lido. Na
-  ordem de leitura o aviso explica o botão morto antes de a pessoa esbarrar nele.
-- **Enter não envia, e isso vem de graça do botão desabilitado.** O envio implícito do HTML
-  aciona o botão padrão, e botão desabilitado não tem comportamento de ativação. Sem isso o
-  formulário faria GET na própria rota e **a mensagem inteira apareceria na barra de
-  endereço**. Ao ligar o envio, isso deixa de ser automático e precisa ser tratado.
+**Na prática isso não é problema, porque o React resolve sozinho:** ele escreve
+`encType="multipart/form-data"` e `method="POST"` na tag `<form>` quando a `action` é uma
+Server Action. Navegador nenhum manda urlencoded desse formulário.
 
-### A máscara de telefone
+**Vira problema na hora de testar.** O padrão de um `<form>` é urlencoded, então qualquer
+teste escrito à mão que monte o POST sozinho cai no caminho recusado, **e o Next não
+reclama**: ele devolve a página estática, com status 200 e o formulário em branco, como se
+o envio simplesmente não tivesse acontecido. Isso custou uma rodada inteira de diagnóstico
+aqui, com a suspeita errada de que o caminho sem JavaScript não funcionava.
 
-**Escrita à mão, sem biblioteca**, em `components/ui/campo-telefone.tsx`. **Só este campo é
-client component**, e não o formulário: máscara precisa reagir a cada tecla, o resto não tem
-estado nem handler e continua no servidor.
+**A segunda condição é o cabeçalho `Origin`.** O Next compara Origin com Host como proteção
+de CSRF na Server Action, e navegador sempre manda num POST. Um teste sem esse cabeçalho é
+recusado do mesmo jeito silencioso.
 
-**Ela formata pelos dígitos, e não pelo que está escrito**, então colar em qualquer formato
-dá o mesmo resultado. O corte muda com o tamanho: até dez dígitos sai 4 mais 4, que é fixo,
-e no décimo primeiro vira 5 mais 4, que é celular.
+**Fica como receita para a próxima vez:** para exercer o caminho sem JavaScript sem abrir
+navegador, leia o HTML servido, colete os campos ocultos `$ACTION_REF_1`, `$ACTION_1:0`,
+`$ACTION_1:1` e `$ACTION_KEY` **desescapando o HTML**, e mande multipart com `Origin`. Sem
+uma dessas três coisas o teste mente.
 
-**Três armadilhas que já custaram correção, e que a próxima reescrita vai reencontrar:**
+#### Onde cada coisa mora
 
-1. **O cursor volta para onde estava, ancorado na contagem de dígitos.** Campo controlado
-   joga o cursor para o fim a cada reescrita, e sem isso quem corrigisse o DDD de um número
-   já digitado seria cuspido no fim da linha a cada tecla. A âncora é dígito, e não posição
-   em caracteres, porque os separadores entram e saem sozinhos. Em `useLayoutEffect`, senão
-   o cursor pisca no fim por um quadro.
-2. **O 55 da frente cai quando passa de 11 dígitos.** Quem copia do WhatsApp cola com código
-   do país, e sem a regra "+55 41 99999-8888" virava "(55) 41999-9988", **um número errado
-   com cara de certo**, que é o pior defeito possível num campo de contato. A condição é o
-   comprimento, e não o 55 sozinho: 55 também é DDD do Rio Grande do Sul, e um (55) legítimo
-   tem 11 dígitos e não é tocado.
-3. **Não existe `maxLength`, e isso é deliberado.** Ele parece o reforço óbvio e sabota a
-   regra acima: "+55 41 99999-8888" tem 17 caracteres, o navegador corta em 15 antes de o
-   `onChange` disparar, e a máscara recebe o texto já mutilado. **O limite real é de dígitos,
-   não de caracteres**, e mora na própria função de formatar.
+| Arquivo | Papel |
+| --- | --- |
+| `lib/contato.ts` | validação, limpeza, escape, montagem do corpo, e os tipos do estado |
+| `lib/email.ts` | o `fetch` para o Brevo, e o único lugar que sabe qual serviço é |
+| `app/contato/acoes.ts` | a Server Action: armadilha, carimbo, validação, envio |
+| `app/contato/_secoes/secao-formulario.tsx` | a tela, agora client component |
+
+**O `lib/contato.ts` não tem `fetch` nem React de propósito.** É função pura, então a
+validação se confere sem rede e sem renderizar nada. E o `lib/email.ts` separado é o que
+faz trocar de serviço ser reescrever um arquivo em vez de caçar `fetch` espalhado.
+
+**O `EstadoDoEnvio` e o `ESTADO_INICIAL` moram no `lib/contato.ts` e não no `acoes.ts`**,
+porque arquivo com `"use server"` só pode exportar função assíncrona. Uma constante
+exportada de lá quebra a compilação.
+
+#### A validação, e o que ela protege
+
+**Duas camadas, e a do servidor não confia em nada da do cliente.** O `required`, o
+`type="email"` e o `maxLength` são conveniência de quem digita e somem no primeiro `curl`.
+
+**A LIMPEZA ACONTECE NA ENTRADA, E NÃO NA SAÍDA.** Todo campo de uma linha tem caractere de
+controle trocado por espaço, `\r` e `\n` inclusive, e é aí que injeção de cabeçalho morre:
+um nome com quebra de linha seguida de `Bcc:` só vira ataque se a quebra sobreviver até a
+montagem da mensagem. Cortada na entrada, ela nunca chega lá. Fazer isso na saída seria
+depender de ninguém esquecer. **Conferido no teste:** um nome com `\r\nBcc:` volta com a
+quebra virada espaço.
+
+**O assunto é conferido contra a lista de permissão**, que é o `assuntos` do
+`conteudo/contato.ts`, o mesmo array que monta o select. **Uma fonte só**, então mexer na
+lista atualiza tela e validação juntas e não existe o dia em que uma opção nova é recusada
+pelo servidor. Ele é o único campo que entra no assunto do e-mail, que é cabeçalho, e
+aceitar texto livre ali seria deixar o visitante escrever num cabeçalho.
+
+**A mensagem de erro do assunto é a mesma para vazio e para valor inventado.** Quem mandou
+valor fora da lista não errou de digitação, está sondando, e uma frase diferente
+confirmaria que existe uma lista.
+
+**No escape de HTML o `&` vem primeiro, e o `\n` vira `<br>` depois do escape.** Inverter a
+segunda parte anula o escape inteiro: o `<br>` recém-inserido viraria `&lt;br&gt;` e
+apareceria como texto, enquanto um `<script>` digitado continuaria escapado. O resultado é
+um e-mail feio que parece seguro.
+
+**NENHUM CAMPO ENTRA EM CABEÇALHO, COM UMA EXCEÇÃO: O `replyTo`.** E ele só é montado com
+um e-mail que passou pela validação. O tipo `MensagemValidada` é a garantia, porque ele só
+é construído pelo `validarFormulario`.
+
+**O remetente é sempre o domínio verificado, nunca o visitante.** Pôr o e-mail de quem
+escreveu no `sender` é a forma clássica de derrubar a própria entrega: o SPF e o DKIM do
+domínio dele não autorizam o Brevo, a mensagem chega como falsificação e o domínio de envio
+queima junto.
+
+#### Robô: a armadilha funciona inteira, o carimbo não
+
+**A armadilha é campo escondido por posição, e não `type="hidden"`**, porque robô costuma
+pular campo escondido por tipo e é ele que precisa cair. Preenchida, **o servidor responde
+sucesso e não manda nada**. Devolver erro ensinaria o robô que aquele campo é a peneira.
+
+**O CARIMBO DE TEMPO É QUEBRA-GALHO ASSUMIDO, e a decisão foi consciente.** Ele é escrito
+por JavaScript ao montar a página, e o motivo é que a `/contato` é pré-renderizada
+estática: um carimbo escrito no HTML seria o horário do **build**, congelado, e a conta
+daria meses para todo mundo. **Não quebraria com erro, daria a resposta errada em
+silêncio.**
+
+O preço é que um carimbo escrito pelo cliente é um carimbo que o cliente forja, e que **sem
+JavaScript a conferência é pulada**, o que é deliberado: quem está nessa situação continua
+passando pela armadilha, pela validação e pelo limite de taxa. As duas alternativas foram
+consideradas e recusadas por enquanto: tornar a rota dinâmica e assinar o carimbo com HMAC
+resolveria de verdade e custaria a pré-renderização de uma das 14 rotas.
+
+**A escrita do carimbo vai direto no DOM, e não em `setState`.** O valor não muda nada na
+tela, e `setState` dentro de efeito é o padrão que o ESLint deste projeto proíbe. É a mesma
+escolha já registrada no `TrilhoRolavel`.
+
+#### O limite de taxa vive no painel da Vercel, e isso é risco
+
+**Sem banco, quem faz o limite é o WAF da Vercel**, que existe no plano Hobby: uma regra
+por projeto, chave por IP, janela fixa de no mínimo 10s e no máximo 10 minutos, e um milhão
+de requisições permitidas por mês. O plano é `/contato`, POST, 5 requisições por 10
+minutos.
+
+**Um `Map` em memória não resolve e é a tentativa óbvia.** Em serverless cada instância tem
+a própria memória e o contador zera sozinho. Ele não erra alto, **erra baixo**, deixando
+passar, e parece funcionar porque nunca reclama.
+
+**Três ressalvas que fazem parte da solução:** o contador é por região, então tráfego da
+mesma chave em regiões diferentes pode passar do limite em cada uma; Hobby dá **uma** regra
+de rate limit por projeto, então essa é a regra do projeto; e **a regra mora no painel, não
+no repositório**. Ela não aparece em diff, não vem num clone e a próxima sessão não tem como
+saber que ela existe. É o mesmo tipo de risco já registrado sobre o redirecionamento do www.
+
+#### O telefone saiu, e a decisão antiga foi revertida
+
+**O CAMPO DE TELEFONE SAIU EM 2026-09-25, POR MINIMIZAÇÃO DE DADO.** Ele era o único
+opcional e **nunca existiu no Figma**, que sempre desenhou quatro campos. Pedir telefone
+para receber uma mensagem é guardar mais dado do que o necessário para responder, e o
+e-mail já responde.
+
+**Isso reverte a decisão registrada antes**, de telefone opcional com o rótulo dizendo
+"(opcional)" em texto em vez de asterisco. A justificativa daquela decisão continua válida
+no que ela afirmava, sobre asterisco precisar de legenda; o que mudou é que o campo deixou
+de existir.
+
+**O `components/ui/campo-telefone.tsx` foi apagado junto**, porque não tinha outro uso, e
+com ele a máscara escrita à mão. **As três armadilhas dela ficam registradas aqui**, porque
+quem reescrever máscara de telefone neste projeto vai reencontrar as três: o cursor precisa
+voltar para onde estava ancorado na contagem de dígitos, e não em posição de caractere; o
+`55` da frente cai quando passa de 11 dígitos, porque quem copia do WhatsApp cola com
+código de país e sem isso "+55 41 99999-8888" virava um número errado com cara de certo; e
+**não existe `maxLength`**, porque ele corta o texto antes de o `onChange` disparar e o
+limite real é de dígitos, não de caracteres.
+
+**O formulário ficou com quatro campos, como o Figma sempre teve**, e com isso a divergência
+entre arquivo e código naquele ponto acabou.
+
+#### O que mais mudou junto
+
+**O `canalPor` saiu do `footer.tsx` e desceu para o `conteudo/contato.ts`.** O envio precisa
+do endereço de e-mail e o rodapé precisa do `mailto`, então eram dois consumidores do mesmo
+dado prestes a ter duas buscas escritas à mão, que é exatamente como o rodapé e a página de
+Contato já divergiram uma vez. Ela devolve o canal inteiro: o rodapé usa o `.destino` e o
+envio usa o `.valor`.
+
+**A linha de LGPD cita o serviço de envio de propósito.** Ela diz "Sua mensagem vai direto
+para o meu e-mail, por um serviço de envio. O site não guarda nada." **"Não guardo nada"
+seria promessa maior do que o caminho cumpre**, porque a mensagem passa por um operador e
+fica no log dele. O que é verdade sem ressalva é que o site não guarda, e é isso que está
+escrito. É a mesma regra de nunca prometer o que a página não faz.
+
+**O FOCO VAI PARA O RESUMO DE ERRO, E NÃO PARA O PRIMEIRO CAMPO INVÁLIDO.** Focar o campo
+diria "conserta este" sem dizer quantos faltam, e quem usa leitor de tela ouviria um erro e
+descobriria os demais um a um, submetendo de novo. O resumo anuncia a lista inteira e cada
+item é um link para o campo. **Trocar é uma linha**, se um dia parecer melhor.
+
+**Nem o resumo nem a confirmação declaram `role="status"` ou `role="alert"`.** Mover o foco
+já faz o leitor de tela anunciar o conteúdo, e somar região viva anunciaria duas vezes. **Na
+confirmação o foco é obrigatório e não refinamento:** o formulário inteiro sai do DOM, o
+botão que tinha o foco vai junto, e sem isso o foco cai no `body`.
+
+**A região viva do "enviando" é renderizada sempre, vazia.** Leitor de tela só anuncia
+mudança de região que já estava no DOM; criar a região junto com o texto costuma não
+anunciar nada.
+
+**A confirmação é rosa, e não âmbar.** No sistema âmbar é ressalva, e confirmar um envio que
+deu certo não é ressalva nenhuma. Rosa é a cor de ação do site, a mesma do botão que acabou
+de ser apertado. O erro é âmbar, que é exatamente o que âmbar significa.
+
+**Os dois blocos usam a `.tingido`**, com `--tint-rosa` e `--tint-ambar`, que é o que põe
+`--surface` opaco embaixo do tint. Regra endurecida em 2026-09-24: texto em accent sobre
+tint nunca direto sobre o `--bg` nem sobre o `--surface-2`.
+
+#### A configuração, que entrou em 2026-09-25
+
+| | |
+| --- | --- |
+| Serviço | **Brevo**, API de e-mail transacional, `fetch` puro |
+| Subdomínio de envio | **`envio.portfoliosamara.com.br`**, autenticado no Brevo |
+| Remetente | **`formulario@envio.portfoliosamara.com.br`**, nome "Portfólio Samara Alanna" |
+| Destino | `sami_andrade@outlook.com.br` |
+| DNS | **na Vercel**, e não na HostGator |
+| Variáveis | `BREVO_API_KEY` e `CONTATO_REMETENTE` |
+
+**O DNS DO DOMÍNIO É GERENCIADO PELA VERCEL, E NÃO PELA HOSTGATOR.** Isto contradiz o que
+este documento dizia antes, escrito quando a suposição era que a zona ficaria na
+hospedagem: **registro novo de e-mail entra no painel da Vercel**, e procurar a zona na
+HostGator é perder tempo e arriscar editar um lugar que não é o que está no ar.
+
+**O subdomínio de envio existe para o DNS do envio não encostar no que entrega o e-mail do
+domínio raiz.** Ele também isola a reputação: problema de entrega do formulário não
+contamina o domínio principal. **Cuidado com o SPF se um dia precisar mexer:** domínio só
+pode ter **um** registro SPF, e publicar um segundo quebra o SPF inteiro em vez de somar.
+
+**A CHAVE DO BREVO EXPIRA, E TROCAR É EM DOIS LUGARES.** No `.env.local` da máquina e nas
+Environment Variables do projeto na Vercel, em Production e Preview. **Esquecer um dos dois
+dá um defeito assimétrico**, que funciona de um lado e falha do outro, e o sintoma na tela é
+o mesmo aviso genérico dos dois jeitos. Quem diz qual é o lado é o log: `Envio não
+configurado` quando a variável falta, e `Brevo recusou o envio: 401` quando ela existe e não
+vale mais.
+
+**As variáveis não têm prefixo `NEXT_PUBLIC_`**, que é o que as empurraria para o pacote que
+o navegador baixa. **Conferido empiricamente**, e não só por leitura: a chave não aparece em
+`.next/static`, nem em `.next/server`, nem no HTML pré-renderizado da `/contato`, nem nos
+logs, nem em pedaços de 16 caracteres deles.
+
+**O destinatário não é variável de ambiente:** ele sai do canal "email" do
+`conteudo/contato.ts`, o mesmo endereço que a página e o rodapé mostram. **Não crie uma
+variável de destino**, ela ficaria sobrando e viraria um segundo lugar para divergir.
+
+**O `messageId` da resposta do Brevo vai para o log, e não é segredo.** É o que liga uma
+mensagem daqui a uma linha do painel do Brevo. Sem ele, "não chegou o e-mail" vira
+investigação sem ponto de partida: não dá para distinguir envio que não aconteceu, envio
+recusado depois de aceito, e envio que chegou e caiu em spam.
+
+**O único log que cita a chave cita o nome da variável, nunca o valor**, e o `catch` da
+requisição registra só nome e mensagem do erro, e não o objeto inteiro. Objeto de erro de
+rede carrega `cause` aninhado cujo conteúdo depende da implementação do `fetch`, e é onde a
+chave vazaria se alguma versão futura anexasse a requisição com os cabeçalhos dela.
+
+**Ainda falta a regra de rate limit no painel da Vercel**, que é a única peça do conjunto
+que não vive no repositório.
 
 **Currículo:** PDF vai para o repositório, também via API do GitHub, em base64.
 **Limite de 5 MB no upload**, porque arquivo grande entra no histórico do Git e não sai.
@@ -2372,6 +2563,13 @@ case, no bloco que carrega o argumento.
 - O seletor de idioma do hero deixa o botão EN desabilitado, porque o site não tem versão
   em inglês. Isso não vale para o currículo, que existe nos dois idiomas. **O que a tradução
   vai exigir está na seção "Trabalho futuro: tradução do site".**
+- **O formulário de contato manda e-mail de verdade desde 2026-09-25**, pelo Brevo, com o
+  domínio autenticado e as variáveis no lugar. **Falta só a regra de rate limit no painel da
+  Vercel**, que é a única peça do conjunto que não vive no repositório e que ninguém
+  descobre lendo o código. Detalhes na seção "O envio do formulário, ligado em 2026-09-25".
+- **A chave do Brevo expira.** Quando vencer, ela precisa ser trocada em **dois** lugares, o
+  `.env.local` e a Vercel, e esquecer um deles funciona de um lado e falha do outro. O
+  sintoma na tela é o mesmo aviso genérico; quem diferencia é o log.
 
 ---
 

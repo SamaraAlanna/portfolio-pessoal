@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Logo from "@/components/layout/logo";
 import { CURRICULO } from "@/lib/site";
-import { canais } from "@/conteudo/contato";
+import { canalPor } from "@/conteudo/contato";
 
 /**
  * Footer.
@@ -14,22 +14,15 @@ import { canais } from "@/conteudo/contato";
 /**
  * O endereço de cada canal vem do `conteudo/contato.ts`, e não escrito de novo aqui.
  *
- * O footer e a página de Contato mostram os mesmos três canais, então eram dois lugares
- * para manter iguais, e já estavam diferentes: "LinkedIn" e "E-mail" apontavam para
- * `/contato` em vez de para o perfil e para o `mailto`, e o GitHub tinha a URL escrita à
- * mão. Quem clicava em "E-mail" no rodapé ia parar numa página, não no cliente de e-mail.
+ * O footer e a página de Contato mostram os mesmos canais, então eram dois lugares para
+ * manter iguais, e já estavam diferentes: "LinkedIn" e "E-mail" apontavam para `/contato`
+ * em vez de para o perfil e para o `mailto`, e o GitHub tinha a URL escrita à mão. Quem
+ * clicava em "E-mail" no rodapé ia parar numa página, não no cliente de e-mail.
  *
- * FALHA NO BUILD SE O CANAL NÃO EXISTIR, de propósito. Renderizar um `href` vazio deixaria
- * um link morto no rodapé de todas as páginas, que é exatamente o tipo de defeito que
- * ninguém encontra procurando. Errar o nome do canal aqui passa a quebrar a compilação.
+ * O `canalPor` MORAVA AQUI E DESCEU PARA O `conteudo/contato.ts` EM 2026-09-25, quando o
+ * envio do formulário passou a precisar do mesmo dado. O motivo de mover em vez de copiar
+ * está comentado lá.
  */
-function canalPor(rotulo: string) {
-  const canal = canais.find((item) => item.rotulo === rotulo);
-  if (!canal) {
-    throw new Error(`Canal "${rotulo}" não existe em conteudo/contato.ts`);
-  }
-  return canal.destino;
-}
 
 /**
  * `externo` marca o que sai do site e abre em nova aba. O `mailto` não entra: ele não
@@ -56,13 +49,13 @@ const colunas = [
   {
     rotulo: "ONDE ME ACHAR",
     itens: [
-      { rotulo: "GitHub", destino: canalPor("github"), externo: true },
-      { rotulo: "LinkedIn", destino: canalPor("linkedin"), externo: true },
-      { rotulo: "WhatsApp", destino: canalPor("whatsapp"), externo: true },
-      { rotulo: "Instagram", destino: canalPor("instagram"), externo: true },
+      { rotulo: "GitHub", destino: canalPor("github").destino, externo: true },
+      { rotulo: "LinkedIn", destino: canalPor("linkedin").destino, externo: true },
+      { rotulo: "WhatsApp", destino: canalPor("whatsapp").destino, externo: true },
+      { rotulo: "Instagram", destino: canalPor("instagram").destino, externo: true },
       // O e-mail fica por último e **não é externo**: ele é `mailto:`, não navega, e abrir
       // aba para entregar ao cliente de e-mail deixa uma aba em branco para trás.
-      { rotulo: "E-mail", destino: canalPor("email") },
+      { rotulo: "E-mail", destino: canalPor("email").destino },
     ],
   },
 ];

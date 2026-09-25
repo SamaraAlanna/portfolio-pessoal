@@ -38,6 +38,30 @@ export const canais: Canal[] = [
 ];
 
 /**
+ * O canal de um rótulo, ou erro de compilação.
+ *
+ * ELA SAIU DO `footer.tsx` EM 2026-09-25, quando o envio do formulário passou a precisar
+ * do endereço de e-mail também. Eram dois consumidores do mesmo dado prestes a ter duas
+ * buscas escritas à mão, que é exatamente como o rodapé e a página de Contato já
+ * divergiram uma vez.
+ *
+ * O RODAPÉ USA O `.destino` E O ENVIO USA O `.valor`, e é por isso que ela devolve o canal
+ * inteiro em vez do endereço: o rodapé precisa do `mailto:` para o link, e o servidor de
+ * e-mail precisa do endereço nu, sem esquema.
+ *
+ * FALHA NO BUILD SE O CANAL NÃO EXISTIR, de propósito. Um `href` vazio deixaria link morto
+ * no rodapé de todas as páginas, e um destinatário vazio faria o envio falhar só em
+ * produção, na primeira mensagem de verdade que alguém tentasse mandar.
+ */
+export function canalPor(rotulo: string): Canal {
+  const canal = canais.find((item) => item.rotulo === rotulo);
+  if (!canal) {
+    throw new Error(`Canal "${rotulo}" não existe em conteudo/contato.ts`);
+  }
+  return canal;
+}
+
+/**
  * Assuntos do select do formulário.
  *
  * Não estão no Figma, que tem só o placeholder "Selecione um assunto". A lista veio da
